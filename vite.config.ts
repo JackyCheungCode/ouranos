@@ -148,7 +148,7 @@ function templatePartials() {
           appTitle: isHome
             ? 'Ouranos | Home'
             : isCustomizer
-              ? 'Ouranos | Bespoke Wheel Studio'
+              ? 'Ouranos | Wheel Atelier'
               : 'Ouranos Admin Panel',
         }),
       ].join('');
