@@ -64,7 +64,8 @@ function templatePartials() {
     transformIndexHtml(html: string, context: { filename: string }) {
       const isHome = context.filename === resolve(rootDir, 'index.html');
       const isAdmin = context.filename.includes('/admin-panel/');
-      if (!isHome && !isAdmin) return html;
+      const isCustomizer = context.filename.includes('/customize/');
+      if (!isHome && !isAdmin && !isCustomizer) return html;
       const validChunks = new Set([
         'accordion',
         'ai-tag',
@@ -144,7 +145,7 @@ function templatePartials() {
         getJsFontLinks(),
         getJsIconLinks(),
         getJsMetaTagsAndIconLinks({
-          appTitle: isHome ? 'Ouranos | Home' : 'Ouranos Admin Panel',
+          appTitle: isHome ? 'Ouranos | Home' : isCustomizer ? 'Ouranos | Bespoke Wheel Studio' : 'Ouranos Admin Panel',
         }),
       ].join('');
       return html
@@ -169,6 +170,7 @@ export default defineConfig({
       input: {
         main: resolve(rootDir, 'index.html'),
         adminPanel: resolve(rootDir, 'admin-panel/index.html'),
+        customize: resolve(rootDir, 'customize/index.html'),
       },
     },
   },
