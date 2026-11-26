@@ -80,12 +80,12 @@
               <h3>Define the dimensions.</h3>
               <p class="step-description">Choose a starting specification. Final dimensions and fitment remain subject to vehicle data and engineering validation.</p>
               <div class="field-grid">
-                <div class="field-block"><label for="diameter">Diameter</label><p-select id="diameter" name="diameter" label="Diameter" value="20"><p-select-option value="18">18</p-select-option><p-select-option value="19">19</p-select-option><p-select-option value="20">20</p-select-option><p-select-option value="21">21</p-select-option><p-select-option value="22">22</p-select-option><p-select-option value="23">23</p-select-option></p-select><span class="field-unit">INCH</span></div>
-                <div class="field-block"><label for="width">Width</label><p-select id="width" name="width" label="Width" value="9.0"><p-select-option value="8.0">8.0</p-select-option><p-select-option value="8.5">8.5</p-select-option><p-select-option value="9.0">9.0</p-select-option><p-select-option value="9.5">9.5</p-select-option><p-select-option value="10.0">10.0</p-select-option><p-select-option value="10.5">10.5</p-select-option><p-select-option value="11.0">11.0</p-select-option><p-select-option value="12.0">12.0</p-select-option></p-select><span class="field-unit">INCH</span></div>
-                <div class="field-block"><label for="offset">Offset (ET)</label><p-input-number id="offset" name="offset" label="Offset (ET)" placeholder="e.g. 35"></p-input-number><span class="field-unit">MM</span></div>
-                <div class="field-block"><label for="pcd">Bolt pattern (PCD)</label><p-input-text id="pcd" name="pcd" label="Bolt pattern (PCD)" placeholder="e.g. 5 × 112"></p-input-text></div>
-                <div class="field-block"><label for="bore">Centre bore</label><p-input-number id="bore" name="bore" label="Centre bore" placeholder="e.g. 66.6"></p-input-number><span class="field-unit">MM</span></div>
-                <div class="field-block"><label for="load">Load requirement</label><p-input-number id="load" name="load" label="Load requirement" placeholder="Optional"></p-input-number><span class="field-unit">KG / WHEEL</span></div>
+                <div class="field-block"><p-select id="diameter" name="diameter" label="Diameter (INCH)" value="20"><p-select-option value="18">18</p-select-option><p-select-option value="19">19</p-select-option><p-select-option value="20">20</p-select-option><p-select-option value="21">21</p-select-option><p-select-option value="22">22</p-select-option><p-select-option value="23">23</p-select-option></p-select></div>
+                <div class="field-block"><p-select id="width" name="width" label="Width (INCH)" value="9.0"><p-select-option value="8.0">8.0</p-select-option><p-select-option value="8.5">8.5</p-select-option><p-select-option value="9.0">9.0</p-select-option><p-select-option value="9.5">9.5</p-select-option><p-select-option value="10.0">10.0</p-select-option><p-select-option value="10.5">10.5</p-select-option><p-select-option value="11.0">11.0</p-select-option><p-select-option value="12.0">12.0</p-select-option></p-select><span class="field-unit">INCH</span></div>
+                <div class="field-block"><p-input-number id="offset" name="offset" label="Offset (MM)" placeholder="e.g. 35"></p-input-number></div>
+                <div class="field-block"><p-input-text id="pcd" name="pcd" label="Bolt pattern (PCD)" placeholder="e.g. 5 × 112"></p-input-text></div>
+                <div class="field-block"><p-input-number id="bore" name="bore" label="Centre bore (MM)" placeholder="e.g. 66.6"></p-input-number><span class="field-unit">MM</span></div>
+                <div class="field-block"><p-input-number id="load" name="load" label="Load (KG / WHEEL)" placeholder="Optional"></p-input-number></div>
               </div>
               <div class="engineering-note"><span>i</span><p>These are requested values, not a fitment approval. Our engineering team will review brake clearance, load rating and vehicle-specific requirements before production.</p></div>
             </section>
@@ -108,16 +108,16 @@
               <h3>What will it be made for?</h3>
               <p class="step-description">Vehicle details help our team assess the specification. This submission is a request for review, not an instant fitment confirmation.</p>
               <div class="field-grid">
-                <div class="field-block"><label for="make">Vehicle make</label><p-input-text id="make" name="make" label="Vehicle make" placeholder="e.g. Porsche"></p-input-text></div>
-                <div class="field-block"><label for="model">Model</label><p-input-text id="model" name="model" label="Model" placeholder="e.g. 911 Carrera"></p-input-text></div>
-                <div class="field-block"><label for="year">Model year</label><p-input-number id="year" name="year" label="Model year" placeholder="e.g. 2025" min="1900" max="2100"></p-input-number></div>
-                <div class="field-block"><label for="variant">Trim / variant</label><p-input-text id="variant" name="variant" label="Trim / variant" placeholder="e.g. GTS"></p-input-text></div>
+                <div class="field-block"><p-input-text id="make" name="make" label="Vehicle make" placeholder="e.g. Porsche"></p-input-text></div>
+                <div class="field-block"><p-input-text id="model" name="model" label="Model" placeholder="e.g. 911 Carrera"></p-input-text></div>
+                <div class="field-block"><p-input-number id="year" name="year" label="Model year" placeholder="e.g. 2025" min="1900" max="2100"></p-input-number></div>
+                <div class="field-block"><p-input-text id="variant" name="variant" label="Trim / variant" placeholder="e.g. GTS"></p-input-text></div>
               </div>
               <div class="field-block"><label for="vehicle-mods">Vehicle modifications <span>OPTIONAL</span></label><p-textarea id="vehicle-mods" name="vehicle-mods" label="Vehicle modifications" rows="3" placeholder="Brakes, suspension, bodywork or other modifications."></p-textarea></div>
-              <div class="field-block"><label for="special-requests">Bespoke requirements</label><p-textarea id="special-requests" name="special-requests" label="Bespoke requirements" rows="4" placeholder="Tell us what you have in mind — custom dimensions, unique detailing or a specific design direction."></p-textarea></div>
+              <div class="field-block"><p-textarea id="special-requests" name="special-requests" label="Bespoke requirements" rows="4" placeholder="Tell us what you have in mind — custom dimensions, unique detailing or a specific design direction."></p-textarea></div>
               <div class="field-grid contact-grid">
-                <div class="field-block"><label for="customer-name">Your name</label><p-input-text id="customer-name" name="customer-name" label="Your name" autocomplete="name" required placeholder="Full name"></p-input-text></div>
-                <div class="field-block"><label for="customer-email">Email address</label><p-input-email id="customer-email" name="customer-email" label="Email address" autocomplete="email" required placeholder="name@example.com"></p-input-email></div>
+                <div class="field-block"><p-input-text id="customer-name" name="customer-name" label="Your name" autocomplete="name" required placeholder="Full name"></p-input-text></div>
+                <div class="field-block"><p-input-email id="customer-email" name="customer-email" label="Email address" autocomplete="email" required placeholder="name@example.com"></p-input-email></div>
               </div>
             </section>
             <div class="form-actions">
