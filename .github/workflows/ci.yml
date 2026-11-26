@@ -46,11 +46,21 @@ jobs:
       - name: Install locked dependencies
         run: npm ci --legacy-peer-deps
 
-      - name: Dependency audit summary
+      - name: Apply and commit formatting
         run: |
-          npm audit --json > npm-audit.json || true
-          node -e "const a=require('./npm-audit.json'); console.log(JSON.stringify({vulnerabilities:a.metadata?.vulnerabilities, packages:Object.entries(a.vulnerabilities||{}).map(([name,v])=>({name,severity:v.severity,isDirect:v.isDirect,range:v.range,fixAvailable:v.fixAvailable}))}, null, 2))"
-          npm audit --audit-level=high
+          npm run format
+          if [ "${{ github.event_name }}" = "push" ] && [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add src tests '*.config.ts' eslint.config.js
+            if ! git diff --cached --quiet; then
+              git commit -m "style: apply project formatting"
+              git push
+            fi
+          fi
+
+      - name: Dependency audit
+        run: npm audit --audit-level=high
 
       - name: Lint
         run: npm run lint
