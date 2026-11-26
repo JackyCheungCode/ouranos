@@ -1,5 +1,5 @@
 import './style.css';
-const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const $=s=>document.querySelector(s);
 const S={step:0,model:null,market:'',regions:[],makes:[],models:[],years:[],trims:[],fitments:[],selected:null,vehicle:null,color:'black',surface:'satin'};
 const COLORS={black:0x34383b,silver:0xd5d7d6,bronze:0x9b704d}, ROUGH={satin:.34,gloss:.16,brushed:.48};
 const NAMES={black:'Black',silver:'Silver',bronze:'Bronze'}, SURF={satin:'Satin',gloss:'Gloss',brushed:'Brushed'};
@@ -88,7 +88,7 @@ function renderModelPage(nextPage){
   const pages=Math.max(1,Math.ceil(modelLibrary.length/MODELS_PER_PAGE));modelPage=Math.max(0,Math.min(pages-1,nextPage));
   const el=$('#model-list');el.replaceChildren();
   const visible=modelLibrary.slice(modelPage*MODELS_PER_PAGE,(modelPage+1)*MODELS_PER_PAGE);
-  visible.forEach((model,index)=>{
+  visible.forEach((model)=>{
     const b=document.createElement('button');b.type='button';b.className='model-card';b.dataset.modelKey=model.key;b.setAttribute('role','option');b.setAttribute('aria-selected',String(S.model?.key===model.key));
     const preview=document.createElement('span');preview.className='model-card-preview';
     const image=document.createElement('img');image.alt=model.name+' preview';image.loading='lazy';preview.append(image);
