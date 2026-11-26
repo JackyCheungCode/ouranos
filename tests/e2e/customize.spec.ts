@@ -32,6 +32,11 @@ async function choose(page: Page, selector: string, value: string) {
   }, value);
 }
 
+async function chooseMarket(page: Page) {
+  await expect(page.locator('#market')).toBeEnabled();
+  await chooseMarket(page);
+}
+
 test('Configurator retrieves USDM fitment and maps staggered front/rear specifications', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
