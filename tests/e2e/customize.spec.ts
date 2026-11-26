@@ -76,6 +76,15 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
   expect(errors).toEqual([]);
 });
 
+test('Selecting a manufacturer from the logo menu loads its models', async ({ page }) => {
+  await mockWheelSize(page);
+  await page.goto('/customize/');
+  await page.locator('#manufacturer-trigger').click();
+  await page.locator('.manufacturer-option').filter({ hasText: 'Porsche' }).click();
+  await expect(page.locator('#model')).toBeEnabled();
+  await expect(page.locator('#model')).toContainText('911');
+});
+
 test('Configurator hero is full bleed and model zoom controls remain available on mobile', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await mockWheelSize(page);
