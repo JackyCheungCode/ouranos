@@ -42,8 +42,29 @@ function templatePartials() {
       const isLanding = context.filename.includes('/landing-page/');
       const isAdmin = context.filename.includes('/admin-panel/');
       if (!isLanding && !isAdmin) return html;
+      const validChunks = new Set([
+        'accordion', 'ai-tag', 'banner', 'button-pure', 'button-tile', 'button', 'canvas',
+        'carousel', 'checkbox', 'crest', 'display', 'divider', 'drilldown', 'fieldset',
+        'flag', 'flyout', 'heading', 'icon', 'inline-notification', 'input-date', 'input-email',
+        'input-month', 'input-number', 'input-password', 'input-search', 'input-tel', 'input-text',
+        'input-time', 'input-url', 'input-week', 'link-pure', 'link-tile-product', 'link-tile',
+        'link', 'modal', 'model-signature', 'multi-select', 'optgroup', 'pagination', 'pin-code',
+        'popover', 'radio-group', 'scroller', 'segmented-control', 'select', 'sheet', 'spinner',
+        'stepper-horizontal', 'switch', 'table', 'tabs-bar', 'tabs', 'tag-dismissible', 'tag',
+        'text-list', 'text', 'textarea', 'toast', 'wordmark',
+      ]);
       const components = [
-        ...new Set([...html.matchAll(/<p-([a-z0-9-]+)/g)].map((match) => match[1])),
+        ...new Set(
+          [...html.matchAll(/<p-([a-z0-9-]+)/g)]
+            .map((match) => {
+              const name = match[1];
+              if (name.startsWith('table-')) return 'table';
+              if (name === 'select-option') return 'select';
+              if (name.startsWith('drilldown-')) return 'drilldown';
+              return name;
+            })
+            .filter((name) => validChunks.has(name)),
+        ),
       ];
       const partials = [
         getJsComponentChunkLinks({ components: components as never[] }),
