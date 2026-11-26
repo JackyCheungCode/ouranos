@@ -142,9 +142,10 @@ async function initWheel() {
   const canvas = $('#wheel-canvas');
   try {
     const THREE = await import('https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js');
+    const { GLTFLoader } = await import('https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/GLTFLoader.js');
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
-    camera.position.set(0, 0.2, 7.2);
+    camera.position.set(0, 0.15, 6.2);
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -154,87 +155,77 @@ async function initWheel() {
     const key = new THREE.DirectionalLight(0xffffff, 3.1); key.position.set(4, 5, 7); scene.add(key);
     const rimLight = new THREE.DirectionalLight(0x9aa8b4, 1.5); rimLight.position.set(-5, -2, 3); scene.add(rimLight);
     const wheel = new THREE.Group(); scene.add(wheel);
-    const metal = new THREE.MeshStandardMaterial({ color: finishColors[state.finish], metalness: 0.88, roughness: 0.27 });
-    const dark = new THREE.MeshStandardMaterial({ color: 0x17191b, metalness: 0.55, roughness: 0.36 });
-    const bright = new THREE.MeshStandardMaterial({ color: 0x9da2a4, metalness: 0.94, roughness: 0.2 });
-    const tire = new THREE.Mesh(new THREE.TorusGeometry(1.65, 0.22, 24, 100), new THREE.MeshStandardMaterial({ color: 0x111315, roughness: 0.82 }));
-    wheel.add(tire);
-    const outerLip = new THREE.Mesh(new THREE.TorusGeometry(1.42, 0.075, 16, 100), bright); wheel.add(outerLip);
-    const barrel = new THREE.Mesh(new THREE.CylinderGeometry(1.34, 1.34, 0.62, 80, 1, true), dark);
-    barrel.rotation.x = Math.PI / 2; wheel.add(barrel);
-    const disc = new THREE.Mesh(new THREE.CylinderGeometry(1.28, 1.28, 0.12, 80), dark);
-    disc.rotation.x = Math.PI / 2; disc.position.z = -0.05; wheel.add(disc);
-    const spokes = new THREE.Group(); wheel.add(spokes);
-    function buildSpokes(count) {
-      while (spokes.children.length) {
-        const child = spokes.children[0];
-        spokes.remove(child);
-        child.geometry?.dispose();
-        if (Array.isArray(child.material)) child.material.forEach((m) => m.dispose()); else child.material?.dispose();
-      }
-      for (let i = 0; i < count; i++) {
-        const angle = (i / count) * Math.PI * 2;
-        const spoke = new THREE.Mesh(new THREE.BoxGeometry(0.16, 1.08, 0.16), metal);
-        spoke.position.set(Math.sin(angle) * 0.48, Math.cos(angle) * 0.48, 0.18);
-        spoke.rotation.z = -angle;
-        spokes.add(spoke);
-        if (state.design.startsWith('Cross') || state.design.startsWith('Mesh')) {
-          const secondary = new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.82, 0.12), bright);
-          secondary.position.set(Math.sin(angle + 0.12) * 0.43, Math.cos(angle + 0.12) * 0.43, 0.22);
-          secondary.rotation.z = -(angle + 0.12);
-          spokes.add(secondary);
-        }
-      }
-    }
-    const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.34, 0.2, 48), bright);
-    hub.rotation.x = Math.PI / 2; hub.position.z = 0.25; wheel.add(hub);
-    const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.19, 0.19, 0.22, 48), dark);
-    cap.rotation.x = Math.PI / 2; cap.position.z = 0.37; wheel.add(cap);
-    const bolts = new THREE.Group(); wheel.add(bolts);
-    for (let i = 0; i < 5; i++) {
-      const a = (i / 5) * Math.PI * 2;
-      const bolt = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.05, 12), bright);
-      bolt.rotation.x = Math.PI / 2; bolt.position.set(Math.sin(a) * 0.27, Math.cos(a) * 0.27, 0.39); bolts.add(bolt);
-    }
-    buildSpokes(10);
-    wheel.rotation.x = -0.12; wheel.rotation.y = -0.28;
+
+    const loader = new GLTFLoader();
+    const gltf = await loader.loadAsync('https://pub-1b5295aa36194df7bb80c797f53c3d1b.r2.dev/models/sport_alloy_wheel_rim.glb');
+    const model = gltf.scene;
+    // The source GLB is authored with its axle along X; rotate it so the wheel face points toward the camera.
+    model.rotation.y = Math.PI / 2;
+    model.updateMatrixWorld(true);
+    const bounds = new THREE.Box3().setFromObject(model);
+    const center = bounds.getCenter(new THREE.Vector3());
+    const size = bounds.getSize(new THREE.Vector3());
+    model.position.sub(center);
+    const maxDimension = Math.max(size.x, size.y, size.z) || 1;
+    model.scale.setScalar(3.25 / maxDimension);
+
+    const applyFinish = (hex) => {
+      model.traverse((object) => {
+        if (!object.isMesh) return;
+        object.castShadow = true;
+        object.receiveShadow = true;
+        const materials = Array.isArray(object.material) ? object.material : [object.material];
+        const updated = materials.map((source) => {
+          const material = source.clone();
+          if (material.color) material.color.setHex(hex);
+          if ('metalness' in material) material.metalness = 0.88;
+          if ('roughness' in material) material.roughness = 0.27;
+          return material;
+        });
+        object.material = Array.isArray(object.material) ? updated : updated[0];
+      });
+    };
+    applyFinish(finishColors[state.finish]);
+    wheel.add(model);
+    wheel.rotation.x = -0.08;
+    wheel.rotation.y = -0.22;
+
     let dragging = false, lastX = 0, lastY = 0;
     canvas.addEventListener('pointerdown', (e) => { dragging = true; lastX = e.clientX; lastY = e.clientY; canvas.setPointerCapture(e.pointerId); });
     canvas.addEventListener('pointerup', () => { dragging = false; });
+    canvas.addEventListener('pointercancel', () => { dragging = false; });
     canvas.addEventListener('pointermove', (e) => {
       if (!dragging) return;
       wheel.rotation.y += (e.clientX - lastX) * 0.009;
       wheel.rotation.x += (e.clientY - lastY) * 0.006;
       lastX = e.clientX; lastY = e.clientY;
     });
-    canvas.addEventListener('wheel', (e) => { e.preventDefault(); camera.position.z = Math.max(5.4, Math.min(9, camera.position.z + e.deltaY * 0.004)); }, { passive: false });
+    canvas.addEventListener('wheel', (e) => { e.preventDefault(); camera.position.z = Math.max(4.8, Math.min(8.5, camera.position.z + e.deltaY * 0.004)); }, { passive: false });
     function resize() {
       const rect = canvas.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
       renderer.setSize(rect.width, rect.height, false);
       camera.aspect = rect.width / rect.height;
       camera.updateProjectionMatrix();
     }
     const observer = new ResizeObserver(resize); observer.observe(canvas); resize();
-    let spokeCount = 10;
     function animate() {
       renderer.render(scene, camera);
       requestAnimationFrame(animate);
     }
     animate();
     wheelScene = {
-      setFinish(color) { metal.color.setHex(color); },
-      setDesign(name) {
-        const count = name.startsWith('Cross') ? 10 : name.startsWith('Mono') ? 6 : name.startsWith('Mesh') ? 14 : 10;
-        spokeCount = count;
-        buildSpokes(count);
-      },
+      setFinish(color) { applyFinish(color); },
+      // The supplied test asset has fixed spoke geometry; design choices remain specification metadata.
+      setDesign() {},
     };
     $('#preview-fallback').hidden = true;
-    $$('.design-choice').forEach((button) => button.addEventListener('click', () => wheelScene.setDesign(button.dataset.design)));
+    $('#preview-status').textContent = 'TEST MODEL · GLB';
   } catch (error) {
-    console.warn('3D preview unavailable; showing static preview.', error);
+    console.warn('GLB preview unavailable; showing static preview.', error);
     canvas.hidden = true;
     $('#preview-fallback').hidden = false;
+    $('#preview-status').textContent = 'PREVIEW UNAVAILABLE';
   }
 }
 restoreDraft();
