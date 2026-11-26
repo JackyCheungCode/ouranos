@@ -1,8 +1,26 @@
+interface ModelsBucketObject {
+  key: string;
+  size: number;
+  uploaded: Date;
+}
+interface ModelsBucketBody extends ModelsBucketObject {
+  body: ReadableStream;
+  httpEtag: string;
+}
+interface ModelsBucket {
+  list(options: { prefix: string; limit: number; cursor?: string }): Promise<{
+    objects: ModelsBucketObject[];
+    truncated: boolean;
+    cursor?: string;
+  }>;
+  get(key: string): Promise<ModelsBucketBody | null>;
+}
+
 export interface Env {
   ASSETS: { fetch(request: Request): Promise<Response> };
   /** Server-side Wheel Size API credential. Never expose this to browser code. */
   WHEEL_SIZE_API_KEY?: string;
-  MODELS_BUCKET: R2Bucket;
+  MODELS_BUCKET: ModelsBucket;
 }
 
 const API_BASE = 'https://api.wheel-size.com/v2';
