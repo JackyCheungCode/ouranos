@@ -5,3 +5,12 @@
 :not(:defined) {
   visibility: hidden;
 }
+
+/* Keep the existing PDS controls and force the requested light foreground. */
+header p-button-pure {
+  color: #fff;
+}
+
+p-link-tile.scheme-dark {
+  color: #fff;
+}
