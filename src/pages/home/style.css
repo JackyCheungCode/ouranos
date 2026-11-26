@@ -6,21 +6,20 @@
   visibility: hidden;
 }
 
-/* The top navigation uses the PDS dark color scheme over the hero media. */
+/* Force the overlay navigation to use PDS dark-mode tokens. */
 header {
-  color: var(--p-color-primary);
+  color-scheme: dark;
 }
 
 header a {
-  color: var(--p-color-primary);
+  color: #fff;
 }
 
 header p-button-pure {
   color-scheme: dark;
 }
 
-/* PDS Link Tile renders its media overlay in the dark scheme by design. */
+/* Link Tile owns its dark media scheme; gradient preserves readable contrast. */
 p-link-tile {
   color-scheme: dark;
-  color: var(--p-color-primary);
 }
