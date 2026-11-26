@@ -982,19 +982,12 @@ html, body { margin: 0; min-height: 100%; background: var(--studio-bg); }
 .model-card-copy strong { font-size:13px; font-weight:500; text-transform:capitalize; }
 .model-card-copy small { color:var(--studio-muted); font-size:10px; }
 
-/* First-step model selection: generated GLB previews and five-item pagination */
+
 .model-step .model-selection { margin-top: 22px; }
 .model-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
 .model-card { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:10px 12px; align-items:center; padding:10px; min-width:0; }
-.model-card-preview { grid-column:1 / -1; display:block; width:100%; aspect-ratio:3 / 2; overflow:hidden; background:#202426; border:1px solid #3b4143; }
-.model-card-preview img { display:block; width:100%; height:100%; object-fit:contain; }
-.model-card-preview.preview-unavailable::after { content:'3D PREVIEW UNAVAILABLE'; display:grid; place-items:center; height:100%; color:#92989a; font-size:9px; letter-spacing:.12em; }
-.model-card-copy { min-width:0; }
-.model-card-copy strong { overflow-wrap:anywhere; }
-.model-card-state { justify-self:end; }
-.model-pagination { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:16px; }
-.model-pagination button { min-height:38px; padding:0 14px; border:1px solid #555b5d; background:#24292b; color:#eee; font-size:9px; letter-spacing:.12em; cursor:pointer; }
-.model-pagination button:disabled { opacity:.35; cursor:not-allowed; }
-.model-pagination span { color:#aaa18e; font-size:9px; letter-spacing:.12em; white-space:nowrap; }
-.model-selection-error { margin:12px 0 0; color:#d8a29a; font-size:11px; }
-@media (max-width:560px) { .model-list { grid-template-columns:minmax(0,1fr); } }
+.model-list { grid-template-columns:minmax(0,1fr); }
+.model-card { display:flex; align-items:center; justify-content:space-between; gap:16px; min-height:64px; padding:14px 16px; }
+.model-card-copy { display:flex; flex-direction:column; gap:5px; }
+.model-card-copy small { color:var(--studio-muted); font-size:10px; }
+.model-card-state { flex:none; }
