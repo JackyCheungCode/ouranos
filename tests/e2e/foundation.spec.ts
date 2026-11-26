@@ -16,7 +16,7 @@ test('Home page is served at the root with shared Ouranos layout', async ({ page
   await expect(page.locator('p-wordmark, p-crest')).toHaveCount(0);
 
   const stylesheet = page.locator('link[rel="stylesheet"]').first();
-  await expect(stylesheet).toHaveAttribute('href', /\\.css(?:\\?|$)/);
+  await expect(stylesheet).toHaveAttribute('href', /\.css(?:\?|$)/);
   const stylesheetUrl = await stylesheet.getAttribute('href');
   expect(stylesheetUrl).not.toBeNull();
 
