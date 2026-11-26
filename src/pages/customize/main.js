@@ -84,7 +84,7 @@ $('.finish-choice, .swatch').forEach((button) => button.addEventListener('click'
   el?.addEventListener('change', () => { state[id] = el.value; syncSummary(); saveDraft(); });
 });
 
-$('#config-form input, #config-form textarea, #config-form select, #config-form p-input-number, #config-form p-input-text, #config-form p-input-email, #config-form p-select, #config-form p-textarea').forEach((field) => field.addEventListener('change', saveDraft));
+$('#config-form input, #config-form textarea, #config-form select, #config-form p-input-number, #config-form p-input-text, #config-form p-input-email, #config-form p-select, #config-form p-textarea').forEach((field) => { field.addEventListener('input', saveDraft); field.addEventListener('change', saveDraft); });
 
 $('#config-form').addEventListener('submit', (event) => {
   event.preventDefault();
