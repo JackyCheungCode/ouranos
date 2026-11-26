@@ -22,7 +22,9 @@ function reactHeadPartials() {
     transformIndexHtml(html: string) {
       if (!html.includes('id="root"')) return html;
       const partials = [
-        getReactFontLinks(), getReactIconLinks(), getReactComponentChunkLinks(),
+        getReactFontLinks(),
+        getReactIconLinks(),
+        getReactComponentChunkLinks(),
         getReactMetaTagsAndIconLinks({ appTitle: 'ouranos' }),
       ].join('');
       return html.replace('</head>', `${partials}</head>`);
@@ -37,12 +39,20 @@ function templatePartials() {
       const isLanding = context.filename.includes('/landing-page/');
       const isAdmin = context.filename.includes('/admin-panel/');
       if (!isLanding && !isAdmin) return html;
-      const components = [...new Set([...html.matchAll(/<p-([a-z0-9-]+)/g)].map((match) => match[1]))];
+      const components = [
+        ...new Set([...html.matchAll(/<p-([a-z0-9-]+)/g)].map((match) => match[1])),
+      ];
       const partials = [
-        getJsComponentChunkLinks({ components }), getJsFontLinks(), getJsIconLinks(),
-        getJsMetaTagsAndIconLinks({ appTitle: isLanding ? 'Ouranos Landing Page' : 'Ouranos Admin Panel' }),
+        getJsComponentChunkLinks({ components }),
+        getJsFontLinks(),
+        getJsIconLinks(),
+        getJsMetaTagsAndIconLinks({
+          appTitle: isLanding ? 'Ouranos Landing Page' : 'Ouranos Admin Panel',
+        }),
       ].join('');
-      return html.replace('</head>', `${partials}</head>`).replace('</body>', `${getLoaderScript()}</body>`);
+      return html
+        .replace('</head>', `${partials}</head>`)
+        .replace('</body>', `${getLoaderScript()}</body>`);
     },
   };
 }
