@@ -31,13 +31,13 @@ function restoreDraft() {
         if (Object.hasOwn(state, id)) state[id] = value;
       }
     }
-    $('.design-choice').forEach((el) => el.classList.toggle('selected', el.dataset.design === state.design));
+    $$('.design-choice').forEach((el) => el.classList.toggle('selected', el.dataset.design === state.design));
   } catch { /* Ignore malformed or unavailable local drafts. */ }
 }
 
 function setStep(step) {
   state.step = Math.max(0, Math.min(3, step));
-  $('.config-step').forEach((panel, index) => panel.classList.toggle('active', index === state.step));
+  $$('.config-step').forEach((panel, index) => panel.classList.toggle('active', index === state.step));
   const stepper = $('#config-stepper');
   if (stepper) {
     stepper.querySelectorAll('p-stepper-horizontal-item').forEach((item, index) => {
@@ -61,30 +61,30 @@ function syncSummary() {
 
 function setFinish(finish) {
   state.finish = finish;
-  $$('.finish-choice').forEach((el) => el.classList.toggle('selected', el.dataset.finish === finish));
-  $$('.swatch').forEach((el) => el.classList.toggle('active', el.dataset.finish === finish));
+  $$$('.finish-choice').forEach((el) => el.classList.toggle('selected', el.dataset.finish === finish));
+  $$$('.swatch').forEach((el) => el.classList.toggle('active', el.dataset.finish === finish));
   if (wheelScene) wheelScene.setFinish(finishColors[finish]);
   $('#fallback-wheel').style.borderColor = `#${finishColors[finish].toString(16).padStart(6, '0')}`;
   syncSummary();
 }
 
-$('.step-tab').forEach((tab) => tab.addEventListener('click', () => setStep(Number(tab.dataset.step))));
+$('#config-stepper').addEventListener('update', (event) => setStep(event.detail.activeStepIndex));
 $('#back-button').addEventListener('click', () => setStep(state.step - 1));
 $('#next-button').addEventListener('click', () => setStep(state.step + 1));
-$$('.design-choice').forEach((button) => button.addEventListener('click', () => {
+$$$('.design-choice').forEach((button) => button.addEventListener('click', () => {
   state.design = button.dataset.design;
-  $('.design-choice').forEach((el) => el.classList.toggle('selected', el === button));
+  $$('.design-choice').forEach((el) => el.classList.toggle('selected', el === button));
   syncSummary();
   if (wheelScene) wheelScene.setDesign(state.design);
 }));
-$('.finish-choice, .swatch').forEach((button) => button.addEventListener('click', () => setFinish(button.dataset.finish)));
+$$('.finish-choice, .swatch').forEach((button) => button.addEventListener('click', () => setFinish(button.dataset.finish)));
 ['diameter', 'width', 'offset', 'pcd', 'bore', 'load'].forEach((id) => {
   const el = document.getElementById(id);
   el?.addEventListener('input', () => { state[id] = el.value; syncSummary(); saveDraft(); });
   el?.addEventListener('change', () => { state[id] = el.value; syncSummary(); saveDraft(); });
 });
 
-$('#config-form input, #config-form textarea, #config-form select, #config-form p-input-number, #config-form p-input-text, #config-form p-input-email, #config-form p-select, #config-form p-textarea').forEach((field) => { field.addEventListener('input', saveDraft); field.addEventListener('change', saveDraft); });
+$$('#config-form input, #config-form textarea, #config-form select, #config-form p-input-number, #config-form p-input-text, #config-form p-input-email, #config-form p-select, #config-form p-textarea').forEach((field) => { field.addEventListener('input', saveDraft); field.addEventListener('change', saveDraft); });
 
 $('#config-form').addEventListener('submit', (event) => {
   event.preventDefault();
