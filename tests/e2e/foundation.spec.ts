@@ -87,5 +87,5 @@ test('PDS font preload links are emitted into the Home document head', async ({ 
 test('Worker applies SPA fallback to the Home page for unknown paths', async ({ request }) => {
   const response = await request.get('/__ouranos_infrastructure_smoke_test__');
   expect(response.ok()).toBeTruthy();
-  expect(await response.text()).toContain('<title>Ouranos | Home</title>');
+  expect(await response.text()).toContain('<title>Ouranos | Precision in Every Form</title>');
 });
