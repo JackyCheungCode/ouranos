@@ -26,7 +26,10 @@ function restoreDraft() {
     if (typeof draft.finish === 'string' && finishNames[draft.finish]) state.finish = draft.finish;
     for (const [id, value] of Object.entries(draft.fields || {})) {
       const field = document.getElementById(id);
-      if (field && typeof value === 'string') field.value = value;
+      if (field && typeof value === 'string') {
+        field.value = value;
+        if (Object.hasOwn(state, id)) state[id] = value;
+      }
     }
     $('.design-choice').forEach((el) => el.classList.toggle('selected', el.dataset.design === state.design));
   } catch { /* Ignore malformed or unavailable local drafts. */ }
@@ -164,7 +167,8 @@ async function initWheel() {
     const spokes = new THREE.Group(); wheel.add(spokes);
     function buildSpokes(count) {
       while (spokes.children.length) {
-        const child = spokes.children.pop();
+        const child = spokes.children[0];
+        spokes.remove(child);
         child.geometry?.dispose();
         if (Array.isArray(child.material)) child.material.forEach((m) => m.dispose()); else child.material?.dispose();
       }
@@ -221,7 +225,8 @@ async function initWheel() {
       setFinish(color) { metal.color.setHex(color); },
       setDesign(name) {
         const count = name.startsWith('Cross') ? 10 : name.startsWith('Mono') ? 6 : name.startsWith('Mesh') ? 14 : 10;
-        if (count !== spokeCount) { spokeCount = count; buildSpokes(count); }
+        spokeCount = count;
+        buildSpokes(count);
       },
     };
     $('#preview-fallback').hidden = true;
