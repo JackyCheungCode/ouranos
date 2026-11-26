@@ -69,9 +69,6 @@ async function wheelSizeRequest(request: Request, env: Env): Promise<Response> {
   try {
     const response = await fetch(upstream.toString(), {
       headers: { accept: 'application/json', 'accept-encoding': 'gzip' },
-      cf: CATALOG_ENDPOINTS.has(route)
-        ? { cacheTtl: 3600, cacheEverything: true }
-        : { cacheTtl: 0 },
     });
     const body = await response.text();
     const headers = new Headers(cors);
