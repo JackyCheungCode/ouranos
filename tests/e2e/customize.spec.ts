@@ -126,6 +126,8 @@ test('Configurator hero is full bleed and model zoom controls remain available o
 });
 
 test('Vehicle step can be skipped and manual wheel dimensions remain available', async ({ page }) => {
+  await page.route('**/api/models', async (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ models: [{ key: 'models/test-wheel.glb', name: 'Test Wheel', size: 1024, url: '/api/models/file?key=models%2Ftest-wheel.glb' }] }) }));
+  await page.route('**/api/models/file**', async (route) => route.fulfill({ status: 503, body: 'Preview fixture' }));
   await page.route('**/api/wheel-size/**', async (route) => {
     const url = new URL(route.request().url());
     if (url.pathname.endsWith('/regions')) {
@@ -140,8 +142,6 @@ test('Vehicle step can be skipped and manual wheel dimensions remain available',
   await page.goto('/customize/');
   await chooseMarket(page);
   await expect(page.locator('#api-status')).toContainText('WHEEL SIZE KEY NOT CONFIGURED');
-  await page.locator('#model-list .model-card').click();
-  await page.locator('#next-button').click();
   await page.locator('#model-list .model-card').click();
   await page.locator('#next-button').click();
   await page.locator('#skip-vehicle').click();
