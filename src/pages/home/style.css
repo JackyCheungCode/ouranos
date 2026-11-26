@@ -6,11 +6,20 @@
   visibility: hidden;
 }
 
-/* Keep the existing PDS controls and force the requested light foreground. */
-header p-button-pure {
-  color: #fff;
+/* The top navigation uses the PDS dark color scheme over the hero media. */
+header {
+  color: var(--p-color-primary);
 }
 
-p-link-tile.scheme-dark {
-  color: #fff;
+header a {
+  color: var(--p-color-primary);
+}
+
+header p-button-pure {
+  color-scheme: dark;
+}
+
+/* PDS Link Tile renders its media overlay in the dark scheme by design. */
+p-link-tile {
+  color-scheme: dark;
 }
