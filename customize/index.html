@@ -20,61 +20,41 @@
         <div class="preview-panel">
           <div class="preview-topline">
             <span>LIVE CONFIGURATION</span>
-            <span id="preview-status">CONCEPT MODEL</span>
+            <span id="preview-status" role="status" aria-live="polite">LOADING GLB</span>
           </div>
           <div class="wheel-stage" id="wheel-stage">
             <canvas id="wheel-canvas" aria-label="Interactive three-dimensional forged wheel preview"></canvas>
-            <div class="preview-fallback" id="preview-fallback" hidden>
-              <div class="fallback-wheel" id="fallback-wheel"><span></span></div>
-              <p>Interactive wheel preview</p>
-            </div>
             <div class="stage-hint"><span class="hint-dot"></span> DRAG TO ROTATE · SCROLL TO ZOOM</div>
           </div>
           <div class="preview-caption">
-            <div><span class="micro-label">YOUR DESIGN</span><strong id="preview-design">AERO / 10 SPOKE</strong></div>
-            <div><span class="micro-label">CONSTRUCTION</span><strong>MONOBLOCK FORGED</strong></div>
-          </div>
-          <div class="preview-swatches" id="quick-swatches" aria-label="Quick finish preview">
-            <p-button type="button" variant="secondary" class="swatch active" data-finish="satin-black" aria-label="Satin black" title="Satin Black">Satin Black</p-button>
-            <p-button type="button" variant="secondary" class="swatch" data-finish="brushed-titanium" aria-label="Brushed titanium" title="Brushed Titanium">Titanium</p-button>
-            <p-button type="button" variant="secondary" class="swatch" data-finish="gloss-silver" aria-label="Gloss silver" title="Gloss Silver">Silver</p-button>
-            <p-button type="button" variant="secondary" class="swatch" data-finish="bronze" aria-label="Bronze" title="Bronze">Bronze</p-button>
+            <div><span class="micro-label">SELECTED MODEL</span><strong id="preview-design">SPORT ALLOY WHEEL RIM</strong></div>
+            <div><span class="micro-label">ASSET FORMAT</span><strong>GLB · 3D MODEL</strong></div>
           </div>
         </div>
 
         <div class="configuration-panel">
           <div class="config-heading">
             <div><p class="eyebrow">THE CONFIGURATOR</p><p-heading tag="h2" size="lg">Create your specification</p-heading></div>
-            <span class="step-counter" id="step-counter">01 / 04</span>
+            <span class="step-counter" id="step-counter">01 / 03</span>
+          </div>
+          <div class="model-selection" aria-label="Selected wheel model">
+            <div class="model-card">
+              <div class="model-card-index">MODEL 01</div>
+              <div class="model-card-copy">
+                <p-heading tag="h3" size="md">Sport Alloy Wheel Rim</p-heading>
+                <p-text size="xs" color="contrast-medium">GLB test asset · Interactive 3D preview</p-text>
+              </div>
+              <span class="model-card-state">SELECTED</span>
+            </div>
           </div>
           <p-stepper-horizontal id="config-stepper" class="step-navigation" aria-label="Configuration steps">
-            <p-stepper-horizontal-item state="current">Design</p-stepper-horizontal-item>
-            <p-stepper-horizontal-item>Dimensions</p-stepper-horizontal-item>
+            <p-stepper-horizontal-item state="current">Dimensions</p-stepper-horizontal-item>
             <p-stepper-horizontal-item>Finish</p-stepper-horizontal-item>
             <p-stepper-horizontal-item>Vehicle</p-stepper-horizontal-item>
           </p-stepper-horizontal>
 
           <form id="config-form">
             <section class="config-step active" data-panel="0">
-              <p class="step-kicker">01 — FORM & CHARACTER</p>
-              <h3>Choose your design language.</h3>
-              <p class="step-description">Select the foundation of your bespoke forged wheel. Final spoke geometry and construction feasibility are confirmed by our engineering team.</p>
-              <div class="choice-grid design-grid">
-                <p-button type="button" variant="secondary" class="design-choice selected" data-design="Aero / 10 Spoke"><span class="design-art aero"></span><strong>Aero</strong><small>10-spoke · Sculpted</small></p-button>
-                <p-button type="button" variant="secondary" class="design-choice" data-design="Cross / 5 Twin Spoke"><span class="design-art cross"></span><strong>Cross</strong><small>5-twin spoke · Technical</small></p-button>
-                <p-button type="button" variant="secondary" class="design-choice" data-design="Mono / 6 Spoke"><span class="design-art mono"></span><strong>Mono</strong><small>6-spoke · Architectural</small></p-button>
-                <p-button type="button" variant="secondary" class="design-choice" data-design="Mesh / Multi Spoke"><span class="design-art mesh"></span><strong>Mesh</strong><small>Multi-spoke · Heritage</small></p-button>
-              </div>
-              <div class="field-block">
-                <label for="construction">Construction</label>
-                <div class="locked-choice"><span><strong>Forged</strong><small>Precision-machined monoblock concept</small></span><span class="lock-mark">SELECTED</span></div>
-              </div>
-              <div class="field-block">
-                <p-textarea id="design-notes" name="design-notes" label="Design direction" rows="3" placeholder="Describe your preferred details, inspiration or references."></p-textarea>
-              </div>
-            </section>
-
-            <section class="config-step" data-panel="1">
               <p class="step-kicker">02 — ENGINEERING PARAMETERS</p>
               <h3>Define the dimensions.</h3>
               <p class="step-description">Choose a starting specification. Final dimensions and fitment remain subject to vehicle data and engineering validation.</p>
@@ -89,21 +69,31 @@
               <div class="engineering-note"><span>i</span><p>These are requested values, not a fitment approval. Our engineering team will review brake clearance, load rating and vehicle-specific requirements before production.</p></div>
             </section>
 
-            <section class="config-step" data-panel="2">
-              <p class="step-kicker">03 — MATERIAL EXPRESSION</p>
-              <h3>Choose your finish.</h3>
-              <p class="step-description">A considered palette of finishes. Final appearance may vary with lighting, substrate and production samples.</p>
-              <div class="finish-list">
-                <p-button type="button" variant="secondary" class="finish-choice selected" data-finish="satin-black"><span class="finish-chip satin-black"></span><span><strong>Satin Black</strong><small>Understated · Contemporary</small></span><span class="radio-indicator"></span></p-button>
-                <p-button type="button" variant="secondary" class="finish-choice" data-finish="brushed-titanium"><span class="finish-chip brushed-titanium"></span><span><strong>Brushed Titanium</strong><small>Machined · Technical</small></span><span class="radio-indicator"></span></p-button>
-                <p-button type="button" variant="secondary" class="finish-choice" data-finish="gloss-silver"><span class="finish-chip gloss-silver"></span><span><strong>Gloss Silver</strong><small>Bright · Timeless</small></span><span class="radio-indicator"></span></p-button>
-                <p-button type="button" variant="secondary" class="finish-choice" data-finish="bronze"><span class="finish-chip bronze"></span><span><strong>Champagne Bronze</strong><small>Warm · Distinctive</small></span><span class="radio-indicator"></span></p-button>
+            <section class="config-step" data-panel="1">
+              <p class="step-kicker">02 — MATERIAL EXPRESSION</p>
+              <h3>Define the finish.</h3>
+              <p class="step-description">Select a colour and surface treatment. The preview updates the GLB material; final production samples may vary.</p>
+              <div class="field-grid">
+                <div class="field-block">
+                  <p-select id="wheel-color" name="wheel-color" label="Colour" value="black">
+                    <p-select-option value="black">Black</p-select-option>
+                    <p-select-option value="silver">Silver</p-select-option>
+                    <p-select-option value="bronze">Bronze</p-select-option>
+                  </p-select>
+                </div>
+                <div class="field-block">
+                  <p-select id="wheel-surface" name="wheel-surface" label="Surface treatment" value="satin">
+                    <p-select-option value="satin">Satin</p-select-option>
+                    <p-select-option value="gloss">Gloss</p-select-option>
+                    <p-select-option value="brushed">Brushed</p-select-option>
+                  </p-select>
+                </div>
               </div>
               <div class="field-block"><p-textarea id="finish-notes" name="finish-notes" label="Special finish request" rows="3" placeholder="Custom colour reference, gloss level, machining details..."></p-textarea></div>
             </section>
 
-            <section class="config-step" data-panel="3">
-              <p class="step-kicker">04 — VEHICLE & INTENT</p>
+            <section class="config-step" data-panel="2">
+              <p class="step-kicker">03 — VEHICLE & INTENT</p>
               <h3>What will it be made for?</h3>
               <p class="step-description">Vehicle details help our team assess the specification. This submission is a request for review, not an instant fitment confirmation.</p>
               <div class="field-grid">
@@ -132,7 +122,7 @@
       <section class="summary-section">
         <div><p class="eyebrow">A PERSONAL SPECIFICATION</p><p-heading tag="h2" size="lg">Every detail, considered.</p-heading></div>
         <div class="summary-grid" id="summary-grid">
-          <div><span>DESIGN</span><strong id="summary-design">Aero / 10 Spoke</strong></div>
+          <div><span>MODEL</span><strong id="summary-design">Sport Alloy Wheel Rim</strong></div>
           <div><span>CONSTRUCTION</span><strong>Forged</strong></div>
           <div><span>DIMENSION</span><strong id="summary-dimension">20 × 9.0 in</strong></div>
           <div><span>FINISH</span><strong id="summary-finish">Satin Black</strong></div>
