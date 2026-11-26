@@ -40,12 +40,16 @@ function sharedLayoutPartials() {
   return {
     name: 'ouranos-shared-layout-partials',
     transformIndexHtml(html: string) {
-      if (!html.includes('<!-- OURANOS:HEADER -->') && !html.includes('<!-- OURANOS:FOOTER -->')) return html;
+      if (!html.includes('<!-- OURANOS:HEADER -->') && !html.includes('<!-- OURANOS:FOOTER -->'))
+        return html;
 
       const readPartial = (name: string) =>
         readFileSync(resolve(rootDir, 'src/components/layout', name), 'utf8');
       const header = readPartial('header.html');
-      const topbar = readPartial('topbar.html').replace('<!-- OURANOS:SIDEBAR -->', readPartial('sidebar.html'));
+      const topbar = readPartial('topbar.html').replace(
+        '<!-- OURANOS:SIDEBAR -->',
+        readPartial('sidebar.html'),
+      );
 
       return html
         .replace('<!-- OURANOS:HEADER -->', header.replace('<!-- OURANOS:TOPBAR -->', topbar))
@@ -151,7 +155,13 @@ function templatePartials() {
 }
 
 export default defineConfig({
-  plugins: [react(), tailwindcss(), sharedLayoutPartials(), reactHeadPartials(), templatePartials()],
+  plugins: [
+    react(),
+    tailwindcss(),
+    sharedLayoutPartials(),
+    reactHeadPartials(),
+    templatePartials(),
+  ],
   build: {
     outDir: 'dist',
     emptyOutDir: true,
