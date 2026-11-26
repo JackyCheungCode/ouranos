@@ -51,6 +51,8 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
   await expect(page.locator('#fitment-rows')).toContainText('ORIGINAL');
   await expect(page.locator('#fitment-rows')).toContainText('8.5J×20 ET50');
   await expect(page.locator('#fitment-rows')).toContainText('11.5J×21 ET45');
+  await choose(page, '#variant', 'carrera-gts');
+  await expect(page.locator('#fitment-table-wrap')).toBeVisible();
 
   await page.getByRole('button', { name: 'SELECT', exact: true }).click();
   await page.locator('#next-button').click();
