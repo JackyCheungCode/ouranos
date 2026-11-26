@@ -138,18 +138,14 @@ body {
   gap: 10px;
   padding-top: 16px;
 }
-.swatch,
+.swatch { cursor: pointer; }
+.swatch.active { outline: 1px solid #eee; outline-offset: 3px; }
 .finish-chip {
   border: 1px solid #747779;
   border-radius: 50%;
-  width: 26px;
-  height: 26px;
+  width: 34px;
+  height: 34px;
   display: inline-block;
-  cursor: pointer;
-}
-.swatch.active {
-  outline: 1px solid #eee;
-  outline-offset: 4px;
 }
 .satin-black {
   background: linear-gradient(135deg, #161719, #55585a 48%, #202224);
