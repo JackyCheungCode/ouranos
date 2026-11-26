@@ -35,10 +35,10 @@
             <div><span class="micro-label">CONSTRUCTION</span><strong>MONOBLOCK FORGED</strong></div>
           </div>
           <div class="preview-swatches" id="quick-swatches" aria-label="Quick finish preview">
-            <button class="swatch active" data-finish="satin-black" aria-label="Satin black" title="Satin Black"></button>
-            <button class="swatch" data-finish="brushed-titanium" aria-label="Brushed titanium" title="Brushed Titanium"></button>
-            <button class="swatch" data-finish="gloss-silver" aria-label="Gloss silver" title="Gloss Silver"></button>
-            <button class="swatch" data-finish="bronze" aria-label="Bronze" title="Bronze"></button>
+            <p-button type="button" variant="secondary" class="swatch active" data-finish="satin-black" aria-label="Satin black" title="Satin Black">Satin Black</p-button>
+            <p-button type="button" variant="secondary" class="swatch" data-finish="brushed-titanium" aria-label="Brushed titanium" title="Brushed Titanium">Titanium</p-button>
+            <p-button type="button" variant="secondary" class="swatch" data-finish="gloss-silver" aria-label="Gloss silver" title="Gloss Silver">Silver</p-button>
+            <p-button type="button" variant="secondary" class="swatch" data-finish="bronze" aria-label="Bronze" title="Bronze">Bronze</p-button>
           </div>
         </div>
 
@@ -47,12 +47,12 @@
             <div><p class="eyebrow">THE CONFIGURATOR</p><p-heading tag="h2" size="lg">Create your specification</p-heading></div>
             <span class="step-counter" id="step-counter">01 / 04</span>
           </div>
-          <nav class="step-navigation" aria-label="Configuration steps">
-            <button class="step-tab active" data-step="0"><span>01</span> Design</button>
-            <button class="step-tab" data-step="1"><span>02</span> Dimensions</button>
-            <button class="step-tab" data-step="2"><span>03</span> Finish</button>
-            <button class="step-tab" data-step="3"><span>04</span> Vehicle</button>
-          </nav>
+          <p-stepper-horizontal id="config-stepper" class="step-navigation" aria-label="Configuration steps">
+            <p-stepper-horizontal-item state="current">Design</p-stepper-horizontal-item>
+            <p-stepper-horizontal-item>Dimensions</p-stepper-horizontal-item>
+            <p-stepper-horizontal-item>Finish</p-stepper-horizontal-item>
+            <p-stepper-horizontal-item>Vehicle</p-stepper-horizontal-item>
+          </p-stepper-horizontal>
 
           <form id="config-form">
             <section class="config-step active" data-panel="0">
@@ -71,7 +71,7 @@
               </div>
               <div class="field-block">
                 <label for="design-notes">Design direction <span>OPTIONAL</span></label>
-                <textarea id="design-notes" rows="3" placeholder="Describe your preferred details, inspiration or references."></textarea>
+                <p-textarea id="design-notes" name="design-notes" label="Design direction" rows="3" placeholder="Describe your preferred details, inspiration or references."></p-textarea>
               </div>
             </section>
 
@@ -80,12 +80,12 @@
               <h3>Define the dimensions.</h3>
               <p class="step-description">Choose a starting specification. Final dimensions and fitment remain subject to vehicle data and engineering validation.</p>
               <div class="field-grid">
-                <div class="field-block"><label for="diameter">Diameter</label><select id="diameter"><option>18</option><option>19</option><option selected>20</option><option>21</option><option>22</option><option>23</option></select><span class="field-unit">INCH</span></div>
-                <div class="field-block"><label for="width">Width</label><select id="width"><option>8.0</option><option>8.5</option><option selected>9.0</option><option>9.5</option><option>10.0</option><option>10.5</option><option>11.0</option><option>12.0</option></select><span class="field-unit">INCH</span></div>
-                <div class="field-block"><label for="offset">Offset (ET)</label><input id="offset" type="number" placeholder="e.g. 35"><span class="field-unit">MM</span></div>
-                <div class="field-block"><label for="pcd">Bolt pattern (PCD)</label><input id="pcd" type="text" placeholder="e.g. 5 × 112"></div>
-                <div class="field-block"><label for="bore">Centre bore</label><input id="bore" type="number" placeholder="e.g. 66.6"><span class="field-unit">MM</span></div>
-                <div class="field-block"><label for="load">Load requirement</label><input id="load" type="number" placeholder="Optional"><span class="field-unit">KG / WHEEL</span></div>
+                <div class="field-block"><label for="diameter">Diameter</label><p-select id="diameter" name="diameter" label="Diameter" value="20"><p-select-option value="18">18</p-select-option><p-select-option value="19">19</p-select-option><p-select-option value="20">20</p-select-option><p-select-option value="21">21</p-select-option><p-select-option value="22">22</p-select-option><p-select-option value="23">23</p-select-option></p-select><span class="field-unit">INCH</span></div>
+                <div class="field-block"><label for="width">Width</label><p-select id="width" name="width" label="Width" value="9.0"><p-select-option value="8.0">8.0</p-select-option><p-select-option value="8.5">8.5</p-select-option><p-select-option value="9.0">9.0</p-select-option><p-select-option value="9.5">9.5</p-select-option><p-select-option value="10.0">10.0</p-select-option><p-select-option value="10.5">10.5</p-select-option><p-select-option value="11.0">11.0</p-select-option><p-select-option value="12.0">12.0</p-select-option></p-select><span class="field-unit">INCH</span></div>
+                <div class="field-block"><label for="offset">Offset (ET)</label><p-input-number id="offset" name="offset" label="Offset (ET)" placeholder="e.g. 35"></p-input-number><span class="field-unit">MM</span></div>
+                <div class="field-block"><label for="pcd">Bolt pattern (PCD)</label><p-input-text id="pcd" name="pcd" label="Bolt pattern (PCD)" placeholder="e.g. 5 × 112"></p-input-text></div>
+                <div class="field-block"><label for="bore">Centre bore</label><p-input-number id="bore" name="bore" label="Centre bore" placeholder="e.g. 66.6"></p-input-number><span class="field-unit">MM</span></div>
+                <div class="field-block"><label for="load">Load requirement</label><p-input-number id="load" name="load" label="Load requirement" placeholder="Optional"></p-input-number><span class="field-unit">KG / WHEEL</span></div>
               </div>
               <div class="engineering-note"><span>i</span><p>These are requested values, not a fitment approval. Our engineering team will review brake clearance, load rating and vehicle-specific requirements before production.</p></div>
             </section>
@@ -95,12 +95,12 @@
               <h3>Choose your finish.</h3>
               <p class="step-description">A considered palette of finishes. Final appearance may vary with lighting, substrate and production samples.</p>
               <div class="finish-list">
-                <button type="button" class="finish-choice selected" data-finish="satin-black"><span class="finish-chip satin-black"></span><span><strong>Satin Black</strong><small>Understated · Contemporary</small></span><span class="radio-indicator"></span></button>
-                <button type="button" class="finish-choice" data-finish="brushed-titanium"><span class="finish-chip brushed-titanium"></span><span><strong>Brushed Titanium</strong><small>Machined · Technical</small></span><span class="radio-indicator"></span></button>
-                <button type="button" class="finish-choice" data-finish="gloss-silver"><span class="finish-chip gloss-silver"></span><span><strong>Gloss Silver</strong><small>Bright · Timeless</small></span><span class="radio-indicator"></span></button>
-                <button type="button" class="finish-choice" data-finish="bronze"><span class="finish-chip bronze"></span><span><strong>Champagne Bronze</strong><small>Warm · Distinctive</small></span><span class="radio-indicator"></span></button>
+                <p-button type="button" variant="secondary" class="finish-choice selected" data-finish="satin-black"><span class="finish-chip satin-black"></span><span><strong>Satin Black</strong><small>Understated · Contemporary</small></span><span class="radio-indicator"></span></p-button>
+                <p-button type="button" variant="secondary" class="finish-choice" data-finish="brushed-titanium"><span class="finish-chip brushed-titanium"></span><span><strong>Brushed Titanium</strong><small>Machined · Technical</small></span><span class="radio-indicator"></span></p-button>
+                <p-button type="button" variant="secondary" class="finish-choice" data-finish="gloss-silver"><span class="finish-chip gloss-silver"></span><span><strong>Gloss Silver</strong><small>Bright · Timeless</small></span><span class="radio-indicator"></span></p-button>
+                <p-button type="button" variant="secondary" class="finish-choice" data-finish="bronze"><span class="finish-chip bronze"></span><span><strong>Champagne Bronze</strong><small>Warm · Distinctive</small></span><span class="radio-indicator"></span></p-button>
               </div>
-              <div class="field-block"><label for="finish-notes">Special finish request <span>OPTIONAL</span></label><textarea id="finish-notes" rows="3" placeholder="Custom colour reference, gloss level, machining details..."></textarea></div>
+              <div class="field-block"><label for="finish-notes">Special finish request <span>OPTIONAL</span></label><p-textarea id="finish-notes" name="finish-notes" label="Special finish request" rows="3" placeholder="Custom colour reference, gloss level, machining details..."></p-textarea></div>
             </section>
 
             <section class="config-step" data-panel="3">
@@ -108,22 +108,22 @@
               <h3>What will it be made for?</h3>
               <p class="step-description">Vehicle details help our team assess the specification. This submission is a request for review, not an instant fitment confirmation.</p>
               <div class="field-grid">
-                <div class="field-block"><label for="make">Vehicle make</label><input id="make" type="text" placeholder="e.g. Porsche"></div>
-                <div class="field-block"><label for="model">Model</label><input id="model" type="text" placeholder="e.g. 911 Carrera"></div>
-                <div class="field-block"><label for="year">Model year</label><input id="year" type="number" placeholder="e.g. 2025"></div>
-                <div class="field-block"><label for="variant">Trim / variant</label><input id="variant" type="text" placeholder="e.g. GTS"></div>
+                <div class="field-block"><label for="make">Vehicle make</label><p-input-text id="make" name="make" label="Vehicle make" placeholder="e.g. Porsche"></p-input-text></div>
+                <div class="field-block"><label for="model">Model</label><p-input-text id="model" name="model" label="Model" placeholder="e.g. 911 Carrera"></p-input-text></div>
+                <div class="field-block"><label for="year">Model year</label><p-input-number id="year" name="year" label="Model year" placeholder="e.g. 2025" min="1900" max="2100"></p-input-number></div>
+                <div class="field-block"><label for="variant">Trim / variant</label><p-input-text id="variant" name="variant" label="Trim / variant" placeholder="e.g. GTS"></p-input-text></div>
               </div>
-              <div class="field-block"><label for="vehicle-mods">Vehicle modifications <span>OPTIONAL</span></label><textarea id="vehicle-mods" rows="3" placeholder="Brakes, suspension, bodywork or other modifications."></textarea></div>
-              <div class="field-block"><label for="special-requests">Bespoke requirements</label><textarea id="special-requests" rows="4" placeholder="Tell us what you have in mind — custom dimensions, unique detailing or a specific design direction."></textarea></div>
+              <div class="field-block"><label for="vehicle-mods">Vehicle modifications <span>OPTIONAL</span></label><p-textarea id="vehicle-mods" name="vehicle-mods" label="Vehicle modifications" rows="3" placeholder="Brakes, suspension, bodywork or other modifications."></p-textarea></div>
+              <div class="field-block"><label for="special-requests">Bespoke requirements</label><p-textarea id="special-requests" name="special-requests" label="Bespoke requirements" rows="4" placeholder="Tell us what you have in mind — custom dimensions, unique detailing or a specific design direction."></p-textarea></div>
               <div class="field-grid contact-grid">
                 <div class="field-block"><label for="customer-name">Your name</label><input id="customer-name" type="text" autocomplete="name" required placeholder="Full name"></div>
-                <div class="field-block"><label for="customer-email">Email address</label><input id="customer-email" type="email" autocomplete="email" required placeholder="name@example.com"></div>
+                <div class="field-block"><label for="customer-email">Email address</label><p-input-email id="customer-email" name="customer-email" label="Email address" autocomplete="email" required placeholder="name@example.com"></p-input-email></div>
               </div>
             </section>
             <div class="form-actions">
-              <button type="button" class="back-button" id="back-button" disabled>BACK</button>
-              <button type="button" class="next-button" id="next-button">CONTINUE <span>→</span></button>
-              <button type="submit" class="next-button submit-button" id="submit-button" hidden>REQUEST A BESPOKE REVIEW <span>→</span></button>
+              <p-button type="button" variant="secondary" class="back-button" id="back-button" disabled>Back</p-button>
+              <p-button type="button" variant="primary" class="next-button" id="next-button">Continue</p-button>
+              <p-button type="submit" variant="primary" class="next-button submit-button" id="submit-button" hidden>Request a bespoke review</p-button>
             </div>
           </form>
           <p class="privacy-note">No payment. No commitment. Every bespoke specification is reviewed by our team.</p>
