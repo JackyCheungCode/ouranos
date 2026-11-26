@@ -48,7 +48,7 @@ function setStep(step) {
   }
   $('#step-counter').textContent = `0${state.step + 1} / 03`;
   $('#back-button').disabled = state.step === 0;
-  $('#next-button').hidden = state.step === 3;
+  $('#next-button').hidden = state.step === 2;
   $('#submit-button').hidden = state.step !== 2;
 }
 
@@ -89,7 +89,7 @@ $('#config-form').addEventListener('submit', (event) => {
     width_in: $('#width').value, offset_et_mm: $('#offset').value || null,
     pcd: $('#pcd').value || null, centre_bore_mm: $('#bore').value || null,
     load_requirement_kg: $('#load').value || null, color: colorNames[state.color], surface_treatment: surfaceNames[state.surface],
-    design_direction: $('#design-notes').value, finish_request: $('#finish-notes').value,
+    finish_request: $('#finish-notes').value,
     vehicle: { make: $('#make').value, model: $('#model').value, year: $('#year').value, variant: $('#variant').value, modifications: $('#vehicle-mods').value },
     bespoke_requirements: $('#special-requests').value,
     customer: { name: $('#customer-name').value, email: $('#customer-email').value },
