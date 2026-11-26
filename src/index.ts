@@ -5,7 +5,7 @@ export interface Env {
 }
 
 const API_BASE = 'https://api.wheel-size.com/v2';
-const CATALOG_ENDPOINTS = new Set(['makes', 'models', 'years', 'generations', 'modifications']);
+const CATALOG_ENDPOINTS = new Set(['regions', 'makes', 'models', 'years', 'generations', 'modifications']);
 const ALLOWED_PARAMS = new Set([
   'region',
   'make',
@@ -63,7 +63,8 @@ async function wheelSizeRequest(request: Request, env: Env): Promise<Response> {
   for (const [key, value] of url.searchParams) {
     if (ALLOWED_PARAMS.has(key) && value.trim()) upstream.searchParams.set(key, value.trim());
   }
-  upstream.searchParams.set('region', url.searchParams.get('region') || 'usdm');
+  const region = url.searchParams.get('region');
+  if (region && route !== 'regions') upstream.searchParams.set('region', region);
   upstream.searchParams.set('user_key', env.WHEEL_SIZE_API_KEY);
 
   try {
