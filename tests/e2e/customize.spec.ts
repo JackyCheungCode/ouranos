@@ -34,7 +34,7 @@ async function choose(page: Page, selector: string, value: string) {
 
 async function chooseMarket(page: Page) {
   await expect(page.locator('#market')).toBeEnabled();
-  await chooseMarket(page);
+  await choose(page, '#market', 'usdm');
 }
 
 test('Configurator retrieves USDM fitment and maps staggered front/rear specifications', async ({ page }) => {
