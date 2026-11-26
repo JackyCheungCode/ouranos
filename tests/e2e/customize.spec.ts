@@ -100,6 +100,8 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
 test('Selecting a manufacturer from the logo menu loads its models', async ({ page }) => {
   await mockWheelSize(page);
   await page.goto('/customize/');
+  await page.locator('#model-list .model-card').click();
+  await page.locator('#next-button').click();
   await chooseMarket(page);
   await expect(page.locator('#manufacturer-trigger')).toBeEnabled();
   await page.locator('#manufacturer-trigger').click();
@@ -140,6 +142,8 @@ test('Vehicle step can be skipped and manual wheel dimensions remain available',
     }) });
   });
   await page.goto('/customize/');
+  await page.locator('#model-list .model-card').click();
+  await page.locator('#next-button').click();
   await chooseMarket(page);
   await expect(page.locator('#api-status')).toContainText('WHEEL SIZE KEY NOT CONFIGURED');
   await page.locator('#model-list .model-card').click();
@@ -160,6 +164,8 @@ test('Manufacturer options include a compact logo and step navigation stays read
   await mockWheelSize(page);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/customize/');
+  await page.locator('#model-list .model-card').click();
+  await page.locator('#next-button').click();
   await chooseMarket(page);
   await page.locator('#manufacturer-trigger').click();
   await expect(page.locator('#manufacturer-menu')).toBeVisible();
@@ -193,6 +199,8 @@ test('Manufacturer options include a compact logo and step navigation stays read
 test('Configurator prepares a downloadable engineering specification', async ({ page }) => {
   await mockWheelSize(page);
   await page.goto('/customize/');
+  await page.locator('#model-list .model-card').click();
+  await page.locator('#next-button').click();
   await chooseMarket(page);
   await choose(page, '#make', 'porsche');
   await choose(page, '#model', '911');
