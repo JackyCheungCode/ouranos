@@ -40,7 +40,7 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
   await expect(page).toHaveTitle('Ouranos | Bespoke Forged Wheel Studio');
   await expect(page.getByRole('heading', { name: /Find your vehicle/i })).toBeVisible();
   await expect(page.locator('#market')).toHaveJSProperty('value', 'usdm');
-  await expect(page.locator('#make')).toBeVisible();
+  await expect(page.locator('#manufacturer-trigger')).toBeVisible();
 
   await choose(page, '#make', 'porsche');
   await expect(page.locator('#model')).toBeEnabled();
@@ -90,6 +90,41 @@ test('Configurator hero is full bleed and model zoom controls remain available o
   await expect(page.locator('#zoom-reset')).toBeVisible();
   const documentWidth = await page.locator('body').evaluate((body) => body.scrollWidth);
   expect(documentWidth).toBeLessThanOrEqual(390);
+});
+
+test('Vehicle step can be skipped and manual wheel dimensions remain available', async ({ page }) => {
+  await page.route('**/api/wheel-size/**', async (route) => {
+    await route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({
+      error: 'WHEEL_SIZE_NOT_CONFIGURED',
+      message: 'Wheel Size API credentials are not configured on this Worker.',
+    }) });
+  });
+  await page.goto('/customize/');
+  await expect(page.locator('#api-status')).toContainText('WHEEL SIZE KEY NOT CONFIGURED');
+  await page.locator('#skip-vehicle').click();
+  await expect(page.locator('[data-panel="1"]')).toBeVisible();
+  await expect(page.locator('#front-diameter')).toBeVisible();
+  await expect(page.locator('#rear-diameter')).toBeVisible();
+  await expect(page.locator('#front-source')).toContainText('MANUAL ENTRY');
+  await page.locator('#front-diameter').evaluate((element) => {
+    (element as HTMLInputElement).value = '20';
+    element.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  await expect(page.locator('#summary-front')).toContainText('20');
+});
+
+test('Manufacturer options include a transparent logo slot and step navigation stays readable', async ({ page }) => {
+  await mockWheelSize(page);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/customize/');
+  await page.locator('#manufacturer-trigger').click();
+  await expect(page.locator('#manufacturer-menu')).toBeVisible();
+  await expect(page.locator('.manufacturer-option')).toContainText('Porsche');
+  await expect(page.locator('.manufacturer-option-logo img')).toHaveAttribute('src', /cdn\.simpleicons\.org/);
+  const stepperFontSize = await page.locator('.step-navigation p-stepper-horizontal-item').first().evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+  expect(stepperFontSize).toBeGreaterThanOrEqual(12);
+  const zoomDirection = await page.locator('.zoom-controls').evaluate((el) => getComputedStyle(el).flexDirection);
+  expect(zoomDirection).toBe('column');
 });
 
 test('Configurator prepares a downloadable engineering specification', async ({ page }) => {
