@@ -1,0 +1,8 @@
+@import '@porsche-design-system/components-react';
+@import 'tailwindcss';
+@import '@porsche-design-system/components-react/tailwindcss';
+
+/* Prevent unregistered PDS Web Components from flashing before hydration. */
+:not(:defined) {
+  visibility: hidden;
+}
