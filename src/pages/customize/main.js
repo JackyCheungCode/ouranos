@@ -51,51 +51,16 @@ $('#back-button').addEventListener('click',()=>step(S.step-1));$('#next-button')
 $('#model-prev').addEventListener('click',()=>renderModelPage(modelPage-1));$('#model-next').addEventListener('click',()=>renderModelPage(modelPage+1));
 $('#wheel-color').addEventListener('change',e=>material(e.target.value,S.surface));$('#wheel-surface').addEventListener('change',e=>material(S.color,e.target.value));ids.forEach(id=>{const el=$('#'+id);el?.addEventListener('input',sync);el?.addEventListener('change',sync);});$('#config-form').addEventListener('submit',submit);
 async function initWheel(){const canvas=$('#wheel-canvas');try{const THREE=await import('https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js'),{GLTFLoader}=await import('https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/GLTFLoader.js');const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(44,1,.1,100),defaultZoom=6.1;camera.position.set(0,.1,defaultZoom);const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;scene.add(new THREE.HemisphereLight(0xffffff,0x292d31,2.1));const light=new THREE.DirectionalLight(0xffffff,3.1);light.position.set(4,5,7);scene.add(light);const rim=new THREE.DirectionalLight(0x9aa8b4,1.5);rim.position.set(-5,-2,3);scene.add(rim);const wheel=new THREE.Group();scene.add(wheel);const url=activeModelUrl,response=await fetch(url,{credentials:'same-origin',cache:'default'});if(!response.ok)throw Error('GLB HTTP '+response.status);const buffer=await response.arrayBuffer();if(buffer.byteLength<20||new DataView(buffer).getUint32(0,true)!==0x46546c67)throw Error('Invalid GLB binary');const model=(await new GLTFLoader().parseAsync(buffer,new URL('.',new URL(url,location.origin)).href)).scene;if(!model)throw Error('Empty GLB scene');model.rotation.y=Math.PI/2;model.updateMatrixWorld(true);const box=new THREE.Box3().setFromObject(model);if(box.isEmpty())throw Error('No GLB geometry');const center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3()),scale=3.5/Math.max(size.x,size.y,size.z),group=new THREE.Group();group.add(model);group.scale.setScalar(scale);group.position.copy(center).multiplyScalar(-scale);const mats=[];model.traverse(o=>{if(!o.isMesh)return;const source=Array.isArray(o.material)?o.material:[o.material],clones=source.map(m=>{const c=m.clone();mats.push(c);if(c.color)c.color.setHex(COLORS[S.color]);if('metalness'in c)c.metalness=.88;if('roughness'in c)c.roughness=ROUGH[S.surface];return c;});o.material=Array.isArray(o.material)?clones:clones[0];});if(!mats.length)throw Error('No GLB mesh materials');wheel.add(group);wheel.rotation.set(-.08,-.22,0);let drag=false,x=0,y=0,pinch=0,pinchZoom=defaultZoom;const clamp=z=>Math.max(4.2,Math.min(10,z)),zoom=d=>camera.position.z=clamp(camera.position.z+d);canvas.addEventListener('pointerdown',e=>{drag=true;x=e.clientX;y=e.clientY;canvas.setPointerCapture?.(e.pointerId);});canvas.addEventListener('pointerup',()=>drag=false);canvas.addEventListener('pointercancel',()=>drag=false);canvas.addEventListener('pointermove',e=>{if(!drag)return;wheel.rotation.y+=(e.clientX-x)*.009;wheel.rotation.x+=(e.clientY-y)*.006;x=e.clientX;y=e.clientY;});canvas.addEventListener('wheel',e=>{e.preventDefault();zoom(e.deltaY*.004);},{passive:false});canvas.addEventListener('touchstart',e=>{if(e.touches.length===2){pinch=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);pinchZoom=camera.position.z;}},{passive:true});canvas.addEventListener('touchmove',e=>{if(e.touches.length===2&&pinch){const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);camera.position.z=clamp(pinchZoom-(d-pinch)*.012);}},{passive:true});$('#zoom-in').addEventListener('click',()=>zoom(-.45));$('#zoom-out').addEventListener('click',()=>zoom(.45));$('#zoom-reset').addEventListener('click',()=>{camera.position.z=defaultZoom;wheel.rotation.set(-.08,-.22,0);});const resize=()=>{const r=canvas.getBoundingClientRect();if(!r.width||!r.height)return;renderer.setSize(r.width,r.height,false);camera.aspect=r.width/r.height;camera.updateProjectionMatrix();};new ResizeObserver(resize).observe(canvas);resize();let animationFrame=0;const animate=()=>{renderer.render(scene,camera);animationFrame=requestAnimationFrame(animate);};animate();wheelScene={setMaterial(c,r){mats.forEach(m=>{if(m.color)m.color.setHex(c);if('roughness'in m)m.roughness=r;});},dispose(){cancelAnimationFrame(animationFrame);renderer.dispose();scene.clear();}};$('#preview-status').textContent='GLB LOADED · '+Math.round(buffer.byteLength/1024)+' KB';$('#preview-design').textContent=activeModelName.toUpperCase();}catch(e){console.error(e);$('#preview-status').textContent='MODEL LOAD FAILED · '+e.message;}}
-async function renderModelThumbnails(models){
-  const THREE=await import('https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js');
-  const {GLTFLoader}=await import('https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/GLTFLoader.js');
-  const canvas=document.createElement('canvas');canvas.width=240;canvas.height=160;
-  let renderer;
-  try{
-    renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,preserveDrawingBuffer:true});
-    renderer.setSize(240,160,false);renderer.setPixelRatio(1);renderer.outputColorSpace=THREE.SRGBColorSpace;
-    renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;
-    const scene=new THREE.Scene();scene.background=new THREE.Color(0x202426);
-    scene.add(new THREE.HemisphereLight(0xffffff,0x292d31,2.2));
-    const light=new THREE.DirectionalLight(0xffffff,3);light.position.set(4,5,7);scene.add(light);
-    const camera=new THREE.PerspectiveCamera(38,1.5,.1,100);camera.position.set(0,.15,6);
-    const loader=new GLTFLoader();
-    for(const model of models){
-      const card=document.querySelector('[data-model-key="'+CSS.escape(model.key)+'"]');
-      const image=card?.querySelector('.model-card-preview img');
-      if(!image)continue;
-      try{
-        const response=await fetch(model.url,{credentials:'same-origin'});if(!response.ok)throw Error('GLB '+response.status);
-        const buffer=await response.arrayBuffer();
-        const gltf=await loader.parseAsync(buffer,new URL('.',new URL(model.url,location.origin)).href);
-        const object=gltf.scene;object.rotation.y=Math.PI/2;object.updateMatrixWorld(true);
-        const bounds=new THREE.Box3().setFromObject(object);if(bounds.isEmpty())throw Error('Empty geometry');
-        const center=bounds.getCenter(new THREE.Vector3()),size=bounds.getSize(new THREE.Vector3());
-        const scale=3.2/Math.max(size.x,size.y,size.z);object.scale.setScalar(scale);object.position.copy(center).multiplyScalar(-scale);
-        scene.add(object);camera.position.z=4.8;camera.lookAt(0,0,0);renderer.render(scene,camera);
-        image.src=canvas.toDataURL('image/webp',.84);image.alt=model.name+' 3D preview';
-        scene.remove(object);object.traverse(node=>{if(node.isMesh){node.geometry?.dispose?.();for(const material of (Array.isArray(node.material)?node.material:[node.material]))material?.dispose?.();}});
-      }catch(error){console.warn('Model thumbnail unavailable',model.key,error);image.closest('.model-card-preview').classList.add('preview-unavailable');}
-    }
-  }finally{renderer?.dispose();}
-}
 function renderModelPage(nextPage){
   const pages=Math.max(1,Math.ceil(modelLibrary.length/MODELS_PER_PAGE));modelPage=Math.max(0,Math.min(pages-1,nextPage));
   const el=$('#model-list');el.replaceChildren();
   const visible=modelLibrary.slice(modelPage*MODELS_PER_PAGE,(modelPage+1)*MODELS_PER_PAGE);
   visible.forEach((model)=>{
     const b=document.createElement('button');b.type='button';b.className='model-card';b.dataset.modelKey=model.key;b.setAttribute('role','option');b.setAttribute('aria-selected',String(S.model?.key===model.key));
-    const preview=document.createElement('span');preview.className='model-card-preview';
-    const image=document.createElement('img');image.alt=model.name+' preview';image.loading='lazy';preview.append(image);
     const copy=document.createElement('span');copy.className='model-card-copy';const title=document.createElement('strong');title.textContent=model.name;
     const meta=document.createElement('small');meta.textContent=Math.round(model.size/1024)+' KB · GLB';copy.append(title,meta);
     const state=document.createElement('span');state.className='model-card-state';state.textContent=S.model?.key===model.key?'SELECTED':'SELECT';
-    b.append(preview,copy,state);b.addEventListener('click',()=>{
+    b.append(copy,state);b.addEventListener('click',()=>{
       S.model=model;activeModelUrl=model.url;activeModelName=model.name;
       document.querySelectorAll('.model-card').forEach(n=>{n.setAttribute('aria-selected',String(n.dataset.modelKey===model.key));const label=n.querySelector('.model-card-state');if(label)label.textContent=n.dataset.modelKey===model.key?'SELECTED':'SELECT';});
       $('#model-selection-error')?.remove();$('#preview-design').textContent=model.name.toUpperCase();$('#preview-status').textContent='LOADING GLB';
@@ -104,7 +69,6 @@ function renderModelPage(nextPage){
   });
   $('#model-page-label').textContent='PAGE '+(modelPage+1)+' / '+pages;
   $('#model-prev').disabled=modelPage===0;$('#model-next').disabled=modelPage>=pages-1;
-  renderModelThumbnails(visible).catch(error=>console.warn('Thumbnail generation unavailable',error));
 }
 async function loadModelLibrary(){
   const count=$('#model-count');
