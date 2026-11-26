@@ -29,8 +29,14 @@ test('Home page is served at the root with shared Ouranos layout', async ({ page
 test('Home exposes the two primary entry tiles and five wheel collections', async ({ page }) => {
   await page.goto('/');
 
-  await expect(page.locator('p-link-tile[label="Find Wheels for Your Vehicle"]')).toHaveAttribute('href', '/fitment');
-  await expect(page.locator('p-link-tile[label="Customize Your Wheels"]')).toHaveAttribute('href', '/customize');
+  await expect(page.locator('p-link-tile[label="Find Wheels for Your Vehicle"]')).toHaveAttribute(
+    'href',
+    '/fitment',
+  );
+  await expect(page.locator('p-link-tile[label="Customize Your Wheels"]')).toHaveAttribute(
+    'href',
+    '/customize',
+  );
 
   for (const line of ['PERFORMANCE', 'LUXURY', 'STREET', 'OFF-ROAD', 'HERITAGE']) {
     await expect(page.locator(`p-link-tile[label="${line}"]`)).toHaveCount(1);
@@ -42,8 +48,13 @@ test('Home exposes the two primary entry tiles and five wheel collections', asyn
 test('Home header icons and collection tile foregrounds are white', async ({ page }) => {
   await page.goto('/');
 
-  const headerIconColor = await page.locator('header p-button-pure').first().evaluate((element) => getComputedStyle(element).color);
-  const collectionTextColor = await page.locator('p-link-tile[label="PERFORMANCE"]').evaluate((element) => getComputedStyle(element).color);
+  const headerIconColor = await page
+    .locator('header p-button-pure')
+    .first()
+    .evaluate((element) => getComputedStyle(element).color);
+  const collectionTextColor = await page
+    .locator('p-link-tile[label="PERFORMANCE"]')
+    .evaluate((element) => getComputedStyle(element).color);
 
   expect(headerIconColor).toBe('rgb(255, 255, 255)');
   expect(collectionTextColor).toBe('rgb(255, 255, 255)');
