@@ -1,6 +1,10 @@
 import { expect, test, type Page } from '@playwright/test';
 
 async function mockWheelSize(page: Page) {
+  await page.route('**/api/models', async (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ models: [{ key: 'models/test-wheel.glb', name: 'Test Wheel', size: 1024, url: '/api/models/file?key=models%2Ftest-wheel.glb' }] }) }));
+  await page.route('**/api/models/file**', async (route) => route.fulfill({ status: 503, body: 'Preview fixture' }));
+  await page.route('**/api/models', async (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ models: [{ key: 'models/test-wheel.glb', name: 'Test Wheel', size: 1024, url: '/api/models/file?key=models%2Ftest-wheel.glb' }] }) }));
+  await page.route('**/api/models/file**', async (route) => route.fulfill({ status: 503, body: 'Preview fixture' }));
   await page.route('**/api/wheel-size/**', async (route) => {
     const url = new URL(route.request().url());
     const path = url.pathname;
@@ -46,6 +50,7 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
   await expect(page).toHaveTitle('Ouranos | Wheel Atelier');
   await expect(page.getByRole('heading', { name: /Choose your wheel model/i })).toBeVisible();
   await expect(page.locator('#model-list .model-card')).toHaveCount(1);
+  await expect(page.locator('#model-page-label')).toHaveText('PAGE 1 / 1');
   await page.locator('#model-list .model-card').click();
   await expect(page.locator('#model-list .model-card')).toHaveAttribute('aria-selected', 'true');
   await page.locator('#next-button').click();
@@ -137,8 +142,10 @@ test('Vehicle step can be skipped and manual wheel dimensions remain available',
   await expect(page.locator('#api-status')).toContainText('WHEEL SIZE KEY NOT CONFIGURED');
   await page.locator('#model-list .model-card').click();
   await page.locator('#next-button').click();
+  await page.locator('#model-list .model-card').click();
+  await page.locator('#next-button').click();
   await page.locator('#skip-vehicle').click();
-  await expect(page.locator('[data-panel="3"]')).toBeVisible();
+  await expect(page.locator('[data-panel="2"]')).toBeVisible();
   await expect(page.locator('#front-diameter')).toBeVisible();
   await expect(page.locator('#rear-diameter')).toBeVisible();
   await expect(page.locator('#front-source')).toContainText('MANUAL ENTRY');
