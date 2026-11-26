@@ -6,12 +6,12 @@ import {
   getIconLinks,
   getMetaTagsAndIconLinks,
 } from '@porsche-design-system/components-react/partials';
-import { defineConfig, type Plugin } from 'vite';
+import { defineConfig } from 'vitest/config';
 
-function pdsHeadPartials(): Plugin {
+function pdsHeadPartials() {
   return {
     name: 'pds-head-partials',
-    transformIndexHtml(html) {
+    transformIndexHtml(html: string) {
       const partials = [
         getFontLinks(),
         getIconLinks(),
@@ -29,5 +29,9 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
+  },
+  test: {
+    environment: 'node',
+    include: ['tests/unit/**/*.test.ts'],
   },
 });
