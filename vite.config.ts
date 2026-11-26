@@ -68,8 +68,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(rootDir, 'index.html'),
-        landingPage: resolve(import.meta.dirname, 'landing-page/index.html'),
-        adminPanel: resolve(import.meta.dirname, 'admin-panel/index.html'),
+        landingPage: resolve(rootDir, 'landing-page/index.html'),
+        adminPanel: resolve(rootDir, 'admin-panel/index.html'),
       },
     },
   },
