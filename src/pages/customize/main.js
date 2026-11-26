@@ -107,8 +107,9 @@ $('#config-form').addEventListener('submit', (event) => {
   note.textContent = 'Your configuration has not been transmitted. Download or copy this specification and send it to your Ouranos representative for engineering review.';
   const actions = document.createElement('div');
   actions.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;margin:16px 0';
-  const copy = document.createElement('button');
+  const copy = document.createElement('p-button');
   copy.type = 'button';
+  copy.variant = 'primary';
   copy.className = 'next-button';
   copy.textContent = 'COPY CONFIGURATION';
   copy.addEventListener('click', async () => {
@@ -119,8 +120,9 @@ $('#config-form').addEventListener('submit', (event) => {
       copy.textContent = 'COPY UNAVAILABLE';
     }
   });
-  const download = document.createElement('button');
+  const download = document.createElement('p-button');
   download.type = 'button';
+  download.variant = 'secondary';
   download.className = 'back-button';
   download.textContent = 'DOWNLOAD CONFIGURATION';
   download.addEventListener('click', () => {
