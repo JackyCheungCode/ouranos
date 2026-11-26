@@ -13,8 +13,11 @@ import {
   getLoaderScript,
   getMetaTagsAndIconLinks as getJsMetaTagsAndIconLinks,
 } from '@porsche-design-system/components-js/partials';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
+
+const rootDir = dirname(fileURLToPath(import.meta.url));
 
 function reactHeadPartials() {
   return {
@@ -43,7 +46,7 @@ function templatePartials() {
         ...new Set([...html.matchAll(/<p-([a-z0-9-]+)/g)].map((match) => match[1])),
       ];
       const partials = [
-        getJsComponentChunkLinks({ components }),
+        getJsComponentChunkLinks({ components: components as never[] }),
         getJsFontLinks(),
         getJsIconLinks(),
         getJsMetaTagsAndIconLinks({
@@ -64,7 +67,7 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        main: resolve(import.meta.dirname, 'index.html'),
+        main: resolve(rootDir, 'index.html'),
         landingPage: resolve(import.meta.dirname, 'landing-page/index.html'),
         adminPanel: resolve(import.meta.dirname, 'admin-panel/index.html'),
       },
