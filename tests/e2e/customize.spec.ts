@@ -52,6 +52,7 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
   await expect(page.locator('#fitment-rows')).toContainText('8.5J ×20 ET50');
   await expect(page.locator('#fitment-rows')).toContainText('11.5J ×21 ET45');
   await choose(page, '#variant', 'carrera-gts');
+  await expect(page.locator('#api-status')).toHaveText('FITMENT DATA LOADED');
   await expect(page.locator('#fitment-table-wrap')).toBeVisible();
 
   await page.getByRole('button', { name: 'SELECT', exact: true }).click();
@@ -94,6 +95,14 @@ test('Configurator hero is full bleed and model zoom controls remain available o
 test('Configurator prepares a downloadable engineering specification', async ({ page }) => {
   await mockWheelSize(page);
   await page.goto('/customize/');
+  await choose(page, '#make', 'porsche');
+  await choose(page, '#model', '911');
+  await choose(page, '#year', '2024');
+  await expect(page.locator('#fitment-table-wrap')).toBeVisible();
+  await page.getByRole('button', { name: 'SELECT', exact: true }).click();
+  await page.locator('#next-button').click();
+  await page.locator('#next-button').click();
+  await page.locator('#next-button').click();
   await page.locator('#customer-name').evaluate((element) => {
     (element as HTMLInputElement).value = 'Test Customer';
     element.dispatchEvent(new Event('input', { bubbles: true }));
@@ -102,9 +111,7 @@ test('Configurator prepares a downloadable engineering specification', async ({ 
     (element as HTMLInputElement).value = 'customer@example.com';
     element.dispatchEvent(new Event('input', { bubbles: true }));
   });
-  await page.locator('#submit-button').evaluate((element) => {
-    (element as HTMLButtonElement).click();
-  });
+  await page.locator('#submit-button').click();
   await expect(page.locator('#submission-message')).toBeVisible();
   await expect(page.locator('#submission-message')).toContainText('has not been transmitted');
   await expect(page.locator('#submission-message')).toContainText('DOWNLOAD CONFIGURATION');
