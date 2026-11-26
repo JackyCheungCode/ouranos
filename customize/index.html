@@ -37,8 +37,7 @@
               <button type="button" id="zoom-reset" aria-label="Reset zoom">RESET</button>
             </div>
           </div>
-          <div class="model-selection" aria-label="Wheel model library"><div class="fitment-heading"><div><span class="micro-label">R2 MODEL LIBRARY</span><strong>Choose a wheel model</strong></div><span id="model-count" class="fitment-count">LOADING</span></div><div id="model-list" class="model-list" role="listbox" aria-label="Available wheel models"></div></div>
-          <div class="preview-caption">
+<div class="preview-caption">
             <div><span class="micro-label">SELECTED MODEL</span><strong id="preview-design">SPORT ALLOY WHEEL RIM</strong></div>
             <div><span class="micro-label">ASSET FORMAT</span><strong>GLB · R2 MODEL</strong></div>
           </div>
@@ -46,21 +45,36 @@
 
         <div class="configuration-panel">
           <p-stepper-horizontal id="config-stepper" class="step-navigation" size="medium" aria-label="Configuration steps">
-            <p-stepper-horizontal-item state="current">Vehicle</p-stepper-horizontal-item>
+            <p-stepper-horizontal-item state="current">Model</p-stepper-horizontal-item>
+            <p-stepper-horizontal-item>Vehicle</p-stepper-horizontal-item>
             <p-stepper-horizontal-item>Dimensions</p-stepper-horizontal-item>
             <p-stepper-horizontal-item>Finish</p-stepper-horizontal-item>
             <p-stepper-horizontal-item>Review</p-stepper-horizontal-item>
           </p-stepper-horizontal>
           <div class="config-heading">
             <div><p class="eyebrow">THE CONFIGURATOR</p><p-heading tag="h2" size="lg">Create your specification</p-heading></div>
-            <span class="step-counter" id="step-counter">01 / 04</span>
+            <span class="step-counter" id="step-counter">01 / 05</span>
           </div>
 
 
           <form id="config-form">
-            <section class="config-step active" data-panel="0">
+            <section class="config-step active model-step" data-panel="0">
+              <p class="step-kicker">01 — WHEEL MODEL</p>
+              <h3>Choose your wheel model.</h3>
+              <p class="step-description">Select a model from the Ouranos R2 library. Each model includes a preview generated from its actual GLB geometry.</p>
+              <div class="model-selection" aria-label="Wheel model library">
+                <div class="fitment-heading"><div><span class="micro-label">R2 MODEL LIBRARY</span><strong>Available wheel models</strong></div><span id="model-count" class="fitment-count">LOADING</span></div>
+                <div id="model-list" class="model-list" role="listbox" aria-label="Available wheel models"></div>
+                <div class="model-pagination" id="model-pagination" aria-label="Model pages">
+                  <button type="button" id="model-prev" disabled>PREVIOUS</button>
+                  <span id="model-page-label">PAGE 1 / 1</span>
+                  <button type="button" id="model-next" disabled>NEXT</button>
+                </div>
+              </div>
+            </section>
+            <section class="config-step" data-panel="4">
               <div class="step-skip-row"><button type="button" id="skip-vehicle" class="skip-vehicle-button">SKIP VEHICLE SELECTION <span aria-hidden="true">→</span></button></div>
-              <p class="step-kicker">01 — VEHICLE & FACTORY FITMENT</p>
+              <p class="step-kicker">02 — VEHICLE & FACTORY FITMENT</p>
               <h3>Find your vehicle.</h3>
               <p class="step-description">Select your vehicle to retrieve factory and alternative wheel specifications from Wheel Size. Choose a vehicle market to load the manufacturers and fitment data available for that region.</p>
               <div class="market-row">
@@ -103,7 +117,7 @@
             </section>
 
             <section class="config-step" data-panel="1">
-              <p class="step-kicker">02 — ENGINEERING PARAMETERS</p>
+              <p class="step-kicker">03 — ENGINEERING PARAMETERS</p>
               <h3>Refine the dimensions.</h3>
               <p class="step-description">Values returned by Wheel Size are prefilled below. Edit any field as required. Front and rear specifications are independent for staggered fitments.</p>
               <div class="axle-spec-grid">
@@ -136,7 +150,7 @@
             </section>
 
             <section class="config-step" data-panel="2">
-              <p class="step-kicker">03 — MATERIAL EXPRESSION</p>
+              <p class="step-kicker">04 — MATERIAL EXPRESSION</p>
               <h3>Define the finish.</h3>
               <p class="step-description">Select a colour and surface treatment. The preview updates the GLB material; final production samples may vary.</p>
               <div class="field-grid">
@@ -147,7 +161,7 @@
             </section>
 
             <section class="config-step" data-panel="3">
-              <p class="step-kicker">04 — CONTACT & REVIEW</p>
+              <p class="step-kicker">05 — CONTACT & REVIEW</p>
               <h3>Complete your request.</h3>
               <p class="step-description">Your selected vehicle and wheel parameters will be included in the specification for engineering review.</p>
               <div class="review-summary" id="review-summary"></div>
