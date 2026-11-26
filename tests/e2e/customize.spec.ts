@@ -153,16 +153,24 @@ test('Manufacturer options include a compact logo and step navigation stays read
   await expect(page.locator('.manufacturer-option').filter({ hasText: 'Porsche' })).toBeVisible();
   await expect(page.locator('.manufacturer-option')).toContainText('Porsche');
   await expect(page.locator('.manufacturer-option-logo img')).toHaveAttribute('src', /cdn\.simpleicons\.org/);
-  const stepper = page.locator('#config-stepper');
-  const stepperBox = await stepper.boundingBox();
-  const pageContentBox = await page.locator('.studio-grid').boundingBox();
-  expect(stepperBox?.width).toBeCloseTo(pageContentBox?.width || 0, 0);
+  const stepper = page.locator('.configuration-panel #config-stepper');
+  await expect(stepper).toBeVisible();
+  await expect(stepper).toHaveAttribute('size', 'medium');
+  await expect(stepper.locator('p-stepper-horizontal-item')).toHaveText(['Vehicle', 'Dimensions', 'Finish', 'Review']);
+  const stepperMetrics = await stepper.evaluate((element) => {
+    const panel = element.parentElement;
+    if (!panel) throw new Error('Stepper is not inside the configuration panel');
+    const style = getComputedStyle(panel);
+    return {
+      stepperWidth: element.getBoundingClientRect().width,
+      panelContentWidth: panel.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight),
+    };
+  });
+  expect(stepperMetrics.stepperWidth).toBeCloseTo(stepperMetrics.panelContentWidth, 0);
   const logoFrame = await page.locator('.manufacturer-option-logo').first().evaluate((el) => ({ radius: getComputedStyle(el).borderRadius, width: el.getBoundingClientRect().width, height: el.getBoundingClientRect().height }));
   expect(logoFrame.radius).toBe('50%');
   expect(logoFrame.width).toBe(38);
   expect(logoFrame.height).toBe(38);
-  const stepperFontSize = await page.locator('.step-navigation p-stepper-horizontal-item').first().evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
-  expect(stepperFontSize).toBeGreaterThanOrEqual(12);
   const zoomDirection = await page.locator('.zoom-controls').evaluate((el) => getComputedStyle(el).flexDirection);
   expect(zoomDirection).toBe('column');
 });
