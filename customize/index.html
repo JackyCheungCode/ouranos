@@ -11,7 +11,7 @@
     <!-- OURANOS:HEADER -->
     <main class="customizer-shell">
       <section class="customizer-hero" aria-label="Ouranos bespoke forged wheel programme">
-        <div class="hero-image" role="img" aria-label="Porsche sports car photographed in a dramatic studio setting"></div>
+        <div class="hero-image" role="img" aria-label="Performance sports car in a dramatic studio setting"></div>
         <div class="hero-shade"></div>
         <div class="hero-content">
           <p class="eyebrow">OURANOS BESPOKE PROGRAMME</p>
@@ -30,7 +30,12 @@
           </div>
           <div class="wheel-stage" id="wheel-stage">
             <canvas id="wheel-canvas" aria-label="Interactive three-dimensional forged wheel preview"></canvas>
-            <div class="stage-hint"><span class="hint-dot"></span> DRAG TO ROTATE · SCROLL TO ZOOM</div>
+            <div class="stage-hint"><span class="hint-dot"></span> DRAG TO ROTATE · PINCH OR USE CONTROLS TO ZOOM</div>
+            <div class="zoom-controls" aria-label="3D model zoom controls">
+              <button type="button" id="zoom-in" aria-label="Zoom in">+</button>
+              <button type="button" id="zoom-out" aria-label="Zoom out">−</button>
+              <button type="button" id="zoom-reset" aria-label="Reset zoom">RESET</button>
+            </div>
           </div>
           <div class="preview-caption">
             <div><span class="micro-label">SELECTED MODEL</span><strong id="preview-design">SPORT ALLOY WHEEL RIM</strong></div>
@@ -41,75 +46,104 @@
         <div class="configuration-panel">
           <div class="config-heading">
             <div><p class="eyebrow">THE CONFIGURATOR</p><p-heading tag="h2" size="lg">Create your specification</p-heading></div>
-            <span class="step-counter" id="step-counter">01 / 03</span>
-          </div>
-          <div class="model-selection" aria-label="Selected wheel model">
-            <div class="model-card">
-              <div class="model-card-index">MODEL 01</div>
-              <div class="model-card-copy">
-                <p-heading tag="h3" size="md">Sport Alloy Wheel Rim</p-heading>
-                <p-text size="xs" color="contrast-medium">GLB test asset · Interactive 3D preview</p-text>
-              </div>
-              <span class="model-card-state">SELECTED</span>
-            </div>
+            <span class="step-counter" id="step-counter">01 / 04</span>
           </div>
           <p-stepper-horizontal id="config-stepper" class="step-navigation" aria-label="Configuration steps">
-            <p-stepper-horizontal-item state="current">Dimensions</p-stepper-horizontal-item>
+            <p-stepper-horizontal-item state="current">Vehicle</p-stepper-horizontal-item>
+            <p-stepper-horizontal-item>Dimensions</p-stepper-horizontal-item>
             <p-stepper-horizontal-item>Finish</p-stepper-horizontal-item>
-            <p-stepper-horizontal-item>Vehicle</p-stepper-horizontal-item>
+            <p-stepper-horizontal-item>Review</p-stepper-horizontal-item>
           </p-stepper-horizontal>
 
           <form id="config-form">
             <section class="config-step active" data-panel="0">
-              <p class="step-kicker">01 — ENGINEERING PARAMETERS</p>
-              <h3>Define the dimensions.</h3>
-              <p class="step-description">Choose a starting specification. Final dimensions and fitment remain subject to vehicle data and engineering validation.</p>
-              <div class="field-grid">
-                <div class="field-block"><p-select id="diameter" name="diameter" label="Diameter (INCH)" value="20"><p-select-option value="18">18</p-select-option><p-select-option value="19">19</p-select-option><p-select-option value="20">20</p-select-option><p-select-option value="21">21</p-select-option><p-select-option value="22">22</p-select-option><p-select-option value="23">23</p-select-option></p-select></div>
-                <div class="field-block"><p-select id="width" name="width" label="Width (INCH)" value="9.0"><p-select-option value="8.0">8.0</p-select-option><p-select-option value="8.5">8.5</p-select-option><p-select-option value="9.0">9.0</p-select-option><p-select-option value="9.5">9.5</p-select-option><p-select-option value="10.0">10.0</p-select-option><p-select-option value="10.5">10.5</p-select-option><p-select-option value="11.0">11.0</p-select-option><p-select-option value="12.0">12.0</p-select-option></p-select></div>
-                <div class="field-block"><p-input-number id="offset" name="offset" label="Offset (MM)" placeholder="e.g. 35"></p-input-number></div>
-                <div class="field-block"><p-input-text id="pcd" name="pcd" label="Bolt pattern (PCD)" placeholder="e.g. 5 × 112"></p-input-text></div>
-                <div class="field-block"><p-input-number id="bore" name="bore" label="Centre bore (MM)" placeholder="e.g. 66.6"></p-input-number></div>
-                <div class="field-block"><p-input-number id="load" name="load" label="Load (KG / WHEEL)" placeholder="Optional"></p-input-number></div>
+              <p class="step-kicker">01 — VEHICLE & FACTORY FITMENT</p>
+              <h3>Find your vehicle.</h3>
+              <p class="step-description">Select your vehicle to retrieve factory and alternative wheel specifications from Wheel Size. Default market: United States (USDM).</p>
+              <div class="market-row">
+                <div class="field-block market-select"><p-select id="market" name="market" label="Vehicle market" value="usdm"><p-select-option value="usdm">USDM · United States</p-select-option><p-select-option value="cdm">CDM · Canada</p-select-option><p-select-option value="eudm">EUDM · Europe</p-select-option><p-select-option value="jdm">JDM · Japan</p-select-option></p-select></div>
+                <div class="api-status" id="api-status" role="status">CONNECTING TO WHEEL SIZE</div>
               </div>
-              <div class="engineering-note"><span>i</span><p>These are requested values, not a fitment approval. Our engineering team will review brake clearance, load rating and vehicle-specific requirements before production.</p></div>
+              <div class="vehicle-fields">
+                <div class="field-block make-field">
+                  <label for="make">MANUFACTURER</label>
+                  <div class="make-control">
+                    <div class="make-logo-wrap"><img id="make-logo" alt="" hidden><span id="make-logo-fallback">—</span></div>
+                    <p-select id="make" name="make" aria-label="Manufacturer" value=""><p-select-option value="">Select manufacturer</p-select-option></p-select>
+                  </div>
+                </div>
+                <div class="field-block"><p-select id="model" name="model" label="MODEL" value="" disabled><p-select-option value="">Select model</p-select-option></p-select></div>
+                <div class="field-block"><p-select id="year" name="year" label="YEAR" value="" disabled><p-select-option value="">Select year</p-select-option></p-select></div>
+                <div class="field-block"><p-select id="variant" name="variant" label="TRIM / MODIFICATION" value="" disabled><p-select-option value="">Select trim</p-select-option></p-select></div>
+              </div>
+              <div class="fitment-heading">
+                <div><span class="micro-label">WHEEL SIZE DATABASE</span><strong>Available wheel specifications</strong></div>
+                <span id="fitment-count" class="fitment-count">0 RESULTS</span>
+              </div>
+              <div id="fitment-empty" class="fitment-empty">Select a manufacturer, model and year to search vehicle fitment data.</div>
+              <div class="fitment-table-wrap" id="fitment-table-wrap" hidden>
+                <table class="fitment-table">
+                  <thead><tr><th>TYPE</th><th>AXLE</th><th>SIZE</th><th>J</th><th>ET</th><th>PCD</th><th>CB</th><th></th></tr></thead>
+                  <tbody id="fitment-rows"></tbody>
+                </table>
+              </div>
+              <div class="fitment-selection" id="fitment-selection" hidden>
+                <span class="hint-dot"></span><span id="fitment-selection-text">A fitment set is selected.</span>
+              </div>
+              <div class="engineering-note"><span>i</span><p>Wheel Size data is a reference, not an engineering approval. Confirm brake clearance, load rating and vehicle modifications before production.</p></div>
             </section>
 
             <section class="config-step" data-panel="1">
-              <p class="step-kicker">02 — MATERIAL EXPRESSION</p>
+              <p class="step-kicker">02 — ENGINEERING PARAMETERS</p>
+              <h3>Refine the dimensions.</h3>
+              <p class="step-description">Values returned by Wheel Size are prefilled below. Edit any field as required. Front and rear specifications are independent for staggered fitments.</p>
+              <div class="axle-spec-grid">
+                <section class="axle-spec">
+                  <div class="axle-heading"><span>01</span><strong>FRONT AXLE</strong><small>FRONT</small></div>
+                  <div class="field-grid">
+                    <div class="field-block"><p-input-number id="front-diameter" label="Diameter" step="0.5" placeholder="—"></p-input-number></div>
+                    <div class="field-block"><p-input-number id="front-width" label="Width (J)" step="0.5" placeholder="—"></p-input-number></div>
+                    <div class="field-block"><p-input-number id="front-offset" label="Offset (ET)" step="1" placeholder="—"></p-input-number></div>
+                    <div class="field-block"><p-input-text id="front-pcd" label="PCD" placeholder="—"></p-input-text></div>
+                    <div class="field-block"><p-input-number id="front-bore" label="Centre bore (CB)" step="0.1" placeholder="—"></p-input-number></div>
+                    <div class="field-block"><p-input-number id="front-load" label="Load (kg)" step="1" placeholder="—"></p-input-number></div>
+                  </div>
+                  <div class="axle-source" id="front-source">Awaiting vehicle specification</div>
+                </section>
+                <section class="axle-spec">
+                  <div class="axle-heading"><span>02</span><strong>REAR AXLE</strong><small>REAR</small></div>
+                  <div class="field-grid">
+                    <div class="field-block"><p-input-number id="rear-diameter" label="Diameter" step="0.5" placeholder="—"></p-input-number></div>
+                    <div class="field-block"><p-input-number id="rear-width" label="Width (J)" step="0.5" placeholder="—"></p-input-number></div>
+                    <div class="field-block"><p-input-number id="rear-offset" label="Offset (ET)" step="1" placeholder="—"></p-input-number></div>
+                    <div class="field-block"><p-input-text id="rear-pcd" label="PCD" placeholder="—"></p-input-text></div>
+                    <div class="field-block"><p-input-number id="rear-bore" label="Centre bore (CB)" step="0.1" placeholder="—"></p-input-number></div>
+                    <div class="field-block"><p-input-number id="rear-load" label="Load (kg)" step="1" placeholder="—"></p-input-number></div>
+                  </div>
+                  <div class="axle-source" id="rear-source">Awaiting vehicle specification</div>
+                </section>
+              </div>
+              <div class="engineering-note"><span>i</span><p>Missing API values remain blank for manual entry. Rear values are never copied from the front axle automatically.</p></div>
+            </section>
+
+            <section class="config-step" data-panel="2">
+              <p class="step-kicker">03 — MATERIAL EXPRESSION</p>
               <h3>Define the finish.</h3>
               <p class="step-description">Select a colour and surface treatment. The preview updates the GLB material; final production samples may vary.</p>
               <div class="field-grid">
-                <div class="field-block">
-                  <p-select id="wheel-color" name="wheel-color" label="Colour" value="black">
-                    <p-select-option value="black">Black</p-select-option>
-                    <p-select-option value="silver">Silver</p-select-option>
-                    <p-select-option value="bronze">Bronze</p-select-option>
-                  </p-select>
-                </div>
-                <div class="field-block">
-                  <p-select id="wheel-surface" name="wheel-surface" label="Surface treatment" value="satin">
-                    <p-select-option value="satin">Satin</p-select-option>
-                    <p-select-option value="gloss">Gloss</p-select-option>
-                    <p-select-option value="brushed">Brushed</p-select-option>
-                  </p-select>
-                </div>
+                <div class="field-block"><p-select id="wheel-color" name="wheel-color" label="Colour" value="black"><p-select-option value="black">Black</p-select-option><p-select-option value="silver">Silver</p-select-option><p-select-option value="bronze">Bronze</p-select-option></p-select></div>
+                <div class="field-block"><p-select id="wheel-surface" name="wheel-surface" label="Surface treatment" value="satin"><p-select-option value="satin">Satin</p-select-option><p-select-option value="gloss">Gloss</p-select-option><p-select-option value="brushed">Brushed</p-select-option></p-select></div>
               </div>
               <div class="field-block"><p-textarea id="finish-notes" name="finish-notes" label="Special finish request" rows="3" placeholder="Custom colour reference, gloss level, machining details..."></p-textarea></div>
             </section>
 
-            <section class="config-step" data-panel="2">
-              <p class="step-kicker">03 — VEHICLE & INTENT</p>
-              <h3>What will it be made for?</h3>
-              <p class="step-description">Vehicle details help our team assess the specification. This submission is a request for review, not an instant fitment confirmation.</p>
-              <div class="field-grid">
-                <div class="field-block"><p-input-text id="make" name="make" label="Vehicle make" placeholder="e.g. Porsche"></p-input-text></div>
-                <div class="field-block"><p-input-text id="model" name="model" label="Model" placeholder="e.g. 911 Carrera"></p-input-text></div>
-                <div class="field-block"><p-input-number id="year" name="year" label="Model year" placeholder="e.g. 2025" min="1900" max="2100"></p-input-number></div>
-                <div class="field-block"><p-input-text id="variant" name="variant" label="Trim / variant" placeholder="e.g. GTS"></p-input-text></div>
-              </div>
+            <section class="config-step" data-panel="3">
+              <p class="step-kicker">04 — CONTACT & REVIEW</p>
+              <h3>Complete your request.</h3>
+              <p class="step-description">Your selected vehicle and wheel parameters will be included in the specification for engineering review.</p>
+              <div class="review-summary" id="review-summary"></div>
               <div class="field-block"><p-textarea id="vehicle-mods" name="vehicle-mods" label="Vehicle modifications" rows="3" placeholder="Brakes, suspension, bodywork or other modifications."></p-textarea></div>
-              <div class="field-block"><p-textarea id="special-requests" name="special-requests" label="Bespoke requirements" rows="4" placeholder="Tell us what you have in mind — custom dimensions, unique detailing or a specific design direction."></p-textarea></div>
+              <div class="field-block"><p-textarea id="special-requests" name="special-requests" label="Bespoke requirements" rows="3" placeholder="Custom dimensions, unique detailing or design direction."></p-textarea></div>
               <div class="field-grid contact-grid">
                 <div class="field-block"><p-input-text id="customer-name" name="customer-name" label="Your name" autocomplete="name" required placeholder="Full name"></p-input-text></div>
                 <div class="field-block"><p-input-email id="customer-email" name="customer-email" label="Email address" autocomplete="email" required placeholder="name@example.com"></p-input-email></div>
@@ -118,7 +152,7 @@
             <div class="form-actions">
               <p-button type="button" variant="secondary" class="back-button" id="back-button" disabled>Back</p-button>
               <p-button type="button" variant="primary" class="next-button" id="next-button">Continue</p-button>
-              <p-button type="submit" variant="primary" class="next-button submit-button" id="submit-button" hidden>Request a bespoke review</p-button>
+              <p-button type="submit" variant="primary" class="next-button submit-button" id="submit-button" hidden>Prepare specification</p-button>
             </div>
           </form>
           <p class="privacy-note">No payment. No commitment. Every bespoke specification is reviewed by our team.</p>
@@ -128,10 +162,10 @@
       <section class="summary-section">
         <div><p class="eyebrow">A PERSONAL SPECIFICATION</p><p-heading tag="h2" size="lg">Every detail, considered.</p-heading></div>
         <div class="summary-grid" id="summary-grid">
-          <div><span>MODEL</span><strong id="summary-design">Sport Alloy Wheel Rim</strong></div>
-          <div><span>ASSET TYPE</span><strong>GLB Test Model</strong></div>
-          <div><span>DIMENSION</span><strong id="summary-dimension">20 × 9.0 in</strong></div>
-          <div><span>FINISH</span><strong id="summary-finish">Satin Black</strong></div>
+          <div><span>VEHICLE</span><strong id="summary-vehicle">Not selected</strong></div>
+          <div><span>FRONT</span><strong id="summary-front">—</strong></div>
+          <div><span>REAR</span><strong id="summary-rear">—</strong></div>
+          <div><span>FINISH</span><strong id="summary-finish">Satin · Black</strong></div>
         </div>
       </section>
       <div class="submission-message" id="submission-message" role="status" hidden></div>
