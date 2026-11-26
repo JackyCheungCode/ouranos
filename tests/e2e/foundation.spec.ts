@@ -38,13 +38,7 @@ test('Home exposes the two primary entry tiles and five wheel collections', asyn
     '/customize',
   );
 
-  for (const line of [
-    'Performance',
-    'Luxury',
-    'Street',
-    'Off-road',
-    'Heritage',
-  ]) {
+  for (const line of ['Performance', 'Luxury', 'Street', 'Off-road', 'Heritage']) {
     await expect(page.locator(`p-link-tile[label="${line}"]`)).toHaveCount(1);
   }
 
