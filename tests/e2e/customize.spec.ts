@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 
-test('Bespoke studio exposes forged-only configuration and saves design drafts', async ({ page }) => {
+test('Bespoke studio exposes forged-only configuration and saves design drafts', async ({
+  page,
+}) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/customize/');
@@ -29,7 +31,9 @@ test('Bespoke studio exposes forged-only configuration and saves design drafts',
   expect(errors).toEqual([]);
 });
 
-test('Bespoke studio captures vehicle and contact details before preparing a specification', async ({ page }) => {
+test('Bespoke studio captures vehicle and contact details before preparing a specification', async ({
+  page,
+}) => {
   await page.goto('/customize/');
   await page.locator('.step-tab[data-step="3"]').click();
   await page.locator('#customer-name').fill('Test Customer');
@@ -37,6 +41,8 @@ test('Bespoke studio captures vehicle and contact details before preparing a spe
   await page.locator('#submit-button').click();
 
   await expect(page.locator('#submission-message')).toBeVisible();
-  await expect(page.locator('#submission-message')).toContainText('Your configuration has not been transmitted');
+  await expect(page.locator('#submission-message')).toContainText(
+    'Your configuration has not been transmitted',
+  );
   await expect(page.locator('#submission-message')).toContainText('DOWNLOAD CONFIGURATION');
 });
