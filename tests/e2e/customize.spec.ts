@@ -34,7 +34,7 @@ async function choose(page: Page, selector: string, value: string) {
 
 async function chooseMarket(page: Page) {
   await expect(page.locator('#market')).toBeEnabled();
-  await chooseMarket(page);
+  await choose(page, '#market', 'usdm');
 }
 
 test('Configurator retrieves USDM fitment and maps staggered front/rear specifications', async ({ page }) => {
@@ -47,7 +47,7 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
   await expect(page.getByRole('heading', { name: /Find your vehicle/i })).toBeVisible();
   await expect(page.locator('#market')).toBeEnabled();
   await expect(page.locator('#market')).toHaveJSProperty('value', '');
-  await choose(page, '#market', 'usdm');
+  await chooseMarket(page);
   await expect(page.locator('#manufacturer-trigger')).toBeVisible();
 
   await choose(page, '#make', 'porsche');
