@@ -68,8 +68,14 @@
                 <div class="field-block make-field">
                   <label for="make">MANUFACTURER</label>
                   <div class="make-control">
-                    <div class="make-logo-wrap"><img id="make-logo" alt="" hidden><span id="make-logo-fallback">—</span></div>
-                    <p-select id="make" name="make" aria-label="Manufacturer" value=""><p-select-option value="">Select manufacturer</p-select-option></p-select>
+                    <div class="manufacturer-select" id="manufacturer-select">
+                      <button type="button" class="manufacturer-trigger" id="manufacturer-trigger" aria-haspopup="listbox" aria-expanded="false" aria-controls="manufacturer-menu">
+                        <span class="manufacturer-current-logo"><img id="make-current-logo" alt="" hidden><span id="make-current-fallback">—</span></span>
+                        <span id="make-current-label">Select manufacturer</span><span class="manufacturer-chevron" aria-hidden="true">⌄</span>
+                      </button>
+                      <div class="manufacturer-menu" id="manufacturer-menu" role="listbox" aria-label="Manufacturer" hidden></div>
+                      <select id="make" name="make" aria-label="Manufacturer" tabindex="-1" aria-hidden="true"><option value="">Select manufacturer</option></select>
+                    </div>
                   </div>
                 </div>
                 <div class="field-block"><p-select id="model" name="model" label="MODEL" value="" disabled><p-select-option value="">Select model</p-select-option></p-select></div>
@@ -90,6 +96,7 @@
               <div class="fitment-selection" id="fitment-selection" hidden>
                 <span class="hint-dot"></span><span id="fitment-selection-text">A fitment set is selected.</span>
               </div>
+              <button type="button" id="skip-vehicle" class="skip-vehicle-button">SKIP VEHICLE SELECTION <span aria-hidden="true">→</span><small>Continue directly to wheel dimensions and enter specifications manually.</small></button>
               <div class="engineering-note"><span>i</span><p>Wheel Size data is a reference, not an engineering approval. Confirm brake clearance, load rating and vehicle modifications before production.</p></div>
             </section>
 
