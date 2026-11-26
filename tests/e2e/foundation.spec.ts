@@ -5,8 +5,8 @@ test('Home page is served at the root with shared Ouranos layout', async ({ page
   page.on('pageerror', (error) => pageErrors.push(error.message));
 
   await page.goto('/');
-  await expect(page).toHaveTitle('Ouranos | Home');
-  await expect(page.locator('p-heading#heading-section-1')).toContainText('Home');
+  await expect(page).toHaveTitle('Ouranos | Precision in Every Form');
+  await expect(page.locator('p-heading#heading-section-1')).toContainText('Precision in Every Form');
   await expect(page.locator('header a[aria-label="Ouranos Home"]').first()).toHaveText('OURANOS');
   await expect(page.locator('#nav-drilldown')).toHaveCount(1);
   await expect(page.locator('footer')).toContainText('Ouranos');
@@ -66,7 +66,7 @@ test('Home overlay navigation and image tiles use the dark PDS scheme', async ({
     'color',
     'rgb(255, 255, 255)',
   );
-  await expect(header.locator('p-button-pure')).toHaveAttribute('color', 'primary');
+  await expect(header.locator('p-button-pure').first()).toHaveAttribute('color', 'primary');
 
   for (const tile of [
     page.locator('p-link-tile[label="Find Wheels for Your Vehicle"]'),
