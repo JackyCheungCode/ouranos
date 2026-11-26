@@ -38,7 +38,13 @@ test('Home exposes the two primary entry tiles and five wheel collections', asyn
     '/customize',
   );
 
-  for (const line of ['PERFORMANCE / 性能运动系列', 'LUXURY / 豪华定制系列', 'STREET / 街道改装系列', 'OFF-ROAD / 越野 SUV 系列', 'HERITAGE / 经典复古系列']) {
+  for (const line of [
+    'PERFORMANCE / 性能运动系列',
+    'LUXURY / 豪华定制系列',
+    'STREET / 街道改装系列',
+    'OFF-ROAD / 越野 SUV 系列',
+    'HERITAGE / 经典复古系列',
+  ]) {
     await expect(page.locator(`p-link-tile[label="${line}"]`)).toHaveCount(1);
   }
 
