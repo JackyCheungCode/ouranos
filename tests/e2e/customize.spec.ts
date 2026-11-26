@@ -44,6 +44,11 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
   await page.goto('/customize/');
 
   await expect(page).toHaveTitle('Ouranos | Wheel Atelier');
+  await expect(page.getByRole('heading', { name: /Choose your wheel model/i })).toBeVisible();
+  await expect(page.locator('#model-list .model-card')).toHaveCount(1);
+  await page.locator('#model-list .model-card').click();
+  await expect(page.locator('#model-list .model-card')).toHaveAttribute('aria-selected', 'true');
+  await page.locator('#next-button').click();
   await expect(page.getByRole('heading', { name: /Find your vehicle/i })).toBeVisible();
   await expect(page.locator('#market')).toBeEnabled();
   await expect(page.locator('#market')).toHaveJSProperty('value', '');
@@ -67,9 +72,8 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
   await expect(page.locator('#api-status')).toHaveText('FITMENT DATA LOADED');
   await expect(page.locator('#fitment-table-wrap')).toBeVisible();
 
-  await page.getByRole('button', { name: 'SELECT', exact: true }).click();
   await page.locator('#next-button').click();
-  await expect(page.locator('[data-panel="1"]')).toBeVisible();
+  await expect(page.locator('[data-panel="2"]')).toBeVisible();
   await expect(page.locator('#front-diameter')).toHaveJSProperty('value', '20');
   await expect(page.locator('#front-width')).toHaveJSProperty('value', '8.5');
   await expect(page.locator('#front-offset')).toHaveJSProperty('value', '50');
@@ -131,8 +135,10 @@ test('Vehicle step can be skipped and manual wheel dimensions remain available',
   await page.goto('/customize/');
   await chooseMarket(page);
   await expect(page.locator('#api-status')).toContainText('WHEEL SIZE KEY NOT CONFIGURED');
+  await page.locator('#model-list .model-card').click();
+  await page.locator('#next-button').click();
   await page.locator('#skip-vehicle').click();
-  await expect(page.locator('[data-panel="1"]')).toBeVisible();
+  await expect(page.locator('[data-panel="3"]')).toBeVisible();
   await expect(page.locator('#front-diameter')).toBeVisible();
   await expect(page.locator('#rear-diameter')).toBeVisible();
   await expect(page.locator('#front-source')).toContainText('MANUAL ENTRY');
@@ -156,9 +162,9 @@ test('Manufacturer options include a compact logo and step navigation stays read
   const stepper = page.locator('.configuration-panel #config-stepper');
   await expect(stepper).toBeVisible();
   await expect(stepper).toHaveAttribute('size', 'medium');
-  await expect(stepper.locator('p-stepper-horizontal-item')).toHaveCount(4);
+  await expect(stepper.locator('p-stepper-horizontal-item')).toHaveCount(5);
   const stepLabels = await stepper.locator('p-stepper-horizontal-item').evaluateAll((items) => items.map((item) => (item.textContent || '').replace(/current:/gi, '').trim()));
-  expect(stepLabels).toEqual(['Vehicle', 'Dimensions', 'Finish', 'Review']);
+  expect(stepLabels).toEqual(['Model', 'Vehicle', 'Dimensions', 'Finish', 'Review']);
   const stepperMetrics = await stepper.evaluate((element) => {
     const panel = element.parentElement;
     if (!panel) throw new Error('Stepper is not inside the configuration panel');
@@ -186,6 +192,8 @@ test('Configurator prepares a downloadable engineering specification', async ({ 
   await choose(page, '#year', '2024');
   await expect(page.locator('#fitment-table-wrap')).toBeVisible();
   await page.getByRole('button', { name: 'SELECT', exact: true }).click();
+  await page.locator('#model-list .model-card').click();
+  await page.locator('#next-button').click();
   await page.locator('#next-button').click();
   await page.locator('#next-button').click();
   await page.locator('#next-button').click();
