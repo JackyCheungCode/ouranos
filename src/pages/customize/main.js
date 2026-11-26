@@ -1,18 +1,21 @@
 import './style.css';
 
-const state = { step: 0, design: 'Aero / 10 Spoke', diameter: '20', width: '9.0', offset: '', pcd: '', bore: '', load: '', finish: 'satin-black' };
+const state = { step: 0, model: 'sport_alloy_wheel_rim', diameter: '20', width: '9.0', offset: '', pcd: '', bore: '', load: '', color: 'black', surface: 'satin' };
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
-const finishNames = { 'satin-black': 'Satin Black', 'brushed-titanium': 'Brushed Titanium', 'gloss-silver': 'Gloss Silver', bronze: 'Champagne Bronze' };
-const finishColors = { 'satin-black': 0x34383b, 'brushed-titanium': 0xb9bec0, 'gloss-silver': 0xe0e1df, bronze: 0x9b704d };
+const colorNames = { black: 'Black', silver: 'Silver', bronze: 'Bronze' };
+const colorValues = { black: 0x34383b, silver: 0xd5d7d6, bronze: 0x9b704d };
+const surfaceNames = { satin: 'Satin', gloss: 'Gloss', brushed: 'Brushed' };
+const surfaceRoughness = { satin: 0.34, gloss: 0.16, brushed: 0.48 };
 let wheelScene;
 const DRAFT_KEY = 'ouranos-bespoke-config-v1';
-const draftFields = ['diameter', 'width', 'offset', 'pcd', 'bore', 'load', 'design-notes', 'finish-notes', 'make', 'model', 'year', 'variant', 'vehicle-mods', 'special-requests'];
+const draftFields = ['diameter', 'width', 'offset', 'pcd', 'bore', 'load', 'wheel-color', 'wheel-surface', 'finish-notes', 'make', 'model', 'year', 'variant', 'vehicle-mods', 'special-requests'];
 
 function saveDraft() {
   const draft = {
-    design: state.design,
-    finish: state.finish,
+    model: state.model,
+    color: state.color,
+    surface: state.surface,
     fields: Object.fromEntries(draftFields.map((id) => [id, document.getElementById(id)?.value ?? ''])),
   };
   try { localStorage.setItem(DRAFT_KEY, JSON.stringify(draft)); } catch { /* Private browsing may block storage. */ }
@@ -22,8 +25,8 @@ function restoreDraft() {
   try {
     const draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null');
     if (!draft || typeof draft !== 'object') return;
-    if (typeof draft.design === 'string') state.design = draft.design;
-    if (typeof draft.finish === 'string' && finishNames[draft.finish]) state.finish = draft.finish;
+    if (typeof draft.color === 'string' && colorNames[draft.color]) state.color = draft.color;
+    if (typeof draft.surface === 'string' && surfaceNames[draft.surface]) state.surface = draft.surface;
     for (const [id, value] of Object.entries(draft.fields || {})) {
       const field = document.getElementById(id);
       if (field && typeof value === 'string') {
@@ -31,12 +34,11 @@ function restoreDraft() {
         if (Object.hasOwn(state, id)) state[id] = value;
       }
     }
-    $$('.design-choice').forEach((el) => el.classList.toggle('selected', el.dataset.design === state.design));
   } catch { /* Ignore malformed or unavailable local drafts. */ }
 }
 
 function setStep(step) {
-  state.step = Math.max(0, Math.min(3, step));
+  state.step = Math.max(0, Math.min(2, step));
   $$('.config-step').forEach((panel, index) => panel.classList.toggle('active', index === state.step));
   const stepper = $('#config-stepper');
   if (stepper) {
@@ -44,39 +46,34 @@ function setStep(step) {
       item.state = index === state.step ? 'current' : index < state.step ? 'complete' : undefined;
     });
   }
-  $('#step-counter').textContent = `0${state.step + 1} / 04`;
+  $('#step-counter').textContent = `0${state.step + 1} / 03`;
   $('#back-button').disabled = state.step === 0;
   $('#next-button').hidden = state.step === 3;
-  $('#submit-button').hidden = state.step !== 3;
+  $('#submit-button').hidden = state.step !== 2;
 }
 
 function syncSummary() {
-  $('#preview-design').textContent = state.design.toUpperCase();
-  $('#summary-design').textContent = state.design;
+  $('#preview-design').textContent = 'SPORT ALLOY WHEEL RIM';
+  $('#summary-design').textContent = 'Sport Alloy Wheel Rim';
   $('#summary-dimension').textContent = `${state.diameter} × ${state.width} in`;
-  $('#summary-finish').textContent = finishNames[state.finish];
+  $('#summary-finish').textContent = `${colorNames[state.color]} · ${surfaceNames[state.surface]}`;
   saveDraft();
 }
 
-function setFinish(finish) {
-  state.finish = finish;
-  $$('.finish-choice').forEach((el) => el.classList.toggle('selected', el.dataset.finish === finish));
-  $$('.swatch').forEach((el) => el.classList.toggle('active', el.dataset.finish === finish));
-  if (wheelScene) wheelScene.setFinish(finishColors[finish]);
-  $('#fallback-wheel').style.borderColor = `#${finishColors[finish].toString(16).padStart(6, '0')}`;
+function setMaterial(color, surface) {
+  if (colorNames[color]) state.color = color;
+  if (surfaceNames[surface]) state.surface = surface;
+  $('#wheel-color').value = state.color;
+  $('#wheel-surface').value = state.surface;
+  if (wheelScene) wheelScene.setMaterial(colorValues[state.color], surfaceRoughness[state.surface]);
   syncSummary();
 }
 
 $('#config-stepper').addEventListener('update', (event) => setStep(event.detail.activeStepIndex));
 $('#back-button').addEventListener('click', () => setStep(state.step - 1));
 $('#next-button').addEventListener('click', () => setStep(state.step + 1));
-$$('.design-choice').forEach((button) => button.addEventListener('click', () => {
-  state.design = button.dataset.design;
-  $$('.design-choice').forEach((el) => el.classList.toggle('selected', el === button));
-  syncSummary();
-  if (wheelScene) wheelScene.setDesign(state.design);
-}));
-$$('.finish-choice, .swatch').forEach((button) => button.addEventListener('click', () => setFinish(button.dataset.finish)));
+$('#wheel-color').addEventListener('change', (event) => setMaterial(event.target.value, state.surface));
+$('#wheel-surface').addEventListener('change', (event) => setMaterial(state.color, event.target.value));
 ['diameter', 'width', 'offset', 'pcd', 'bore', 'load'].forEach((id) => {
   const el = document.getElementById(id);
   el?.addEventListener('input', () => { state[id] = el.value; syncSummary(); saveDraft(); });
@@ -88,10 +85,10 @@ $$('#config-form input, #config-form textarea, #config-form select, #config-form
 $('#config-form').addEventListener('submit', (event) => {
   event.preventDefault();
   const payload = {
-    design: state.design, construction: 'Forged', diameter_in: $('#diameter').value,
+    model: 'sport_alloy_wheel_rim.glb', construction: 'Forged', diameter_in: $('#diameter').value,
     width_in: $('#width').value, offset_et_mm: $('#offset').value || null,
     pcd: $('#pcd').value || null, centre_bore_mm: $('#bore').value || null,
-    load_requirement_kg: $('#load').value || null, finish: finishNames[state.finish],
+    load_requirement_kg: $('#load').value || null, color: colorNames[state.color], surface_treatment: surfaceNames[state.surface],
     design_direction: $('#design-notes').value, finish_request: $('#finish-notes').value,
     vehicle: { make: $('#make').value, model: $('#model').value, year: $('#year').value, variant: $('#variant').value, modifications: $('#vehicle-mods').value },
     bespoke_requirements: $('#special-requests').value,
@@ -161,40 +158,54 @@ async function initWheel() {
     const rimLight = new THREE.DirectionalLight(0x9aa8b4, 1.5); rimLight.position.set(-5, -2, 3); scene.add(rimLight);
     const wheel = new THREE.Group(); scene.add(wheel);
 
-    const loader = new GLTFLoader();
-    const gltf = await Promise.race([
-      loader.loadAsync('https://pub-1b5295aa36194df7bb80c797f53c3d1b.r2.dev/models/sport_alloy_wheel_rim.glb'),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('GLB load timed out after 20 seconds')), 20000)),
+    const modelUrl = 'https://pub-1b5295aa36194df7bb80c797f53c3d1b.r2.dev/models/sport_alloy_wheel_rim.glb';
+    $('#preview-status').textContent = 'FETCHING GLB';
+    const response = await Promise.race([
+      fetch(modelUrl, { mode: 'cors', credentials: 'omit', cache: 'no-cache' }),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Network timeout while requesting GLB')), 20000)),
     ]);
+    if (!response.ok) throw new Error('GLB request failed: HTTP ' + response.status);
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.includes('model/gltf-binary') && !contentType.includes('octet-stream')) console.warn('Unexpected GLB content type:', contentType);
+    const buffer = await response.arrayBuffer();
+    if (buffer.byteLength < 20) throw new Error('GLB response is too small (' + buffer.byteLength + ' bytes)');
+    if (new DataView(buffer).getUint32(0, true) !== 0x46546c67) throw new Error('Response is not a valid GLB binary (missing glTF header)');
+    $('#preview-status').textContent = 'PARSING GLB';
+    const loader = new GLTFLoader();
+    const gltf = await loader.parseAsync(buffer, new URL('.', modelUrl).href);
     const model = gltf.scene;
-    // The source GLB is authored with its axle along X; rotate it so the wheel face points toward the camera.
+    if (!model) throw new Error('GLB contains no default scene');
     model.rotation.y = Math.PI / 2;
     model.updateMatrixWorld(true);
     const bounds = new THREE.Box3().setFromObject(model);
+    if (bounds.isEmpty()) throw new Error('GLB scene contains no renderable geometry');
     const center = bounds.getCenter(new THREE.Vector3());
     const size = bounds.getSize(new THREE.Vector3());
-    model.position.sub(center);
-    const maxDimension = Math.max(size.x, size.y, size.z) || 1;
-    model.scale.setScalar(3.25 / maxDimension);
-
-    const applyFinish = (hex) => {
-      model.traverse((object) => {
-        if (!object.isMesh) return;
-        object.castShadow = true;
-        object.receiveShadow = true;
-        const materials = Array.isArray(object.material) ? object.material : [object.material];
-        const updated = materials.map((source) => {
-          const material = source.clone();
-          if (material.color) material.color.setHex(hex);
-          if ('metalness' in material) material.metalness = 0.88;
-          if ('roughness' in material) material.roughness = 0.27;
-          return material;
-        });
-        object.material = Array.isArray(object.material) ? updated : updated[0];
+    const maxDimension = Math.max(size.x, size.y, size.z);
+    if (!Number.isFinite(maxDimension) || maxDimension <= 0) throw new Error('GLB geometry has invalid dimensions');
+    const normalized = new THREE.Group();
+    normalized.add(model);
+    const scale = 3.25 / maxDimension;
+    normalized.scale.setScalar(scale);
+    normalized.position.copy(center).multiplyScalar(-scale);
+    const materialRecords = [];
+    model.traverse((object) => {
+      if (!object.isMesh) return;
+      object.castShadow = true;
+      object.receiveShadow = true;
+      const originals = Array.isArray(object.material) ? object.material : [object.material];
+      const materials = originals.map((source) => {
+        const material = source.clone();
+        materialRecords.push(material);
+        if (material.color) material.color.setHex(colorValues[state.color]);
+        if ('metalness' in material) material.metalness = 0.88;
+        if ('roughness' in material) material.roughness = surfaceRoughness[state.surface];
+        return material;
       });
-    };
-    applyFinish(finishColors[state.finish]);
-    wheel.add(model);
+      object.material = Array.isArray(object.material) ? materials : materials[0];
+    });
+    if (!materialRecords.length) throw new Error('GLB scene has no mesh materials to render');
+    wheel.add(normalized);
     wheel.rotation.x = -0.08;
     wheel.rotation.y = -0.22;
 
@@ -223,28 +234,27 @@ async function initWheel() {
     }
     animate();
     wheelScene = {
-      setFinish(color) { applyFinish(color); },
-      // The supplied test asset has fixed spoke geometry; design choices remain specification metadata.
-      setDesign() {},
+      setMaterial(color, roughness) {
+        materialRecords.forEach((material) => {
+          if (material.color) material.color.setHex(color);
+          if ('roughness' in material) material.roughness = roughness;
+        });
+      },
     };
     $('#preview-fallback').hidden = true;
-    $('#preview-status').textContent = 'TEST MODEL · GLB';
+    $('#preview-status').textContent = 'GLB LOADED · ' + Math.round(buffer.byteLength / 1024) + ' KB';
   } catch (error) {
-    console.warn('GLB preview unavailable; showing static preview.', error);
-    canvas.hidden = true;
-    $('#preview-fallback').hidden = false;
-    $('#preview-status').textContent = 'PREVIEW UNAVAILABLE';
-    const errorText = document.createElement('p');
-    errorText.textContent = error instanceof Error ? error.message : 'Unknown preview error';
-    errorText.setAttribute('role', 'status');
-    $('#preview-fallback').append(errorText);
+    console.error('Ouranos GLB preview failed:', error);
+    canvas.hidden = false;
+    $('#preview-fallback').hidden = true;
+    $('#preview-status').textContent = 'MODEL LOAD FAILED · ' + (error instanceof Error ? error.message : 'UNKNOWN ERROR');
   }
 }
 try {
   restoreDraft();
   setStep(0);
   syncSummary();
-  setFinish(state.finish);
+  setMaterial(state.color, state.surface);
   initWheel();
 } catch (error) {
   console.error('Ouranos configurator initialization failed:', error);
