@@ -22,15 +22,6 @@
         <div class="hero-index"><span>01</span><span>INDIVIDUAL FORGED WHEELS</span></div>
       </section>
 
-      <div class="step-navigation-wrap">
-          <p-stepper-horizontal id="config-stepper" class="step-navigation" aria-label="Configuration steps">
-            <p-stepper-horizontal-item state="current">Vehicle</p-stepper-horizontal-item>
-            <p-stepper-horizontal-item>Dimensions</p-stepper-horizontal-item>
-            <p-stepper-horizontal-item>Finish</p-stepper-horizontal-item>
-            <p-stepper-horizontal-item>Review</p-stepper-horizontal-item>
-          </p-stepper-horizontal>
-      </div>
-
       <section class="studio-grid" aria-label="Bespoke wheel configurator">
         <div class="preview-panel">
           <div class="preview-topline">
@@ -53,6 +44,12 @@
         </div>
 
         <div class="configuration-panel">
+          <p-stepper-horizontal id="config-stepper" class="step-navigation" size="medium" aria-label="Configuration steps">
+            <p-stepper-horizontal-item state="current">Vehicle</p-stepper-horizontal-item>
+            <p-stepper-horizontal-item>Dimensions</p-stepper-horizontal-item>
+            <p-stepper-horizontal-item>Finish</p-stepper-horizontal-item>
+            <p-stepper-horizontal-item>Review</p-stepper-horizontal-item>
+          </p-stepper-horizontal>
           <div class="config-heading">
             <div><p class="eyebrow">THE CONFIGURATOR</p><p-heading tag="h2" size="lg">Create your specification</p-heading></div>
             <span class="step-counter" id="step-counter">01 / 04</span>
