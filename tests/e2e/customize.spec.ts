@@ -92,6 +92,7 @@ test('Selecting a manufacturer from the logo menu loads its models', async ({ pa
   await mockWheelSize(page);
   await page.goto('/customize/');
   await chooseMarket(page);
+  await expect(page.locator('#manufacturer-trigger')).toBeEnabled();
   await page.locator('#manufacturer-trigger').click();
   await expect(page.locator('.manufacturer-option').filter({ hasText: 'Porsche' })).toBeVisible();
   await page.locator('.manufacturer-option').filter({ hasText: 'Porsche' }).click();
