@@ -22,6 +22,15 @@
         <div class="hero-index"><span>01</span><span>INDIVIDUAL FORGED WHEELS</span></div>
       </section>
 
+      <div class="step-navigation-wrap">
+          <p-stepper-horizontal id="config-stepper" class="step-navigation" aria-label="Configuration steps">
+            <p-stepper-horizontal-item state="current">Vehicle</p-stepper-horizontal-item>
+            <p-stepper-horizontal-item>Dimensions</p-stepper-horizontal-item>
+            <p-stepper-horizontal-item>Finish</p-stepper-horizontal-item>
+            <p-stepper-horizontal-item>Review</p-stepper-horizontal-item>
+          </p-stepper-horizontal>
+      </div>
+
       <section class="studio-grid" aria-label="Bespoke wheel configurator">
         <div class="preview-panel">
           <div class="preview-topline">
@@ -48,20 +57,16 @@
             <div><p class="eyebrow">THE CONFIGURATOR</p><p-heading tag="h2" size="lg">Create your specification</p-heading></div>
             <span class="step-counter" id="step-counter">01 / 04</span>
           </div>
-          <p-stepper-horizontal id="config-stepper" class="step-navigation" aria-label="Configuration steps">
-            <p-stepper-horizontal-item state="current">Vehicle</p-stepper-horizontal-item>
-            <p-stepper-horizontal-item>Dimensions</p-stepper-horizontal-item>
-            <p-stepper-horizontal-item>Finish</p-stepper-horizontal-item>
-            <p-stepper-horizontal-item>Review</p-stepper-horizontal-item>
-          </p-stepper-horizontal>
+
 
           <form id="config-form">
             <section class="config-step active" data-panel="0">
-              <div class="step-title-row"><p class="step-kicker">01 — VEHICLE & FACTORY FITMENT</p><button type="button" id="skip-vehicle" class="skip-vehicle-button">SKIP VEHICLE SELECTION <span aria-hidden="true">→</span></button></div>
+              <div class="step-skip-row"><button type="button" id="skip-vehicle" class="skip-vehicle-button">SKIP VEHICLE SELECTION <span aria-hidden="true">→</span></button></div>
+              <p class="step-kicker">01 — VEHICLE & FACTORY FITMENT</p>
               <h3>Find your vehicle.</h3>
-              <p class="step-description">Select your vehicle to retrieve factory and alternative wheel specifications from Wheel Size. Default market: United States (USDM).</p>
+              <p class="step-description">Select your vehicle to retrieve factory and alternative wheel specifications from Wheel Size. Choose a vehicle market to load the manufacturers and fitment data available for that region.</p>
               <div class="market-row">
-                <div class="field-block market-select"><p-select id="market" name="market" label="Vehicle market" value="usdm"><p-select-option value="usdm">USDM · United States</p-select-option><p-select-option value="cdm">CDM · Canada</p-select-option><p-select-option value="eudm">EUDM · Europe</p-select-option><p-select-option value="jdm">JDM · Japan</p-select-option></p-select></div>
+                <div class="field-block market-select"><p-select id="market" name="market" label="Vehicle market" value="" disabled><p-select-option value="">Loading vehicle markets…</p-select-option></p-select></div>
                 <div class="api-status" id="api-status" role="status">CONNECTING TO WHEEL SIZE</div>
               </div>
               <div class="vehicle-fields">
