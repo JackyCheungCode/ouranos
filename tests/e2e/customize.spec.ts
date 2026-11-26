@@ -156,7 +156,9 @@ test('Manufacturer options include a compact logo and step navigation stays read
   const stepper = page.locator('.configuration-panel #config-stepper');
   await expect(stepper).toBeVisible();
   await expect(stepper).toHaveAttribute('size', 'medium');
-  await expect(stepper.locator('p-stepper-horizontal-item')).toHaveCount(4);\n  const stepLabels = await stepper.locator('p-stepper-horizontal-item').evaluateAll((items) => items.map((item) => (item.textContent || '').replace(/current:/gi, '').trim()));\n  expect(stepLabels).toEqual(['Vehicle', 'Dimensions', 'Finish', 'Review']);
+  await expect(stepper.locator('p-stepper-horizontal-item')).toHaveCount(4);
+  const stepLabels = await stepper.locator('p-stepper-horizontal-item').evaluateAll((items) => items.map((item) => (item.textContent || '').replace(/current:/gi, '').trim()));
+  expect(stepLabels).toEqual(['Vehicle', 'Dimensions', 'Finish', 'Review']);
   const stepperMetrics = await stepper.evaluate((element) => {
     const panel = element.parentElement;
     if (!panel) throw new Error('Stepper is not inside the configuration panel');
