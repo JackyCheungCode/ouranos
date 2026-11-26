@@ -38,8 +38,20 @@ test('Home exposes the two primary entry tiles and five wheel collections', asyn
     '/customize',
   );
 
-  for (const line of ['Performance', 'Luxury', 'Street', 'Off-road', 'Heritage']) {
-    await expect(page.locator(`p-link-tile[label="${line}"]`)).toHaveCount(1);
+  const collections = [
+    ['Performance', 'Engineered for Driving Excellence'],
+    ['Luxury', 'Refined by Design'],
+    ['Street', 'Built for Individuality'],
+    ['Off-road', 'Beyond the Ordinary'],
+    ['Heritage', 'Timeless Automotive Design'],
+  ];
+
+  for (const [line, subtitle] of collections) {
+    const tile = page.locator(`p-carousel p-link-tile[label="${line}"]`);
+    await expect(tile).toHaveCount(1);
+    await expect(tile).toHaveAttribute('description', subtitle);
+    await expect(tile).not.toHaveAttribute('compact');
+    await expect(page.getByText(subtitle, { exact: true })).toBeVisible();
   }
 
   await expect(page.locator('p-carousel p-link-tile')).toHaveCount(5);
