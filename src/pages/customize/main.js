@@ -6,6 +6,31 @@ const $$ = (selector) => [...document.querySelectorAll(selector)];
 const finishNames = { 'satin-black': 'Satin Black', 'brushed-titanium': 'Brushed Titanium', 'gloss-silver': 'Gloss Silver', bronze: 'Champagne Bronze' };
 const finishColors = { 'satin-black': 0x34383b, 'brushed-titanium': 0xb9bec0, 'gloss-silver': 0xe0e1df, bronze: 0x9b704d };
 let wheelScene;
+const DRAFT_KEY = 'ouranos-bespoke-config-v1';
+const draftFields = ['diameter', 'width', 'offset', 'pcd', 'bore', 'load', 'design-notes', 'finish-notes', 'make', 'model', 'year', 'variant', 'vehicle-mods', 'special-requests'];
+
+function saveDraft() {
+  const draft = {
+    design: state.design,
+    finish: state.finish,
+    fields: Object.fromEntries(draftFields.map((id) => [id, document.getElementById(id)?.value ?? ''])),
+  };
+  try { localStorage.setItem(DRAFT_KEY, JSON.stringify(draft)); } catch { /* Private browsing may block storage. */ }
+}
+
+function restoreDraft() {
+  try {
+    const draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null');
+    if (!draft || typeof draft !== 'object') return;
+    if (typeof draft.design === 'string') state.design = draft.design;
+    if (typeof draft.finish === 'string' && finishNames[draft.finish]) state.finish = draft.finish;
+    for (const [id, value] of Object.entries(draft.fields || {})) {
+      const field = document.getElementById(id);
+      if (field && typeof value === 'string') field.value = value;
+    }
+    $('.design-choice').forEach((el) => el.classList.toggle('selected', el.dataset.design === state.design));
+  } catch { /* Ignore malformed or unavailable local drafts. */ }
+}
 
 function setStep(step) {
   state.step = Math.max(0, Math.min(3, step));
@@ -26,6 +51,7 @@ function syncSummary() {
   $('#summary-dimension').textContent = `${state.diameter} × ${state.width} in`;
   $('#summary-finish').textContent = finishNames[state.finish];
   $('#preview-status').textContent = 'CONCEPT MODEL';
+  saveDraft();
 }
 
 function setFinish(finish) {
@@ -37,21 +63,24 @@ function setFinish(finish) {
   syncSummary();
 }
 
-$$('.step-tab').forEach((tab) => tab.addEventListener('click', () => setStep(Number(tab.dataset.step))));
+$('.step-tab').forEach((tab) => tab.addEventListener('click', () => setStep(Number(tab.dataset.step))));
 $('#back-button').addEventListener('click', () => setStep(state.step - 1));
 $('#next-button').addEventListener('click', () => setStep(state.step + 1));
 $$('.design-choice').forEach((button) => button.addEventListener('click', () => {
   state.design = button.dataset.design;
-  $$('.design-choice').forEach((el) => el.classList.toggle('selected', el === button));
+  $('.design-choice').forEach((el) => el.classList.toggle('selected', el === button));
   syncSummary();
+  if (wheelScene) wheelScene.setDesign(state.design);
 }));
-$$('.finish-choice, .swatch').forEach((button) => button.addEventListener('click', () => setFinish(button.dataset.finish)));
+$('.finish-choice, .swatch').forEach((button) => button.addEventListener('click', () => setFinish(button.dataset.finish)));
 ['diameter', 'width', 'offset', 'pcd', 'bore', 'load'].forEach((id) => {
   const el = document.getElementById(id);
-  el.addEventListener('input', () => { state[id] = el.value; syncSummary(); });
+  el.addEventListener('input', () => { state[id] = el.value; syncSummary(); saveDraft(); });
 });
 
-$('#config-form').addEventListener('submit', async (event) => {
+$('#config-form input, #config-form textarea, #config-form select').forEach((field) => field.addEventListener('change', saveDraft));
+
+$('#config-form').addEventListener('submit', (event) => {
   event.preventDefault();
   const payload = {
     design: state.design, construction: 'Forged', diameter_in: $('#diameter').value,
@@ -70,7 +99,9 @@ $('#config-form').addEventListener('submit', async (event) => {
   const title = document.createElement('strong');
   title.textContent = 'Your configuration is ready for review.';
   const note = document.createElement('p');
-  note.textContent = 'This preview does not transmit enquiries to Ouranos yet. Copy the configuration below and share it with your Ouranos contact.';
+  note.textContent = 'Your configuration has not been transmitted. Download or copy this specification and send it to your Ouranos representative for engineering review.';
+  const actions = document.createElement('div');
+  actions.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;margin:16px 0';
   const copy = document.createElement('button');
   copy.type = 'button';
   copy.className = 'next-button';
@@ -83,10 +114,24 @@ $('#config-form').addEventListener('submit', async (event) => {
       copy.textContent = 'COPY UNAVAILABLE';
     }
   });
+  const download = document.createElement('button');
+  download.type = 'button';
+  download.className = 'back-button';
+  download.textContent = 'DOWNLOAD CONFIGURATION';
+  download.addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'ouranos-bespoke-configuration.json';
+    link.click();
+    URL.revokeObjectURL(url);
+  });
+  actions.append(copy, download);
   const details = document.createElement('pre');
   details.textContent = JSON.stringify(payload, null, 2);
   details.style.cssText = 'white-space:pre-wrap;overflow-wrap:anywhere;font-size:10px;line-height:1.55;color:#c3c5c4;background:#17191b;padding:14px;margin-top:16px;max-height:260px;overflow:auto';
-  message.append(title, note, copy, details);
+  message.append(title, note, actions, details);
   message.scrollIntoView({ behavior: 'smooth', block: 'center' });
 });
 
@@ -187,6 +232,8 @@ async function initWheel() {
     $('#preview-fallback').hidden = false;
   }
 }
+restoreDraft();
 setStep(0);
 syncSummary();
+setFinish(state.finish);
 initWheel();
