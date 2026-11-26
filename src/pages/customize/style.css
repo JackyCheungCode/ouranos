@@ -182,7 +182,7 @@ body {
 }
 .step-navigation {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   border-bottom: 1px solid var(--studio-line);
   margin: 26px 0 30px;
 }
@@ -537,5 +537,55 @@ body {
   }
   .stage-hint {
     font-size: 8px;
+  }
+}
+
+.model-selection {
+  margin-top: 22px;
+}
+.model-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid #55514a;
+  background: #202224;
+}
+.model-card-index,
+.model-card-state {
+  color: #b9a98c;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  white-space: nowrap;
+}
+.model-card-copy {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+.model-card-copy p-heading {
+  display: block;
+}
+.model-card-copy p-text {
+  color: #92989a;
+}
+#preview-status {
+  max-width: 65%;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+@media (max-width: 560px) {
+  .model-card {
+    grid-template-columns: 1fr auto;
+    gap: 8px 12px;
+  }
+  .model-card-index {
+    grid-column: 1 / -1;
+  }
+  .model-card-state {
+    grid-column: 2;
+    grid-row: 2;
   }
 }
