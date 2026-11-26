@@ -51,9 +51,8 @@ $$('.finish-choice, .swatch').forEach((button) => button.addEventListener('click
   el.addEventListener('input', () => { state[id] = el.value; syncSummary(); });
 });
 
-$('#config-form').addEventListener('submit', (event) => {
+$('#config-form').addEventListener('submit', async (event) => {
   event.preventDefault();
-  const form = Object.fromEntries(new FormData(event.currentTarget).entries());
   const payload = {
     design: state.design, construction: 'Forged', diameter_in: $('#diameter').value,
     width_in: $('#width').value, offset_et_mm: $('#offset').value || null,
@@ -65,16 +64,29 @@ $('#config-form').addEventListener('submit', (event) => {
     customer: { name: $('#customer-name').value, email: $('#customer-email').value },
     fitment_status: 'Pending engineering review',
   };
-  const subject = encodeURIComponent('Ouranos Bespoke Forged Wheel Enquiry');
-  const body = encodeURIComponent(JSON.stringify(payload, null, 2));
   const message = $('#submission-message');
   message.hidden = false;
-  message.innerHTML = '<strong>Configuration prepared.</strong><br>Your bespoke specification is ready to send to the Ouranos team. This prototype does not transmit or store submissions yet.';
-  const mail = document.createElement('a');
-  mail.href = `mailto:bespoke@ouranos.com?subject=${subject}&body=${body}`;
-  mail.textContent = 'Open your email draft';
-  mail.className = 'email-draft-link';
-  message.append(' ', mail);
+  message.replaceChildren();
+  const title = document.createElement('strong');
+  title.textContent = 'Your configuration is ready for review.';
+  const note = document.createElement('p');
+  note.textContent = 'This preview does not transmit enquiries to Ouranos yet. Copy the configuration below and share it with your Ouranos contact.';
+  const copy = document.createElement('button');
+  copy.type = 'button';
+  copy.className = 'next-button';
+  copy.textContent = 'COPY CONFIGURATION';
+  copy.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
+      copy.textContent = 'COPIED';
+    } catch {
+      copy.textContent = 'COPY UNAVAILABLE';
+    }
+  });
+  const details = document.createElement('pre');
+  details.textContent = JSON.stringify(payload, null, 2);
+  details.style.cssText = 'white-space:pre-wrap;overflow-wrap:anywhere;font-size:10px;line-height:1.55;color:#c3c5c4;background:#17191b;padding:14px;margin-top:16px;max-height:260px;overflow:auto';
+  message.append(title, note, copy, details);
   message.scrollIntoView({ behavior: 'smooth', block: 'center' });
 });
 
