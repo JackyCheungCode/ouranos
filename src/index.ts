@@ -130,7 +130,7 @@ async function modelRequest(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
   if (request.method !== 'GET') return json({ error: 'METHOD_NOT_ALLOWED' }, 405);
   if (url.pathname === '/api/models') {
-    const objects: R2Object[] = [];
+    const objects: ModelsBucketObject[] = [];
     let cursor: string | undefined;
     do {
       const listed = await env.MODELS_BUCKET.list({ prefix: 'models/', limit: 1000, ...(cursor ? { cursor } : {}) });
