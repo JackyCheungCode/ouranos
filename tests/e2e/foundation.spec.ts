@@ -57,7 +57,10 @@ test('Home overlay navigation and image tiles use the dark PDS scheme', async ({
   await page.goto('/');
   const header = page.locator('header');
   await expect(header).toHaveCSS('color-scheme', 'dark');
-  await expect(header.locator('a[aria-label="Ouranos Home"]').first()).toHaveCSS('color', 'rgb(255, 255, 255)');
+  await expect(header.locator('a[aria-label="Ouranos Home"]').first()).toHaveCSS(
+    'color',
+    'rgb(255, 255, 255)',
+  );
   await expect(header.locator('p-button-pure')).toHaveAttribute('color', 'primary');
 
   for (const tile of [
