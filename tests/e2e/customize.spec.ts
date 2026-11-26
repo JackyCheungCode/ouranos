@@ -34,7 +34,7 @@ async function choose(page: Page, selector: string, value: string) {
 
 async function chooseMarket(page: Page) {
   await expect(page.locator('#market')).toBeEnabled();
-  await choose(page, '#market', 'usdm');
+  await chooseMarket(page);
 }
 
 test('Configurator retrieves USDM fitment and maps staggered front/rear specifications', async ({ page }) => {
@@ -48,6 +48,10 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
   await expect(page.locator('#market')).toBeEnabled();
   await expect(page.locator('#market')).toHaveJSProperty('value', '');
   await chooseMarket(page);
+  await expect(page.locator('#market')).toContainText('USA+');
+  await expect(page.locator('#market')).toContainText('Canada');
+  await expect(page.locator('#market')).not.toContainText('Europe');
+  await expect(page.locator('#make option[value="porsche"]')).toHaveCount(1);
   await expect(page.locator('#manufacturer-trigger')).toBeVisible();
 
   await choose(page, '#make', 'porsche');
@@ -87,8 +91,9 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
 test('Selecting a manufacturer from the logo menu loads its models', async ({ page }) => {
   await mockWheelSize(page);
   await page.goto('/customize/');
-  await choose(page, '#market', 'usdm');
+  await chooseMarket(page);
   await page.locator('#manufacturer-trigger').click();
+  await expect(page.locator('.manufacturer-option').filter({ hasText: 'Porsche' })).toBeVisible();
   await page.locator('.manufacturer-option').filter({ hasText: 'Porsche' }).click();
   await expect(page.locator('#model')).toBeEnabled();
   await expect(page.locator('#model')).toContainText('911');
@@ -123,7 +128,7 @@ test('Vehicle step can be skipped and manual wheel dimensions remain available',
     }) });
   });
   await page.goto('/customize/');
-  await choose(page, '#market', 'usdm');
+  await chooseMarket(page);
   await expect(page.locator('#api-status')).toContainText('WHEEL SIZE KEY NOT CONFIGURED');
   await page.locator('#skip-vehicle').click();
   await expect(page.locator('[data-panel="1"]')).toBeVisible();
@@ -141,9 +146,10 @@ test('Manufacturer options include a compact logo and step navigation stays read
   await mockWheelSize(page);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/customize/');
-  await choose(page, '#market', 'usdm');
+  await chooseMarket(page);
   await page.locator('#manufacturer-trigger').click();
   await expect(page.locator('#manufacturer-menu')).toBeVisible();
+  await expect(page.locator('.manufacturer-option').filter({ hasText: 'Porsche' })).toBeVisible();
   await expect(page.locator('.manufacturer-option')).toContainText('Porsche');
   await expect(page.locator('.manufacturer-option-logo img')).toHaveAttribute('src', /cdn\.simpleicons\.org/);
   const stepper = page.locator('#config-stepper');
@@ -163,7 +169,7 @@ test('Manufacturer options include a compact logo and step navigation stays read
 test('Configurator prepares a downloadable engineering specification', async ({ page }) => {
   await mockWheelSize(page);
   await page.goto('/customize/');
-  await choose(page, '#market', 'usdm');
+  await chooseMarket(page);
   await choose(page, '#make', 'porsche');
   await choose(page, '#model', '911');
   await choose(page, '#year', '2024');
