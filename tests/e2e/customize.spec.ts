@@ -43,7 +43,7 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
   await mockWheelSize(page);
   await page.goto('/customize/');
 
-  await expect(page).toHaveTitle('Ouranos | Bespoke Forged Wheel Studio');
+  await expect(page).toHaveTitle('Ouranos | Wheel Atelier');
   await expect(page.getByRole('heading', { name: /Find your vehicle/i })).toBeVisible();
   await expect(page.locator('#market')).toBeEnabled();
   await expect(page.locator('#market')).toHaveJSProperty('value', '');
@@ -156,7 +156,7 @@ test('Manufacturer options include a compact logo and step navigation stays read
   const stepper = page.locator('.configuration-panel #config-stepper');
   await expect(stepper).toBeVisible();
   await expect(stepper).toHaveAttribute('size', 'medium');
-  await expect(stepper.locator('p-stepper-horizontal-item')).toHaveText(['Vehicle', 'Dimensions', 'Finish', 'Review']);
+  await expect(stepper.locator('p-stepper-horizontal-item')).toHaveCount(4);\n  const stepLabels = await stepper.locator('p-stepper-horizontal-item').evaluateAll((items) => items.map((item) => (item.textContent || '').replace(/current:/gi, '').trim()));\n  expect(stepLabels).toEqual(['Vehicle', 'Dimensions', 'Finish', 'Review']);
   const stepperMetrics = await stepper.evaluate((element) => {
     const panel = element.parentElement;
     if (!panel) throw new Error('Stepper is not inside the configuration panel');
