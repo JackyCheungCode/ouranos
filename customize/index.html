@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en" class="scheme-dark bg-canvas">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Create a bespoke forged wheel configuration with Ouranos.">
+    <title>Ouranos | Bespoke Forged Wheel Studio</title>
+  </head>
+  <body>
+    <!-- OURANOS:HEADER -->
+    <main class="customizer-shell">
+      <section class="customizer-intro">
+        <p class="eyebrow">OURANOS BESPOKE PROGRAMME</p>
+        <p-heading tag="h1" size="2xl">Your vision.<br>Precisely forged.</p-heading>
+        <p class="intro-copy">A considered process for creating a forged wheel configuration that is distinctly yours.</p>
+      </section>
+
+      <section class="studio-grid" aria-label="Bespoke wheel configurator">
+        <div class="preview-panel">
+          <div class="preview-topline">
+            <span>LIVE CONFIGURATION</span>
+            <span id="preview-status">CONCEPT MODEL</span>
+          </div>
+          <div class="wheel-stage" id="wheel-stage">
+            <canvas id="wheel-canvas" aria-label="Interactive three-dimensional forged wheel preview"></canvas>
+            <div class="preview-fallback" id="preview-fallback" hidden>
+              <div class="fallback-wheel" id="fallback-wheel"><span></span></div>
+              <p>Interactive wheel preview</p>
+            </div>
+            <div class="stage-hint"><span class="hint-dot"></span> DRAG TO ROTATE · SCROLL TO ZOOM</div>
+          </div>
+          <div class="preview-caption">
+            <div><span class="micro-label">YOUR DESIGN</span><strong id="preview-design">AERO / 10 SPOKE</strong></div>
+            <div><span class="micro-label">CONSTRUCTION</span><strong>MONOBLOCK FORGED</strong></div>
+          </div>
+          <div class="preview-swatches" id="quick-swatches" aria-label="Quick finish preview">
+            <button class="swatch active" data-finish="satin-black" aria-label="Satin black" title="Satin Black"></button>
+            <button class="swatch" data-finish="brushed-titanium" aria-label="Brushed titanium" title="Brushed Titanium"></button>
+            <button class="swatch" data-finish="gloss-silver" aria-label="Gloss silver" title="Gloss Silver"></button>
+            <button class="swatch" data-finish="bronze" aria-label="Bronze" title="Bronze"></button>
+          </div>
+        </div>
+
+        <div class="configuration-panel">
+          <div class="config-heading">
+            <div><p class="eyebrow">THE CONFIGURATOR</p><p-heading tag="h2" size="lg">Create your specification</p-heading></div>
+            <span class="step-counter" id="step-counter">01 / 04</span>
+          </div>
+          <nav class="step-navigation" aria-label="Configuration steps">
+            <button class="step-tab active" data-step="0"><span>01</span> Design</button>
+            <button class="step-tab" data-step="1"><span>02</span> Dimensions</button>
+            <button class="step-tab" data-step="2"><span>03</span> Finish</button>
+            <button class="step-tab" data-step="3"><span>04</span> Vehicle</button>
+          </nav>
+
+          <form id="config-form">
+            <section class="config-step active" data-panel="0">
+              <p class="step-kicker">01 — FORM & CHARACTER</p>
+              <h3>Choose your design language.</h3>
+              <p class="step-description">Select the foundation of your bespoke forged wheel. Final spoke geometry and construction feasibility are confirmed by our engineering team.</p>
+              <div class="choice-grid design-grid">
+                <button type="button" class="design-choice selected" data-design="Aero / 10 Spoke"><span class="design-art aero"></span><strong>Aero</strong><small>10-spoke · Sculpted</small></button>
+                <button type="button" class="design-choice" data-design="Cross / 5 Twin Spoke"><span class="design-art cross"></span><strong>Cross</strong><small>5-twin spoke · Technical</small></button>
+                <button type="button" class="design-choice" data-design="Mono / 6 Spoke"><span class="design-art mono"></span><strong>Mono</strong><small>6-spoke · Architectural</small></button>
+                <button type="button" class="design-choice" data-design="Mesh / Multi Spoke"><span class="design-art mesh"></span><strong>Mesh</strong><small>Multi-spoke · Heritage</small></button>
+              </div>
+              <div class="field-block">
+                <label for="construction">Construction</label>
+                <div class="locked-choice"><span><strong>Forged</strong><small>Precision-machined monoblock concept</small></span><span class="lock-mark">SELECTED</span></div>
+              </div>
+              <div class="field-block">
+                <label for="design-notes">Design direction <span>OPTIONAL</span></label>
+                <textarea id="design-notes" rows="3" placeholder="Describe your preferred details, inspiration or references."></textarea>
+              </div>
+            </section>
+
+            <section class="config-step" data-panel="1">
+              <p class="step-kicker">02 — ENGINEERING PARAMETERS</p>
+              <h3>Define the dimensions.</h3>
+              <p class="step-description">Choose a starting specification. Final dimensions and fitment remain subject to vehicle data and engineering validation.</p>
+              <div class="field-grid">
+                <div class="field-block"><label for="diameter">Diameter</label><select id="diameter"><option>18</option><option>19</option><option selected>20</option><option>21</option><option>22</option><option>23</option></select><span class="field-unit">INCH</span></div>
+                <div class="field-block"><label for="width">Width</label><select id="width"><option>8.0</option><option>8.5</option><option selected>9.0</option><option>9.5</option><option>10.0</option><option>10.5</option><option>11.0</option><option>12.0</option></select><span class="field-unit">INCH</span></div>
+                <div class="field-block"><label for="offset">Offset (ET)</label><input id="offset" type="number" placeholder="e.g. 35"><span class="field-unit">MM</span></div>
+                <div class="field-block"><label for="pcd">Bolt pattern (PCD)</label><input id="pcd" type="text" placeholder="e.g. 5 × 112"></div>
+                <div class="field-block"><label for="bore">Centre bore</label><input id="bore" type="number" placeholder="e.g. 66.6"><span class="field-unit">MM</span></div>
+                <div class="field-block"><label for="load">Load requirement</label><input id="load" type="number" placeholder="Optional"><span class="field-unit">KG / WHEEL</span></div>
+              </div>
+              <div class="engineering-note"><span>i</span><p>These are requested values, not a fitment approval. Our engineering team will review brake clearance, load rating and vehicle-specific requirements before production.</p></div>
+            </section>
+
+            <section class="config-step" data-panel="2">
+              <p class="step-kicker">03 — MATERIAL EXPRESSION</p>
+              <h3>Choose your finish.</h3>
+              <p class="step-description">A considered palette of finishes. Final appearance may vary with lighting, substrate and production samples.</p>
+              <div class="finish-list">
+                <button type="button" class="finish-choice selected" data-finish="satin-black"><span class="finish-chip satin-black"></span><span><strong>Satin Black</strong><small>Understated · Contemporary</small></span><span class="radio-indicator"></span></button>
+                <button type="button" class="finish-choice" data-finish="brushed-titanium"><span class="finish-chip brushed-titanium"></span><span><strong>Brushed Titanium</strong><small>Machined · Technical</small></span><span class="radio-indicator"></span></button>
+                <button type="button" class="finish-choice" data-finish="gloss-silver"><span class="finish-chip gloss-silver"></span><span><strong>Gloss Silver</strong><small>Bright · Timeless</small></span><span class="radio-indicator"></span></button>
+                <button type="button" class="finish-choice" data-finish="bronze"><span class="finish-chip bronze"></span><span><strong>Champagne Bronze</strong><small>Warm · Distinctive</small></span><span class="radio-indicator"></span></button>
+              </div>
+              <div class="field-block"><label for="finish-notes">Special finish request <span>OPTIONAL</span></label><textarea id="finish-notes" rows="3" placeholder="Custom colour reference, gloss level, machining details..."></textarea></div>
+            </section>
+
+            <section class="config-step" data-panel="3">
+              <p class="step-kicker">04 — VEHICLE & INTENT</p>
+              <h3>What will it be made for?</h3>
+              <p class="step-description">Vehicle details help our team assess the specification. This submission is a request for review, not an instant fitment confirmation.</p>
+              <div class="field-grid">
+                <div class="field-block"><label for="make">Vehicle make</label><input id="make" type="text" placeholder="e.g. Porsche"></div>
+                <div class="field-block"><label for="model">Model</label><input id="model" type="text" placeholder="e.g. 911 Carrera"></div>
+                <div class="field-block"><label for="year">Model year</label><input id="year" type="number" placeholder="e.g. 2025"></div>
+                <div class="field-block"><label for="variant">Trim / variant</label><input id="variant" type="text" placeholder="e.g. GTS"></div>
+              </div>
+              <div class="field-block"><label for="vehicle-mods">Vehicle modifications <span>OPTIONAL</span></label><textarea id="vehicle-mods" rows="3" placeholder="Brakes, suspension, bodywork or other modifications."></textarea></div>
+              <div class="field-block"><label for="special-requests">Bespoke requirements</label><textarea id="special-requests" rows="4" placeholder="Tell us what you have in mind — custom dimensions, unique detailing or a specific design direction."></textarea></div>
+              <div class="field-grid contact-grid">
+                <div class="field-block"><label for="customer-name">Your name</label><input id="customer-name" type="text" autocomplete="name" required placeholder="Full name"></div>
+                <div class="field-block"><label for="customer-email">Email address</label><input id="customer-email" type="email" autocomplete="email" required placeholder="name@example.com"></div>
+              </div>
+            </section>
+            <div class="form-actions">
+              <button type="button" class="back-button" id="back-button" disabled>BACK</button>
+              <button type="button" class="next-button" id="next-button">CONTINUE <span>→</span></button>
+              <button type="submit" class="next-button submit-button" id="submit-button" hidden>REQUEST A BESPOKE REVIEW <span>→</span></button>
+            </div>
+          </form>
+          <p class="privacy-note">No payment. No commitment. Every bespoke specification is reviewed by our team.</p>
+        </div>
+      </section>
+
+      <section class="summary-section">
+        <div><p class="eyebrow">A PERSONAL SPECIFICATION</p><p-heading tag="h2" size="lg">Every detail, considered.</p-heading></div>
+        <div class="summary-grid" id="summary-grid">
+          <div><span>DESIGN</span><strong id="summary-design">Aero / 10 Spoke</strong></div>
+          <div><span>CONSTRUCTION</span><strong>Forged</strong></div>
+          <div><span>DIMENSION</span><strong id="summary-dimension">20 × 9.0 in</strong></div>
+          <div><span>FINISH</span><strong id="summary-finish">Satin Black</strong></div>
+        </div>
+      </section>
+      <div class="submission-message" id="submission-message" role="status" hidden></div>
+    </main>
+    <!-- OURANOS:FOOTER -->
+    <script type="module" src="/src/pages/customize/main.js"></script>
+  </body>
+</html>
