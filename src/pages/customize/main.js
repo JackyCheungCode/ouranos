@@ -55,7 +55,6 @@ function syncSummary() {
   $('#summary-design').textContent = state.design;
   $('#summary-dimension').textContent = `${state.diameter} × ${state.width} in`;
   $('#summary-finish').textContent = finishNames[state.finish];
-  $('#preview-status').textContent = 'CONCEPT MODEL';
   saveDraft();
 }
 
