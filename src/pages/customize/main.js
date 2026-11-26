@@ -85,7 +85,7 @@ $$('#config-form input, #config-form textarea, #config-form select, #config-form
 $('#config-form').addEventListener('submit', (event) => {
   event.preventDefault();
   const payload = {
-    model: 'sport_alloy_wheel_rim.glb', construction: 'Forged', diameter_in: $('#diameter').value,
+    model: 'sport_alloy_wheel_rim.glb', asset_type: 'GLB test asset', diameter_in: $('#diameter').value,
     width_in: $('#width').value, offset_et_mm: $('#offset').value || null,
     pcd: $('#pcd').value || null, centre_bore_mm: $('#bore').value || null,
     load_requirement_kg: $('#load').value || null, color: colorNames[state.color], surface_treatment: surfaceNames[state.surface],
