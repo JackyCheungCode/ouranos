@@ -185,31 +185,10 @@ body {
   border-bottom: 1px solid var(--studio-line);
   margin: 26px 0 30px;
 }
-.step-tab {
-  background: none;
-  border: 0;
-  border-bottom: 2px solid transparent;
-  color: #777d80;
-  padding: 0 3px 14px;
-  font-size: 11px;
-  cursor: pointer;
-  text-align: left;
-  white-space: nowrap;
-}
-.step-tab span {
-  display: block;
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  margin-bottom: 8px;
-  color: #777d80;
-}
-.step-tab.active {
-  border-color: #c8b89c;
-  color: #f5f3ee;
-}
-.step-tab.active span {
-  color: #c8b89c;
-}
+.step-navigation { margin: 26px 0 30px; }
+
+
+
 .config-step {
   display: none;
   min-height: 480px;
@@ -239,21 +218,8 @@ body {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
-.design-choice {
-  background: #202325;
-  border: 1px solid #383c3e;
-  color: #f1f0ec;
-  text-align: left;
-  padding: 12px;
-  cursor: pointer;
-  display: grid;
-  gap: 6px;
-}
-.design-choice.selected,
-.finish-choice.selected {
-  border-color: #c5b18e;
-  background: #252729;
-}
+.design-choice { width: 100%; min-height: 170px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+
 .design-choice strong,
 .finish-choice strong {
   font-size: 12px;
@@ -309,29 +275,9 @@ body {
   font-size: 9px;
   letter-spacing: 0.12em;
 }
-.field-block input,
-.field-block select,
-.field-block textarea {
-  width: 100%;
-  background: #202325;
-  border: 1px solid #424648;
-  border-radius: 2px;
-  color: #f3f1eb;
-  padding: 13px 14px;
-  font: inherit;
-  font-size: 13px;
-  outline: none;
-}
-.field-block input:focus,
-.field-block select:focus,
-.field-block textarea:focus {
-  border-color: #c5b18e;
-  box-shadow: 0 0 0 1px #c5b18e;
-}
-.field-block textarea {
-  resize: vertical;
-  line-height: 1.55;
-}
+.field-block > p-input-number, .field-block > p-input-text, .field-block > p-input-email, .field-block > p-select, .field-block > p-textarea { width: 100%; }
+
+
 .field-unit {
   position: absolute;
   right: 13px;
@@ -399,18 +345,7 @@ body {
   display: grid;
   gap: 8px;
 }
-.finish-choice {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  background: #202325;
-  border: 1px solid #383c3e;
-  color: #eee;
-  padding: 12px;
-  text-align: left;
-  cursor: pointer;
-}
+.finish-choice { width: 100%; display: flex; justify-content: flex-start; align-items: center; gap: 14px; }
 .finish-chip {
   width: 34px;
   height: 34px;
@@ -443,34 +378,8 @@ body {
   padding-top: 20px;
   margin-top: 18px;
 }
-.back-button,
-.next-button {
-  min-height: 48px;
-  padding: 0 20px;
-  font-size: 10px;
-  letter-spacing: 0.13em;
-  font-weight: 600;
-  cursor: pointer;
-}
-.back-button {
-  background: transparent;
-  border: 1px solid #515658;
-  color: #e5e3dc;
-}
-.back-button:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-.next-button {
-  background: #d8d1c4;
-  border: 1px solid #d8d1c4;
-  color: #171819;
-  min-width: 160px;
-}
-.next-button span {
-  font-size: 16px;
-  margin-left: 12px;
-}
+.back-button, 
+
 .submit-button {
   min-width: 240px;
 }
@@ -576,28 +485,4 @@ body {
   .configuration-panel {
     padding: 20px 16px;
   }
-  .step-tab {
-    font-size: 9px;
-  }
-  .step-navigation {
-    margin: 22px 0;
-  }
-  .field-grid {
-    gap: 0 10px;
-  }
-  .field-block input,
-  .field-block select {
-    padding: 12px 10px;
-  }
-  .submit-button {
-    min-width: 0;
-    font-size: 9px;
-    padding: 0 12px;
-  }
-  .preview-caption strong {
-    font-size: 9px;
-  }
-  .stage-hint {
-    font-size: 8px;
-  }
-}
+  .step-navigation { margin: 26px 0 30px; }
