@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test('production shell serves the application root and compiled styles', async ({ page, request }) => {
+test('Cloudflare Worker serves the application root and compiled PDS styles', async ({ page, request }) => {
   const pageErrors: string[] = [];
   page.on('pageerror', (error) => pageErrors.push(error.message));
 
@@ -15,13 +15,17 @@ test('production shell serves the application root and compiled styles', async (
 
   const cssResponse = await request.get(new URL(stylesheetUrl!, page.url()).toString());
   expect(cssResponse.ok()).toBeTruthy();
-  const css = await cssResponse.text();
-  expect(css).toContain('--pds-');
-
+  expect(await cssResponse.text()).toContain('--pds-');
   expect(pageErrors).toEqual([]);
 });
 
 test('PDS font preload links are emitted into the document head', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('head link[rel="preload"][as="font"]').first()).toHaveCount(1);
+});
+
+test('Worker applies SPA fallback for unknown client-side paths', async ({ request }) => {
+  const response = await request.get('/__ouranos_infrastructure_smoke_test__');
+  expect(response.ok()).toBeTruthy();
+  expect(await response.text()).toContain('<div id="root"></div>');
 });

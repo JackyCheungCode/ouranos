@@ -7,13 +7,13 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI ? 'github' : 'list',
   use: {
-    baseURL: 'http://127.0.0.1:4173',
+    baseURL: 'http://127.0.0.1:8787',
     trace: 'retain-on-failure',
     ...devices['Desktop Chrome'],
   },
   webServer: {
-    command: 'npm run preview -- --host 127.0.0.1 --port 4173 --strictPort',
-    url: 'http://127.0.0.1:4173',
+    command: 'npm run dev:worker',
+    url: 'http://127.0.0.1:8787',
     reuseExistingServer: !process.env.CI,
     timeout: 30_000,
   },

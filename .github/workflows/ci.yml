@@ -24,22 +24,29 @@ jobs:
         with:
           node-version: 22
 
-      - name: Bootstrap and commit npm lockfile
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && hashFiles('package-lock.json') == ''
+      - name: Sync and commit npm lockfile
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           npm install --package-lock-only --ignore-scripts --no-audit --no-fund
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add package-lock.json
-          git commit -m "chore: add npm dependency lockfile"
-          git push
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: sync npm dependency lockfile"
+            git push
+          fi
 
-      - name: Generate lockfile for pull request validation when absent
-        if: hashFiles('package-lock.json') == ''
+      - name: Generate lockfile for pull request validation
+        if: github.event_name == 'pull_request'
         run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
 
       - name: Install locked dependencies
         run: npm ci
+
+      - name: Dependency audit summary
+        run: |
+          npm audit --json > npm-audit.json || true
+          node -e "const a=require('./npm-audit.json'); console.log(JSON.stringify({vulnerabilities:a.metadata?.vulnerabilities, packages:Object.entries(a.vulnerabilities||{}).map(([name,v])=>({name,severity:v.severity,isDirect:v.isDirect,range:v.range,fixAvailable:v.fixAvailable}))}, null, 2))"
 
       - name: Lint
         run: npm run lint
@@ -59,7 +66,7 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Browser smoke tests
+      - name: Browser smoke tests against local Worker
         run: npm run test:e2e
 
       - name: Cloudflare Worker dry run
