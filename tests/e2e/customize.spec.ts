@@ -2,9 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 
 async function mockWheelSize(page: Page) {
   await page.route('**/api/models', async (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ models: [{ key: 'models/test-wheel.glb', name: 'Test Wheel', size: 1024, url: '/api/models/file?key=models%2Ftest-wheel.glb' }] }) }));
-  await page.route('**/api/models/file**', async (route) => route.fulfill({ status: 503, body: 'Preview fixture' }));
   await page.route('**/api/models', async (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ models: [{ key: 'models/test-wheel.glb', name: 'Test Wheel', size: 1024, url: '/api/models/file?key=models%2Ftest-wheel.glb' }] }) }));
-  await page.route('**/api/models/file**', async (route) => route.fulfill({ status: 503, body: 'Preview fixture' }));
   await page.route('**/api/wheel-size/**', async (route) => {
     const url = new URL(route.request().url());
     const path = url.pathname;
@@ -129,7 +127,6 @@ test('Configurator hero is full bleed and model zoom controls remain available o
 
 test('Vehicle step can be skipped and manual wheel dimensions remain available', async ({ page }) => {
   await page.route('**/api/models', async (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ models: [{ key: 'models/test-wheel.glb', name: 'Test Wheel', size: 1024, url: '/api/models/file?key=models%2Ftest-wheel.glb' }] }) }));
-  await page.route('**/api/models/file**', async (route) => route.fulfill({ status: 503, body: 'Preview fixture' }));
   await page.route('**/api/wheel-size/**', async (route) => {
     const url = new URL(route.request().url());
     if (url.pathname.endsWith('/regions')) {
