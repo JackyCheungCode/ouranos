@@ -180,12 +180,6 @@ body {
 .step-counter {
   white-space: nowrap;
 }
-.step-navigation {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  border-bottom: 1px solid var(--studio-line);
-  margin: 26px 0 30px;
-}
 
 .config-step {
   display: none;
@@ -517,9 +511,6 @@ body {
     padding: 20px 16px;
   }
 
-  .step-navigation {
-    margin: 22px 0;
-  }
   .field-grid {
     gap: 0 10px;
   }
@@ -695,16 +686,6 @@ body {
 .configuration-panel {
   width: 100%;
 }
-.step-navigation {
-  width: 100%;
-  min-width: 0;
-}
-.step-navigation > * {
-  min-width: 0;
-}
-.step-navigation p-stepper-horizontal-item {
-  min-width: 0;
-}
 .field-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -792,13 +773,6 @@ body {
   }
   .field-grid .field-block {
     margin-top: 16px;
-  }
-  .step-navigation {
-    margin: 20px 0 24px;
-  }
-  .step-navigation p-stepper-horizontal-item {
-    overflow-wrap: anywhere;
-    font-size: 11px;
   }
   .form-actions {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -951,17 +925,13 @@ html, body { margin: 0; min-height: 100%; background: var(--studio-bg); }
   .form-actions .submit-button { grid-column:1; }
 }
 
-.step-navigation { grid-template-columns:repeat(4,minmax(0,1fr)); }
-.step-navigation p-stepper-horizontal-item { min-width:0; overflow-wrap:anywhere; }
 @media (max-width:640px) {
-  .step-navigation p-stepper-horizontal-item { font-size:9px; }
 }
 
 /* Focused configurator refinements */
 .zoom-controls { flex-direction:column; align-items:stretch; gap:7px; }
 .zoom-controls button { min-width:42px; width:42px; height:42px; padding:0; font-size:20px; }
 .zoom-controls button:last-child { width:42px; min-height:42px; font-size:9px; }
-.step-navigation p-stepper-horizontal-item { min-height:54px; padding:10px 8px; font-size:13px; line-height:1.35; white-space:normal; }
 .manufacturer-select { position:relative; flex:1; min-width:0; }
 .manufacturer-select > select { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 .manufacturer-trigger { display:flex; align-items:center; gap:12px; width:100%; min-height:48px; padding:7px 12px; border:1px solid #62696b; background:#24292b; color:#f2f1ed; text-align:left; font:inherit; cursor:pointer; }
@@ -975,15 +945,11 @@ html, body { margin: 0; min-height: 100%; background: var(--studio-bg); }
 .manufacturer-option:last-child { border-bottom:0; }
 .manufacturer-option:hover,.manufacturer-option[aria-selected="true"] { background:#303638; }
 .manufacturer-option-logo { width:42px; height:32px; }
-.step-navigation-wrap { width:min(1600px, calc(100% - clamp(28px, 6vw, 112px))); margin:0 auto 26px; }
-.step-navigation-wrap .step-navigation { width:100%; margin:0; grid-template-columns:repeat(4,minmax(0,1fr)); }
 .step-skip-row { display:flex; justify-content:flex-end; width:100%; margin:0 0 8px; }
 .skip-vehicle-button { display:inline-flex; align-items:center; gap:6px; padding:5px 0; border:0; border-bottom:1px solid #8e8067; background:transparent; color:#c7b99e; text-align:right; font-size:10px; font-weight:600; letter-spacing:.07em; white-space:nowrap; cursor:pointer; }
 .skip-vehicle-button:hover { color:#f2f1ed; border-color:#f2f1ed; }
 .skip-vehicle-button:focus-visible,.manufacturer-trigger:focus-visible,.manufacturer-option:focus-visible { outline:2px solid #c5b18e; outline-offset:2px; }
 @media (max-width:640px) {
-  .step-navigation { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
-  .step-navigation p-stepper-horizontal-item { min-height:48px; padding:9px 8px; font-size:12px; }
   .zoom-controls { right:12px; bottom:12px; gap:8px; }
   .zoom-controls button,.zoom-controls button:last-child { width:42px; min-width:42px; height:42px; min-height:42px; }
 }
@@ -998,7 +964,13 @@ html, body { margin: 0; min-height: 100%; background: var(--studio-bg); }
 }
 .manufacturer-current-logo img[hidden],.manufacturer-option-logo img[hidden] { display:none; }
 @media (max-width:640px) {
-  .step-navigation-wrap { width:calc(100% - 28px); margin-bottom:22px; }
-  .step-navigation-wrap .step-navigation { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; }
-  .step-navigation-wrap .step-navigation p-stepper-horizontal-item { min-width:0; min-height:52px; padding:8px 5px; font-size:12px; line-height:1.25; overflow-wrap:anywhere; }
+}
+
+
+/* Keep the stepper as a native Porsche Design System component. */
+.configuration-panel > .step-navigation {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  margin: 0 0 24px;
 }
