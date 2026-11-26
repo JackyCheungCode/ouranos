@@ -22,4 +22,6 @@ header p-button-pure {
 /* PDS Link Tile renders its media overlay in the dark scheme by design. */
 p-link-tile {
   color-scheme: dark;
+  color: var(--p-color-primary);
 }
+
