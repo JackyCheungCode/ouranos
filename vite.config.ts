@@ -145,7 +145,11 @@ function templatePartials() {
         getJsFontLinks(),
         getJsIconLinks(),
         getJsMetaTagsAndIconLinks({
-          appTitle: isHome ? 'Ouranos | Home' : isCustomizer ? 'Ouranos | Bespoke Wheel Studio' : 'Ouranos Admin Panel',
+          appTitle: isHome
+            ? 'Ouranos | Home'
+            : isCustomizer
+              ? 'Ouranos | Bespoke Wheel Studio'
+              : 'Ouranos Admin Panel',
         }),
       ].join('');
       return html
