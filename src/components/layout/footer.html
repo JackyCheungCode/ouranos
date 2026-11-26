@@ -1,0 +1,158 @@
+<footer class="grid-template py-fluid-lg bg-surface">
+      <h2 class="sr-only">Ouranos footer</h2>
+      <form
+        class="col-extended grid xs:grid-cols-2 md:grid-cols-3 gap-fluid-md"
+        action="#"
+        onsubmit="return false;"
+        aria-label="Change your region"
+      >
+        <p-select name="region" value="de" label="Change your region">
+          <span slot="selected" class="h-full flex items-center gap-fluid-sm grow">
+            <p-flag name="de"></p-flag>
+            Germany
+          </span>
+          <p-optgroup label="Asia">
+            <p-select-option value="cn">
+              <p-flag name="cn"></p-flag>
+              China
+            </p-select-option>
+            <p-select-option value="jp">
+              <p-flag name="jp"></p-flag>
+              Japan
+            </p-select-option>
+            <p-select-option value="kr">
+              <p-flag name="kr"></p-flag>
+              South Korea
+            </p-select-option>
+          </p-optgroup>
+          <p-optgroup label="Europe">
+            <p-select-option value="at">
+              <p-flag name="at"></p-flag>
+              Austria
+            </p-select-option>
+            <p-select-option value="fr">
+              <p-flag name="fr"></p-flag>
+              France
+            </p-select-option>
+            <p-select-option value="de">
+              <p-flag name="de"></p-flag>
+              Germany
+            </p-select-option>
+            <p-select-option value="gb">
+              <p-flag name="gb"></p-flag>
+              Great Britain
+            </p-select-option>
+            <p-select-option value="it">
+              <p-flag name="it"></p-flag>
+              Italy
+            </p-select-option>
+            <p-select-option value="pt">
+              <p-flag name="pt"></p-flag>
+              Portugal
+            </p-select-option>
+            <p-select-option value="es">
+              <p-flag name="es"></p-flag>
+              Spain
+            </p-select-option>
+          </p-optgroup>
+          <p-optgroup label="North America">
+            <p-select-option value="ca">
+              <p-flag name="ca"></p-flag>
+              Canada
+            </p-select-option>
+            <p-select-option value="us">
+              <p-flag name="us"></p-flag>
+              USA
+            </p-select-option>
+          </p-optgroup>
+        </p-select>
+      </form>
+      <nav
+        class="col-extended grid xs:grid-cols-2 md:grid-cols-3 gap-x-fluid-md gap-y-fluid-lg mt-fluid-sm mb-fluid-lg"
+        aria-label="Footer"
+      >
+        <div class="flex flex-col gap-fluid-sm">
+          <p-heading id="heading-footer-1" tag="h3" size="2xs" color="contrast-medium">Legal Services</p-heading>
+          <ul class="grid gap-fluid-sm">
+            <li>
+              <p-link-pure icon="none"><a href="#">Terms and Conditions</a></p-link-pure>
+            </li>
+            <li>
+              <p-link-pure icon="none"><a href="#">Privacy Notice</a></p-link-pure>
+            </li>
+            <li>
+              <p-link-pure icon="none"><a href="#">California Privacy</a></p-link-pure>
+            </li>
+            <li>
+              <p-link-pure icon="none"><a href="#">Imprint and Legal Notice</a></p-link-pure>
+            </li>
+            <li>
+              <p-link-pure icon="none"><a href="#">Accessibility Statement</a></p-link-pure>
+            </li>
+            <li>
+              <p-link-pure icon="none"><a href="#">Open Source Software Notice</a></p-link-pure>
+            </li>
+          </ul>
+        </div>
+        <div class="flex flex-col gap-fluid-sm">
+          <p-heading tag="h3" size="2xs" color="contrast-medium">Ouranos</p-heading>
+          <ul class="grid gap-fluid-sm">
+            <li>
+              <p-link-pure icon="none"><a href="#">Press</a></p-link-pure>
+            </li>
+            <li>
+              <p-link-pure icon="none"><a href="#">Jobs and Careers</a></p-link-pure>
+            </li>
+            <li>
+              <p-link-pure icon="none"><a href="#">Ouranos</a></p-link-pure>
+            </li>
+            <li>
+              <p-link-pure icon="none"><a href="#">Data Privacy</a></p-link-pure>
+            </li>
+            <li>
+              <p-link-pure icon="none"><a href="#">Timepieces Warranty & Service</a></p-link-pure>
+            </li>
+          </ul>
+        </div>
+        <div class="flex flex-col gap-fluid-sm">
+          <p-heading tag="h3" size="2xs" color="contrast-medium">Support</p-heading>
+          <ul class="grid gap-fluid-sm">
+            <li>
+              <p-link-pure icon="none"><a href="#">Fitment Guide</a></p-link-pure>
+            </li>
+            <li>
+              <p-link-pure icon="none"><a href="#">Ouranos Homepage</a></p-link-pure>
+            </li>
+            <li>
+              <p-link-pure icon="none"><a href="#">Wheel Fitment Guide</a></p-link-pure>
+            </li>
+            <li>
+              <p-link-pure icon="none"><a href="#">Wheel Collections</a></p-link-pure>
+            </li>
+            <li>
+              <p-link-pure icon="none"><a href="#">Compare Wheel Designs</a></p-link-pure>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <div class="col-extended grid gap-fluid-md justify-items-center mt-fluid-md">
+        <a class="font-semibold tracking-[0.2em]" href="/" aria-label="Ouranos Home">OURANOS</a>
+        <p-text size="2xs" color="contrast-medium">© 2026 Ouranos. All rights reserved.</p-text>
+        <ul class="flex flex-wrap justify-center gap-fluid-md">
+          <li>
+            <p-link-pure icon="none" size="xs" underline="true"><a href="#">Legal notice</a></p-link-pure>
+          </li>
+          <li>
+            <p-link-pure icon="none" size="xs" underline="true"><a href="#">Privacy notice</a></p-link-pure>
+          </li>
+          <li>
+            <p-link-pure icon="none" size="xs" underline="true"><a href="#">Accessibility Statement</a></p-link-pure>
+          </li>
+          <li>
+            <p-link-pure icon="none" size="xs" underline="true">
+              <a href="#">Open Source Software Notice</a>
+            </p-link-pure>
+          </li>
+        </ul>
+      </div>
+    </footer>

@@ -13,6 +13,7 @@ import {
   getLoaderScript,
   getMetaTagsAndIconLinks as getJsMetaTagsAndIconLinks,
 } from '@porsche-design-system/components-js/partials';
+import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
@@ -35,13 +36,31 @@ function reactHeadPartials() {
   };
 }
 
+function sharedLayoutPartials() {
+  return {
+    name: 'ouranos-shared-layout-partials',
+    transformIndexHtml(html: string) {
+      if (!html.includes('<!-- OURANOS:HEADER -->') && !html.includes('<!-- OURANOS:FOOTER -->')) return html;
+
+      const readPartial = (name: string) =>
+        readFileSync(resolve(rootDir, 'src/components/layout', name), 'utf8');
+      const header = readPartial('header.html');
+      const topbar = readPartial('topbar.html').replace('<!-- OURANOS:SIDEBAR -->', readPartial('sidebar.html'));
+
+      return html
+        .replace('<!-- OURANOS:HEADER -->', header.replace('<!-- OURANOS:TOPBAR -->', topbar))
+        .replace('<!-- OURANOS:FOOTER -->', readPartial('footer.html'));
+    },
+  };
+}
+
 function templatePartials() {
   return {
     name: 'pds-template-partials',
     transformIndexHtml(html: string, context: { filename: string }) {
-      const isLanding = context.filename.includes('/landing-page/');
+      const isHome = context.filename === resolve(rootDir, 'index.html');
       const isAdmin = context.filename.includes('/admin-panel/');
-      if (!isLanding && !isAdmin) return html;
+      if (!isHome && !isAdmin) return html;
       const validChunks = new Set([
         'accordion',
         'ai-tag',
@@ -121,7 +140,7 @@ function templatePartials() {
         getJsFontLinks(),
         getJsIconLinks(),
         getJsMetaTagsAndIconLinks({
-          appTitle: isLanding ? 'Ouranos Landing Page' : 'Ouranos Admin Panel',
+          appTitle: isHome ? 'Ouranos | Home' : 'Ouranos Admin Panel',
         }),
       ].join('');
       return html
@@ -132,14 +151,13 @@ function templatePartials() {
 }
 
 export default defineConfig({
-  plugins: [react(), tailwindcss(), reactHeadPartials(), templatePartials()],
+  plugins: [react(), tailwindcss(), sharedLayoutPartials(), reactHeadPartials(), templatePartials()],
   build: {
     outDir: 'dist',
     emptyOutDir: true,
     rollupOptions: {
       input: {
         main: resolve(rootDir, 'index.html'),
-        landingPage: resolve(rootDir, 'landing-page/index.html'),
         adminPanel: resolve(rootDir, 'admin-panel/index.html'),
       },
     },
