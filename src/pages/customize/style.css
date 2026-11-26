@@ -138,7 +138,9 @@ body {
   gap: 10px;
   padding-top: 16px;
 }
-.swatch { cursor: pointer; }
+.swatch {
+  cursor: pointer;
+}
 .finish-chip {
   border: 1px solid #747779;
   border-radius: 50%;
@@ -185,9 +187,6 @@ body {
   margin: 26px 0 30px;
 }
 
-
-
-
 .config-step {
   display: none;
   min-height: 480px;
@@ -233,9 +232,16 @@ body {
   font-size: 10px;
   color: #92989a;
 }
-.design-choice { width: 100%; }
-.finish-choice { width: 100%; }
-.back-button, .next-button { min-width: 120px; }
+.design-choice {
+  width: 100%;
+}
+.finish-choice {
+  width: 100%;
+}
+.back-button,
+.next-button {
+  min-width: 120px;
+}
 .design-art {
   height: 86px;
   display: grid;
@@ -405,11 +411,6 @@ body {
   margin-top: 18px;
 }
 .back-button,
-
-
-
-
-
 .submit-button {
   min-width: 240px;
 }
@@ -515,7 +516,7 @@ body {
   .configuration-panel {
     padding: 20px 16px;
   }
-  
+
   .step-navigation {
     margin: 22px 0;
   }
