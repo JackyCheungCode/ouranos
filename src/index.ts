@@ -112,12 +112,18 @@ async function modelRequest(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
   if (request.method !== 'GET') return json({ error: 'METHOD_NOT_ALLOWED' }, 405);
   if (url.pathname === '/api/models') {
-    const listed = await env.MODELS_BUCKET.list({ prefix: 'models/', limit: 1000 });
-    const models = listed.objects.filter((object) => object.key.toLowerCase().endsWith('.glb') && object.size > 0).map((object) => ({
+    const objects: R2Object[] = [];
+    let cursor: string | undefined;
+    do {
+      const listed = await env.MODELS_BUCKET.list({ prefix: 'models/', limit: 1000, ...(cursor ? { cursor } : {}) });
+      objects.push(...listed.objects);
+      cursor = listed.truncated ? listed.cursor : undefined;
+    } while (cursor);
+    const models = objects.filter((object) => object.key.toLowerCase().endsWith('.glb') && object.size > 0).map((object) => ({
       key: object.key, name: object.key.slice(7).replace(/\.glb$/i, '').replace(/[_-]+/g, ' '),
       size: object.size, uploaded: object.uploaded.toISOString(), url: '/api/models/file?key=' + encodeURIComponent(object.key),
     }));
-    return json({ models, truncated: listed.truncated }, 200, { 'cache-control': 'public, max-age=60, s-maxage=300' });
+    return json({ models, truncated: false }, 200, { 'cache-control': 'public, max-age=60, s-maxage=300' });
   }
   if (url.pathname === '/api/models/file') {
     const key = url.searchParams.get('key') || '';
