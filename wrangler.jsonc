@@ -1,12 +1,17 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "ouranos",
-  "main": "src/index.js",
+  "main": "src/index.ts",
   "compatibility_date": "2026-11-26",
   "compatibility_flags": [
     "nodejs_compat"
   ],
   "workers_dev": true,
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  },
   "observability": {
     "enabled": true,
     "logs": {
