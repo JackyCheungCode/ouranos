@@ -141,7 +141,7 @@ $('#config-form').addEventListener('submit', (event) => {
 
 async function initWheel() {
   const canvas = $('#wheel-canvas');
-  $('#preview-status').textContent = 'LOADING TEST MODEL';
+  $('#preview-status').textContent = 'LOADING GLB';
   try {
     const THREE = await import('https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js');
     const { GLTFLoader } = await import('https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/GLTFLoader.js');
@@ -241,12 +241,10 @@ async function initWheel() {
         });
       },
     };
-    $('#preview-fallback').hidden = true;
-    $('#preview-status').textContent = 'GLB LOADED · ' + Math.round(buffer.byteLength / 1024) + ' KB';
+      $('#preview-status').textContent = 'GLB LOADED · ' + Math.round(buffer.byteLength / 1024) + ' KB';
   } catch (error) {
     console.error('Ouranos GLB preview failed:', error);
     canvas.hidden = false;
-    $('#preview-fallback').hidden = true;
     $('#preview-status').textContent = 'MODEL LOAD FAILED · ' + (error instanceof Error ? error.message : 'UNKNOWN ERROR');
   }
 }
