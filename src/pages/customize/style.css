@@ -139,13 +139,16 @@ body {
   padding-top: 16px;
 }
 .swatch { cursor: pointer; }
-.swatch.active { outline: 1px solid #eee; outline-offset: 3px; }
 .finish-chip {
   border: 1px solid #747779;
   border-radius: 50%;
   width: 34px;
   height: 34px;
   display: inline-block;
+}
+.swatch.active {
+  outline: 1px solid #eee;
+  outline-offset: 4px;
 }
 .satin-black {
   background: linear-gradient(135deg, #161719, #55585a 48%, #202224);
@@ -181,7 +184,7 @@ body {
   border-bottom: 1px solid var(--studio-line);
   margin: 26px 0 30px;
 }
-.step-navigation { margin: 26px 0 30px; }
+
 
 
 
@@ -214,8 +217,12 @@ body {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
-.design-choice { width: 100%; min-height: 170px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
 
+.design-choice.selected,
+.finish-choice.selected {
+  border-color: #c5b18e;
+  background: #252729;
+}
 .design-choice strong,
 .finish-choice strong {
   font-size: 12px;
@@ -226,6 +233,9 @@ body {
   font-size: 10px;
   color: #92989a;
 }
+.design-choice { width: 100%; }
+.finish-choice { width: 100%; }
+.back-button, .next-button { min-width: 120px; }
 .design-art {
   height: 86px;
   display: grid;
@@ -271,9 +281,29 @@ body {
   font-size: 9px;
   letter-spacing: 0.12em;
 }
-.field-block > p-input-number, .field-block > p-input-text, .field-block > p-input-email, .field-block > p-select, .field-block > p-textarea { width: 100%; }
-
-
+.field-block input,
+.field-block select,
+.field-block textarea {
+  width: 100%;
+  background: #202325;
+  border: 1px solid #424648;
+  border-radius: 2px;
+  color: #f3f1eb;
+  padding: 13px 14px;
+  font: inherit;
+  font-size: 13px;
+  outline: none;
+}
+.field-block input:focus,
+.field-block select:focus,
+.field-block textarea:focus {
+  border-color: #c5b18e;
+  box-shadow: 0 0 0 1px #c5b18e;
+}
+.field-block textarea {
+  resize: vertical;
+  line-height: 1.55;
+}
 .field-unit {
   position: absolute;
   right: 13px;
@@ -341,7 +371,7 @@ body {
   display: grid;
   gap: 8px;
 }
-.finish-choice { width: 100%; display: flex; justify-content: flex-start; align-items: center; gap: 14px; }
+
 .finish-chip {
   width: 34px;
   height: 34px;
@@ -374,7 +404,11 @@ body {
   padding-top: 20px;
   margin-top: 18px;
 }
-.back-button, 
+.back-button,
+
+
+
+
 
 .submit-button {
   min-width: 240px;
@@ -481,4 +515,26 @@ body {
   .configuration-panel {
     padding: 20px 16px;
   }
-  .step-navigation { margin: 26px 0 30px; }
+  
+  .step-navigation {
+    margin: 22px 0;
+  }
+  .field-grid {
+    gap: 0 10px;
+  }
+  .field-block input,
+  .field-block select {
+    padding: 12px 10px;
+  }
+  .submit-button {
+    min-width: 0;
+    font-size: 9px;
+    padding: 0 12px;
+  }
+  .preview-caption strong {
+    font-size: 9px;
+  }
+  .stage-hint {
+    font-size: 8px;
+  }
+}
