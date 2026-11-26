@@ -37,11 +37,13 @@ function restoreDraft() {
 
 function setStep(step) {
   state.step = Math.max(0, Math.min(3, step));
-  $$('.config-step').forEach((panel, index) => panel.classList.toggle('active', index === state.step));
-  $$('.step-tab').forEach((tab, index) => {
-    tab.classList.toggle('active', index === state.step);
-    tab.setAttribute('aria-current', index === state.step ? 'step' : 'false');
-  });
+  $('.config-step').forEach((panel, index) => panel.classList.toggle('active', index === state.step));
+  const stepper = $('#config-stepper');
+  if (stepper) {
+    stepper.querySelectorAll('p-stepper-horizontal-item').forEach((item, index) => {
+      item.state = index === state.step ? 'current' : index < state.step ? 'complete' : undefined;
+    });
+  }
   $('#step-counter').textContent = `0${state.step + 1} / 04`;
   $('#back-button').disabled = state.step === 0;
   $('#next-button').hidden = state.step === 3;
@@ -78,10 +80,11 @@ $$('.design-choice').forEach((button) => button.addEventListener('click', () => 
 $('.finish-choice, .swatch').forEach((button) => button.addEventListener('click', () => setFinish(button.dataset.finish)));
 ['diameter', 'width', 'offset', 'pcd', 'bore', 'load'].forEach((id) => {
   const el = document.getElementById(id);
-  el.addEventListener('input', () => { state[id] = el.value; syncSummary(); saveDraft(); });
+  el?.addEventListener('input', () => { state[id] = el.value; syncSummary(); saveDraft(); });
+  el?.addEventListener('change', () => { state[id] = el.value; syncSummary(); saveDraft(); });
 });
 
-$('#config-form input, #config-form textarea, #config-form select').forEach((field) => field.addEventListener('change', saveDraft));
+$('#config-form input, #config-form textarea, #config-form select, #config-form p-input-number, #config-form p-input-text, #config-form p-input-email, #config-form p-select, #config-form p-textarea').forEach((field) => field.addEventListener('change', saveDraft));
 
 $('#config-form').addEventListener('submit', (event) => {
   event.preventDefault();
@@ -140,6 +143,7 @@ $('#config-form').addEventListener('submit', (event) => {
 
 async function initWheel() {
   const canvas = $('#wheel-canvas');
+  $('#preview-status').textContent = 'LOADING TEST MODEL';
   try {
     const THREE = await import('https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js');
     const { GLTFLoader } = await import('https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/GLTFLoader.js');
@@ -157,7 +161,10 @@ async function initWheel() {
     const wheel = new THREE.Group(); scene.add(wheel);
 
     const loader = new GLTFLoader();
-    const gltf = await loader.loadAsync('https://pub-1b5295aa36194df7bb80c797f53c3d1b.r2.dev/models/sport_alloy_wheel_rim.glb');
+    const gltf = await Promise.race([
+      loader.loadAsync('https://pub-1b5295aa36194df7bb80c797f53c3d1b.r2.dev/models/sport_alloy_wheel_rim.glb'),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('GLB load timed out after 20 seconds')), 20000)),
+    ]);
     const model = gltf.scene;
     // The source GLB is authored with its axle along X; rotate it so the wheel face points toward the camera.
     model.rotation.y = Math.PI / 2;
@@ -226,10 +233,20 @@ async function initWheel() {
     canvas.hidden = true;
     $('#preview-fallback').hidden = false;
     $('#preview-status').textContent = 'PREVIEW UNAVAILABLE';
+    const errorText = document.createElement('p');
+    errorText.textContent = error instanceof Error ? error.message : 'Unknown preview error';
+    errorText.setAttribute('role', 'status');
+    $('#preview-fallback').append(errorText);
   }
 }
-restoreDraft();
-setStep(0);
-syncSummary();
-setFinish(state.finish);
-initWheel();
+try {
+  restoreDraft();
+  setStep(0);
+  syncSummary();
+  setFinish(state.finish);
+  initWheel();
+} catch (error) {
+  console.error('Ouranos configurator initialization failed:', error);
+  const status = $('#preview-status');
+  if (status) status.textContent = 'CONFIGURATOR ERROR';
+}
