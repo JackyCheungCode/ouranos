@@ -61,8 +61,8 @@ function syncSummary() {
 
 function setFinish(finish) {
   state.finish = finish;
-  $$$('.finish-choice').forEach((el) => el.classList.toggle('selected', el.dataset.finish === finish));
-  $$$('.swatch').forEach((el) => el.classList.toggle('active', el.dataset.finish === finish));
+  $$('.finish-choice').forEach((el) => el.classList.toggle('selected', el.dataset.finish === finish));
+  $$('.swatch').forEach((el) => el.classList.toggle('active', el.dataset.finish === finish));
   if (wheelScene) wheelScene.setFinish(finishColors[finish]);
   $('#fallback-wheel').style.borderColor = `#${finishColors[finish].toString(16).padStart(6, '0')}`;
   syncSummary();
@@ -71,7 +71,7 @@ function setFinish(finish) {
 $('#config-stepper').addEventListener('update', (event) => setStep(event.detail.activeStepIndex));
 $('#back-button').addEventListener('click', () => setStep(state.step - 1));
 $('#next-button').addEventListener('click', () => setStep(state.step + 1));
-$$$('.design-choice').forEach((button) => button.addEventListener('click', () => {
+$$('.design-choice').forEach((button) => button.addEventListener('click', () => {
   state.design = button.dataset.design;
   $$('.design-choice').forEach((el) => el.classList.toggle('selected', el === button));
   syncSummary();
