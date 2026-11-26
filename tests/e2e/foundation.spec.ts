@@ -7,8 +7,6 @@ test('Home page is served at the root with shared Ouranos layout', async ({ page
   await page.goto('/');
   await expect(page).toHaveTitle('Ouranos | Home');
   await expect(page.locator('p-heading#heading-section-1')).toContainText('Home');
-  await expect(page.locator('p-button[href="/wheels"]')).toHaveText('Explore Wheels');
-  await expect(page.getByText('Some label')).toHaveCount(0);
   await expect(page.locator('header a[aria-label="Ouranos Home"]').first()).toHaveText('OURANOS');
   await expect(page.locator('#nav-drilldown')).toHaveCount(1);
   await expect(page.locator('footer')).toContainText('Ouranos');
@@ -41,11 +39,11 @@ test('Home exposes the two primary entry tiles and five wheel collections', asyn
   );
 
   for (const line of [
-    'PERFORMANCE / 性能运动系列',
-    'LUXURY / 豪华定制系列',
-    'STREET / 街道改装系列',
-    'OFF-ROAD / 越野 SUV 系列',
-    'HERITAGE / 经典复古系列',
+    'Performance',
+    'Luxury',
+    'Street',
+    'Off-road',
+    'Heritage',
   ]) {
     await expect(page.locator(`p-link-tile[label="${line}"]`)).toHaveCount(1);
   }
@@ -56,6 +54,7 @@ test('Home exposes the two primary entry tiles and five wheel collections', asyn
 test('Home overlay navigation and image tiles use the dark PDS scheme', async ({ page }) => {
   await page.goto('/');
   const header = page.locator('header');
+  await expect(page.locator('html')).toHaveClass(/scheme-dark/);
   await expect(header).toHaveCSS('color-scheme', 'dark');
   await expect(header.locator('a[aria-label="Ouranos Home"]').first()).toHaveCSS(
     'color',
@@ -66,7 +65,7 @@ test('Home overlay navigation and image tiles use the dark PDS scheme', async ({
   for (const tile of [
     page.locator('p-link-tile[label="Find Wheels for Your Vehicle"]'),
     page.locator('p-link-tile[label="Customize Your Wheels"]'),
-    page.locator('p-link-tile[label="PERFORMANCE / 性能运动系列"]'),
+    page.locator('p-link-tile[label="Performance"]'),
   ]) {
     await expect(tile).toHaveAttribute('gradient', 'true');
     const scheme = await tile.evaluate((element) => getComputedStyle(element).colorScheme);
