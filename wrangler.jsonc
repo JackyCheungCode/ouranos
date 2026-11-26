@@ -19,5 +19,8 @@
       "invocation_logs": true
     }
   },
-  "r2_buckets": [\n    { "binding": "MODELS_BUCKET", "bucket_name": "ouranos-media" }\n  ],\n  "account_id": "ea4e98dce9c478d7dd5c07f10e5c722d"
+  "r2_buckets": [
+    { "binding": "MODELS_BUCKET", "bucket_name": "ouranos-media" }
+  ],
+  "account_id": "ea4e98dce9c478d7dd5c07f10e5c722d"
 }
