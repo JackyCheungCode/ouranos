@@ -60,10 +60,10 @@
               <h3>Choose your design language.</h3>
               <p class="step-description">Select the foundation of your bespoke forged wheel. Final spoke geometry and construction feasibility are confirmed by our engineering team.</p>
               <div class="choice-grid design-grid">
-                <button type="button" class="design-choice selected" data-design="Aero / 10 Spoke"><span class="design-art aero"></span><strong>Aero</strong><small>10-spoke · Sculpted</small></button>
-                <button type="button" class="design-choice" data-design="Cross / 5 Twin Spoke"><span class="design-art cross"></span><strong>Cross</strong><small>5-twin spoke · Technical</small></button>
-                <button type="button" class="design-choice" data-design="Mono / 6 Spoke"><span class="design-art mono"></span><strong>Mono</strong><small>6-spoke · Architectural</small></button>
-                <button type="button" class="design-choice" data-design="Mesh / Multi Spoke"><span class="design-art mesh"></span><strong>Mesh</strong><small>Multi-spoke · Heritage</small></button>
+                <p-button type="button" variant="secondary" class="design-choice selected" data-design="Aero / 10 Spoke"><span class="design-art aero"></span><strong>Aero</strong><small>10-spoke · Sculpted</small></p-button>
+                <p-button type="button" variant="secondary" class="design-choice" data-design="Cross / 5 Twin Spoke"><span class="design-art cross"></span><strong>Cross</strong><small>5-twin spoke · Technical</small></p-button>
+                <p-button type="button" variant="secondary" class="design-choice" data-design="Mono / 6 Spoke"><span class="design-art mono"></span><strong>Mono</strong><small>6-spoke · Architectural</small></p-button>
+                <p-button type="button" variant="secondary" class="design-choice" data-design="Mesh / Multi Spoke"><span class="design-art mesh"></span><strong>Mesh</strong><small>Multi-spoke · Heritage</small></p-button>
               </div>
               <div class="field-block">
                 <label for="construction">Construction</label>
@@ -116,7 +116,7 @@
               <div class="field-block"><label for="vehicle-mods">Vehicle modifications <span>OPTIONAL</span></label><p-textarea id="vehicle-mods" name="vehicle-mods" label="Vehicle modifications" rows="3" placeholder="Brakes, suspension, bodywork or other modifications."></p-textarea></div>
               <div class="field-block"><label for="special-requests">Bespoke requirements</label><p-textarea id="special-requests" name="special-requests" label="Bespoke requirements" rows="4" placeholder="Tell us what you have in mind — custom dimensions, unique detailing or a specific design direction."></p-textarea></div>
               <div class="field-grid contact-grid">
-                <div class="field-block"><label for="customer-name">Your name</label><input id="customer-name" type="text" autocomplete="name" required placeholder="Full name"></div>
+                <div class="field-block"><label for="customer-name">Your name</label><p-input-text id="customer-name" name="customer-name" label="Your name" autocomplete="name" required placeholder="Full name"></p-input-text></div>
                 <div class="field-block"><label for="customer-email">Email address</label><p-input-email id="customer-email" name="customer-email" label="Email address" autocomplete="email" required placeholder="name@example.com"></p-input-email></div>
               </div>
             </section>
