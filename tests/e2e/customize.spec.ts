@@ -5,7 +5,8 @@ async function mockWheelSize(page: Page) {
     const url = new URL(route.request().url());
     const path = url.pathname;
     let data: unknown[] = [];
-    if (path.endsWith('/makes')) data = [{ name: 'Porsche', slug: 'porsche' }];
+    if (path.endsWith('/regions')) data = [{ name: 'USA+', slug: 'usdm' }, { name: 'Canada', slug: 'cdm' }];
+    else if (path.endsWith('/makes')) data = [{ name: 'Porsche', slug: 'porsche' }];
     else if (path.endsWith('/models')) data = [{ name: '911', slug: '911' }];
     else if (path.endsWith('/years')) data = [{ name: '2024', slug: '2024' }];
     else if (path.endsWith('/modifications')) data = [{ name: 'Carrera GTS', slug: 'carrera-gts' }];
@@ -39,7 +40,9 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
 
   await expect(page).toHaveTitle('Ouranos | Bespoke Forged Wheel Studio');
   await expect(page.getByRole('heading', { name: /Find your vehicle/i })).toBeVisible();
-  await expect(page.locator('#market')).toHaveJSProperty('value', 'usdm');
+  await expect(page.locator('#market')).toBeEnabled();
+  await expect(page.locator('#market')).toHaveJSProperty('value', '');
+  await choose(page, '#market', 'usdm');
   await expect(page.locator('#manufacturer-trigger')).toBeVisible();
 
   await choose(page, '#make', 'porsche');
@@ -79,6 +82,7 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
 test('Selecting a manufacturer from the logo menu loads its models', async ({ page }) => {
   await mockWheelSize(page);
   await page.goto('/customize/');
+  await choose(page, '#market', 'usdm');
   await page.locator('#manufacturer-trigger').click();
   await page.locator('.manufacturer-option').filter({ hasText: 'Porsche' }).click();
   await expect(page.locator('#model')).toBeEnabled();
@@ -103,12 +107,18 @@ test('Configurator hero is full bleed and model zoom controls remain available o
 
 test('Vehicle step can be skipped and manual wheel dimensions remain available', async ({ page }) => {
   await page.route('**/api/wheel-size/**', async (route) => {
+    const url = new URL(route.request().url());
+    if (url.pathname.endsWith('/regions')) {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ data: [{ name: 'USA+', slug: 'usdm' }] }) });
+      return;
+    }
     await route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({
       error: 'WHEEL_SIZE_NOT_CONFIGURED',
       message: 'Wheel Size API credentials are not configured on this Worker.',
     }) });
   });
   await page.goto('/customize/');
+  await choose(page, '#market', 'usdm');
   await expect(page.locator('#api-status')).toContainText('WHEEL SIZE KEY NOT CONFIGURED');
   await page.locator('#skip-vehicle').click();
   await expect(page.locator('[data-panel="1"]')).toBeVisible();
@@ -126,10 +136,19 @@ test('Manufacturer options include a compact logo and step navigation stays read
   await mockWheelSize(page);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/customize/');
+  await choose(page, '#market', 'usdm');
   await page.locator('#manufacturer-trigger').click();
   await expect(page.locator('#manufacturer-menu')).toBeVisible();
   await expect(page.locator('.manufacturer-option')).toContainText('Porsche');
   await expect(page.locator('.manufacturer-option-logo img')).toHaveAttribute('src', /cdn\.simpleicons\.org/);
+  const stepper = page.locator('#config-stepper');
+  const stepperBox = await stepper.boundingBox();
+  const pageContentBox = await page.locator('.studio-grid').boundingBox();
+  expect(stepperBox?.width).toBeCloseTo(pageContentBox?.width || 0, 0);
+  const logoFrame = await page.locator('.manufacturer-option-logo').first().evaluate((el) => ({ radius: getComputedStyle(el).borderRadius, width: el.getBoundingClientRect().width, height: el.getBoundingClientRect().height }));
+  expect(logoFrame.radius).toBe('50%');
+  expect(logoFrame.width).toBe(38);
+  expect(logoFrame.height).toBe(38);
   const stepperFontSize = await page.locator('.step-navigation p-stepper-horizontal-item').first().evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
   expect(stepperFontSize).toBeGreaterThanOrEqual(12);
   const zoomDirection = await page.locator('.zoom-controls').evaluate((el) => getComputedStyle(el).flexDirection);
@@ -139,6 +158,7 @@ test('Manufacturer options include a compact logo and step navigation stays read
 test('Configurator prepares a downloadable engineering specification', async ({ page }) => {
   await mockWheelSize(page);
   await page.goto('/customize/');
+  await choose(page, '#market', 'usdm');
   await choose(page, '#make', 'porsche');
   await choose(page, '#model', '911');
   await choose(page, '#year', '2024');
