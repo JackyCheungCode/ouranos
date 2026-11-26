@@ -5,11 +5,11 @@ async function mockWheelSize(page: Page) {
     const url = new URL(route.request().url());
     const path = url.pathname;
     let data: unknown[] = [];
-    if (path.endsWith('/makes/')) data = [{ name: 'Porsche', slug: 'porsche' }];
-    else if (path.endsWith('/models/')) data = [{ name: '911', slug: '911' }];
-    else if (path.endsWith('/years/')) data = [{ name: '2024', slug: '2024' }];
-    else if (path.endsWith('/modifications/')) data = [{ name: 'Carrera GTS', slug: 'carrera-gts' }];
-    else if (path.endsWith('/search/by_model/')) {
+    if (path.endsWith('/makes')) data = [{ name: 'Porsche', slug: 'porsche' }];
+    else if (path.endsWith('/models')) data = [{ name: '911', slug: '911' }];
+    else if (path.endsWith('/years')) data = [{ name: '2024', slug: '2024' }];
+    else if (path.endsWith('/modifications')) data = [{ name: 'Carrera GTS', slug: 'carrera-gts' }];
+    else if (path.endsWith('/search/by_model')) {
       data = [{
         type: 'oe',
         technical: { bolt_pattern: '5x130', centre_bore: 71.6 },
@@ -113,7 +113,7 @@ test('Vehicle step can be skipped and manual wheel dimensions remain available',
   await expect(page.locator('#summary-front')).toContainText('20');
 });
 
-test('Manufacturer options include a transparent logo slot and step navigation stays readable', async ({ page }) => {
+test('Manufacturer options include a compact logo and step navigation stays readable', async ({ page }) => {
   await mockWheelSize(page);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/customize/');
