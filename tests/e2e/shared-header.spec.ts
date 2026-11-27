@@ -47,7 +47,9 @@ test('every public page uses the exact Home overlay header and OURANOS script lo
   }
 });
 
-test('shared header preserves language selection, AI access and menu behaviour', async ({ page }) => {
+test('shared header preserves language selection, AI access and menu behaviour', async ({
+  page,
+}) => {
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   const header = page.locator('.ouranos-header');
 
