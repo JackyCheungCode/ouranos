@@ -953,7 +953,7 @@ async function productRequest(request: Request, env: Env): Promise<Response> {
     if (!object) return json({ error: 'MEDIA_NOT_FOUND' }, 404);
     return new Response(object.body, { headers: { 'content-type': object.httpMetadata?.contentType || 'application/octet-stream', 'cache-control': 'public, max-age=3600', etag: object.httpEtag } });
   }
-  const slug = decodeURIComponent(url.pathname.replace(/^\\/api\\/products\\/?/, ''));
+  const slug = decodeURIComponent(url.pathname.slice('/api/products/'.length));
   if (!slug || slug === 'search') return json({ products: await searchPublishedProducts(env, url.searchParams.get('q') || '') });
   const product = await env.DB.prepare(
     "SELECT p.id,p.slug,p.product_name,p.summary,p.description,(SELECT pm.object_key FROM product_media pm WHERE pm.product_id=p.id AND pm.publication_status='published' ORDER BY CASE pm.media_role WHEN 'hero' THEN 0 ELSE 1 END,pm.sort_order LIMIT 1) AS image_key FROM products p WHERE p.slug=? AND p.publication_status='published' LIMIT 1",
