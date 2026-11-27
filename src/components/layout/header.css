@@ -32,7 +32,6 @@
 }
 .ouranos-header p-button-pure {
   color: inherit;
-  color-scheme: inherit;
 }
 .ouranos-header__menu {
   display: flex;
@@ -81,9 +80,22 @@
   min-width: 176px;
   gap: 4px;
 }
-.ouranos-language-menu p-button-pure {
+.ouranos-language-option {
   display: block;
   width: 100%;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.ouranos-language-option:hover,
+.ouranos-language-option:focus-visible {
+  background: var(--pds-theme-light-background-surface, rgba(127, 127, 127, 0.12));
 }
 .ouranos-language-option[aria-pressed="true"] {
   font-weight: 700;
@@ -114,9 +126,6 @@
 }
 .ouranos-header[data-header-variant="overlay"] .ouranos-header__main-inner {
   min-height: 80px;
-}
-.ouranos-header[data-header-variant="overlay"] p-popover {
-  color-scheme: light;
 }
 .ouranos-header[data-header-variant="overlay"] p-button-pure {
   color: #fff;
