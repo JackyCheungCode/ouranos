@@ -256,6 +256,12 @@ test('Manufacturer uses the native PDS select without oversized option logos', a
       items.map((item) => (item.textContent || '').replace(/current:/gi, '').trim()),
     );
   expect(stepLabels).toEqual(['Model', 'Vehicle', 'Dimensions', 'Finish', 'Review']);
+  await page.setViewportSize({ width: 390, height: 844 });
+  const stepContent = stepper.locator('.stepper-item-content').first();
+  await expect(stepContent).toHaveCSS('display', 'flex');
+  await expect(stepContent).toHaveCSS('flex-direction', 'row');
+  await expect(stepContent).toHaveCSS('white-space', 'nowrap');
+  await expect(stepContent.locator('.stepper-item-label')).toHaveCSS('white-space', 'nowrap');
   const zoomDirection = await page
     .locator('.zoom-controls')
     .evaluate((el) => getComputedStyle(el).flexDirection);
