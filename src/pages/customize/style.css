@@ -1096,3 +1096,27 @@ p-heading, p-text, p-select, p-input-number, p-input-text, p-textarea, p-stepper
 
 /* Manufacturer uses the native Porsche Design System select; no oversized option marks. */
 .manufacturer-field, .manufacturer-field > p-select { width:100%; min-width:0; }
+
+
+/* Dimensions and review surfaces follow the configurator's light scheme. */
+.axle-spec {
+  color-scheme: light;
+  background: #fff;
+  border-color: #d9dcd8;
+}
+.axle-heading { border-color:#dfe1dc; }
+.axle-heading span { color:#796d55; }
+.axle-heading strong { color:#303638; }
+.axle-heading small { color:#777e80; }
+.axle-spec .field-block label { color:#353a3c; }
+.axle-spec p-input-number,
+.axle-spec p-input-text,
+.axle-spec p-input-number *,
+.axle-spec p-input-text * { color-scheme:light; }
+.axle-source { color:#777b7d; }
+.review-summary { border-color:#d9dcd8; background:#fff; }
+.review-row { border-color:#e1e3de; }
+.review-row span { color:#73797b; }
+.review-row strong { color:#303638; }
+.submission-message pre { background:#f1f2ef; color:#343a3c; }
+.engineering-note { color-scheme:light; }
