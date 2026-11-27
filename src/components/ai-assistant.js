@@ -120,14 +120,30 @@ if (openButton && closeButton && panel && form && input && messagesElement) {
     const confirm = element('button', 'ouranos-ai-action ouranos-ai-action--primary', block.confirm_label || 'Confirm selection');
     confirm.type = 'button';
     confirm.disabled = true;
+    let confirmed = false;
+    const change = element('button', 'ouranos-ai-action', 'Change selection');
+    change.type = 'button';
+    change.hidden = true;
+    change.addEventListener('click', () => {
+      confirmed = false;
+      choices.querySelectorAll('input').forEach((control) => { control.disabled = false; });
+      confirm.disabled = selected.size === 0;
+      confirm.hidden = false;
+      change.hidden = true;
+      card.querySelector('.ouranos-ai-selection__confirmed')?.remove();
+    });
     confirm.addEventListener('click', () => {
       const values = [...selected];
-      if (!values.length) return;
-      card.replaceChildren(element('strong', '', 'Selection confirmed'));
-      values.forEach((value) => card.append(element('p', 'ouranos-ai-muted', value)));
+      if (!values.length || confirmed) return;
+      confirmed = true;
+      choices.querySelectorAll('input').forEach((control) => { control.disabled = true; });
+      const summary = element('p', 'ouranos-ai-muted ouranos-ai-selection__confirmed', 'Confirmed: ' + values.join(', '));
+      card.insertBefore(summary, confirm);
+      confirm.hidden = true;
+      change.hidden = false;
       sendMessage('I confirm: ' + values.join(', '), { selection: { title: block.title || 'Selection', values } });
     });
-    card.append(confirm);
+    card.append(confirm, change);
     return card;
   };
 
