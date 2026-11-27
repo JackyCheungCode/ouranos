@@ -35,7 +35,8 @@ test('forged wheels landing page follows the seven-section business brief', asyn
   await expect(page.locator('#manufacturing-stepper button[role="tab"]')).toHaveCount(6);
   await expect(page.locator('.forged-brand-logo:not([aria-hidden="true"])')).toHaveCount(30);
   await expect(page.locator('.forged-brand-marquee')).toHaveCount(2);
-  await expect(page.locator('.forged-brand-logo img')).not.toHaveCSS('filter', 'grayscale(1)');
+  const logoFilters = await page.locator('.forged-brand-logo img').evaluateAll((images) => images.map((image) => getComputedStyle(image).filter));
+  expect(logoFilters.every((filter) => filter !== 'grayscale(1)')).toBe(true);
   await expect(page.locator('.forged-certification-mark img')).toHaveCount(2);
   await expect(page.locator('.forged-header__video, .ouranos-header__video')).toBeAttached();
   await expect(page.locator('.forged-construction-panel')).toHaveCount(4);
