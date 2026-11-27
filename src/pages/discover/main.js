@@ -16,6 +16,11 @@ const urlPanel = document.querySelector('#url-panel');
 let selectedFile = null;
 let previewUrl = null;
 
+function setPdsDisabled(element, disabled) {
+  element.disabled = disabled;
+  element.toggleAttribute('disabled', disabled);
+}
+
 function setImageStatus(message, state = '') {
   imageStatus.textContent = message;
   imageStatus.dataset.state = state;
@@ -24,7 +29,7 @@ function setImageStatus(message, state = '') {
 function clearImage() {
   selectedFile = null;
   imageInput.value = '';
-  imageSubmit.disabled = true;
+  setPdsDisabled(imageSubmit, true);
   preview.hidden = true;
   dropzone.hidden = false;
   if (previewUrl) URL.revokeObjectURL(previewUrl);
@@ -51,7 +56,7 @@ function acceptImage(file) {
   previewSize.textContent = (file.size / 1024 / 1024).toFixed(2) + ' MB';
   preview.hidden = false;
   dropzone.hidden = true;
-  imageSubmit.disabled = false;
+  setPdsDisabled(imageSubmit, false);
   setImageStatus('Reference image ready. Catalogue matching will be enabled when product indexing is connected.');
 }
 
@@ -87,7 +92,7 @@ document.querySelectorAll('[data-method]').forEach((button) => {
 });
 
 urlInput.addEventListener('input', () => {
-  urlSubmit.disabled = !urlInput.value.trim();
+  setPdsDisabled(urlSubmit, !urlInput.value.trim());
   urlStatus.textContent = 'Check the URL before continuing. No page content is fetched at this stage.';
   urlStatus.dataset.state = '';
 });
