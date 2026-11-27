@@ -56,7 +56,8 @@ test('forged wheels landing page follows the seven-section business brief', asyn
   await page.locator('[data-case="porsche"]').click();
   await expect(page.locator('#fitment-flyout')).toHaveJSProperty('open', true);
   await page.locator('#fitment-flyout-enquire').click();
-  await expect(page.locator('#notes')).toHaveValue(/PORSCHE/);
+  const fitmentNote = await page.locator('#notes').evaluate((element) => (element as HTMLTextAreaElement).value);
+  expect(fitmentNote).toContain('PORSCHE');
   await page.locator('#warranty-details').click();
   await expect(page.locator('#warranty-modal')).toHaveJSProperty('open', true);
   await page.locator('#warranty-modal-close').click();

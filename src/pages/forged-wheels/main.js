@@ -133,6 +133,10 @@ document.querySelectorAll('.forged-text-button[data-case]').forEach((button) => 
   });
 });
 
+document.querySelector('#catalogue-request')?.addEventListener('click', () => {
+  document.querySelector('#notes').value = 'Please send the latest OURANOS forged wheel catalogue (PDF).';
+});
+
 const warrantyModal = document.querySelector('#warranty-modal');
 document.querySelector('#warranty-details')?.addEventListener('click', () => {
   warrantyModal.open = true;
