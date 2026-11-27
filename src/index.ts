@@ -346,8 +346,8 @@ function validateSourceUrl(raw: string): URL | null {
   if (!raw || raw.length > MAX_SOURCE_URL_LENGTH) return null;
   try {
     const url = new URL(raw);
-    const host = url.hostname.toLowerCase().replace(/\\.$/, '');
-    const ipv4 = /^(?:\\d{1,3}\\.){3}\\d{1,3}$/.test(host);
+    const host = url.hostname.toLowerCase().replace(/\.$/, '');
+    const ipv4 = /^(?:\d{1,3}\.){3}\d{1,3}$/.test(host);
     const ipv6 = host.startsWith('[') || host.includes(':');
     if (!['http:', 'https:'].includes(url.protocol) || !host.includes('.') ||
       ipv4 || ipv6 || url.username || url.password ||
@@ -422,9 +422,9 @@ async function extractWheelReference(env: Env, sourceUrl: URL): Promise<Extracte
     })()));
     const data = JSON.parse(raw) as { title?: string; brand?: string; model?: string; sku?: string; text?: string };
     const text = data.text || '';
-    const dimension = text.match(/(?:^|\\s)(\\d{2})\\s*[x×]\\s*(\\d+(?:\\.\\d+)?)\\s*(?:J)?/i);
-    const pcd = text.match(/(?:PCD\\s*[:：]?\\s*)?(\\d{1,2})\\s*[x×]\\s*(\\d{2,3}(?:\\.\\d+)?)/i);
-    const offset = text.match(/(?:ET|OFFSET)\\s*[:：]?\\s*(-?\\d{1,3})/i);
+    const dimension = text.match(/(?:^|\s)(\d{2})\s*[x×]\s*(\d+(?:\.\d+)?)\s*(?:J)?/i);
+    const pcd = text.match(/PCD\s*[:：]?\s*(\d{1,2})\s*[x×]\s*(\d{2,3}(?:\.\d+)?)/i);
+    const offset = text.match(/(?:ET|OFFSET)\s*[:：]?\s*(-?\d{1,3})/i);
     return {
       title: String(data.title || '').slice(0, 300),
       brand: String(data.brand || '').slice(0, 120),
