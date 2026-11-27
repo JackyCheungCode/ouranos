@@ -137,25 +137,31 @@ if (header) {
     });
   }
 
-  window.OURANOS_SET_LOCALE = (locale) => {
-    applyLocale(locale, true);
-    if (languagePopover) languagePopover.open = false;
-  };
-
-  // Bind directly to each light-DOM option. PDS Popover may retarget or
-  // contain click propagation while dismissing; direct handlers remain reliable.
+  // Native links make locale selection independent of PDS Popover's
+  // internal event lifecycle. Preserve the current route and all query params.
+  const currentUrl = new URL(window.location.href);
   languageOptions.forEach((option) => {
-    option.addEventListener('click', () => {
-      applyLocale(option.dataset.locale, true);
-      if (languagePopover) languagePopover.open = false;
-    });
+    const targetUrl = new URL(currentUrl);
+    targetUrl.searchParams.set('lang', option.dataset.locale);
+    option.setAttribute('href', targetUrl.pathname + targetUrl.search + targetUrl.hash);
   });
 
+  const requestedLocale = currentUrl.searchParams.get('lang');
   let savedLocale = 'en';
   try {
-    savedLocale = localStorage.getItem('ouranos-locale') || document.documentElement.lang || 'en';
+    savedLocale =
+      requestedLocale || localStorage.getItem('ouranos-locale') || document.documentElement.lang || 'en';
   } catch {
-    savedLocale = document.documentElement.lang || 'en';
+    savedLocale = requestedLocale || document.documentElement.lang || 'en';
   }
-  applyLocale(savedLocale);
+  applyLocale(savedLocale, Boolean(requestedLocale));
+
+  if (requestedLocale && translations[requestedLocale]) {
+    currentUrl.searchParams.delete('lang');
+    window.history.replaceState(
+      window.history.state,
+      '',
+      currentUrl.pathname + currentUrl.search + currentUrl.hash,
+    );
+  }
 }
