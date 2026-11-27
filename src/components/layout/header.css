@@ -13,6 +13,7 @@ header .ouranos-wordmark {
   text-decoration-color: #fff;
 }
 header p-button-pure {
+  color: #fff !important;
   color-scheme: dark !important;
 }
 header .ouranos-wordmark {
