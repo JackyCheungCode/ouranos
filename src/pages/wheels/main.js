@@ -160,7 +160,7 @@ function configureUrl(product) {
 function card(product) {
   const detailUrl = '/wheels/?model=' + encodeURIComponent(product.id);
   const customization = product.customizationSummary || 'Size, Fitment & Finish';
-  const minimumOrder = product.construction === 'Forged' ? '4 PCS' : '100 PCS';
+  const minimumOrder = product.minimumOrder || (product.construction === 'Forged' ? '4 PCS' : product.supplyMode === 'production_order' ? '100 PCS' : 'By availability');
   const leadTime = product.manufacturingLeadTime || '10–15 days';
   const iconRow = (icon, label, value) =>
     '<div class="wheel-card-meta"><p-icon name="' + icon + '" size="xs" color="contrast-medium"></p-icon><div><span>' + label + '</span><strong>' + escapeHtml(value) + '</strong></div></div>';
