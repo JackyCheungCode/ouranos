@@ -3,624 +3,285 @@
 @import '@porsche-design-system/components-js/tailwindcss';
 @import '../../components/layout/header.css';
 
-:not(:defined) {
-  visibility: hidden;
-}
-
 .forged-page {
   --forged-gutter: max(var(--p-spacing-static-md), calc((100vw - 1440px) / 2));
-  --forged-ink: #111315;
-  --forged-muted: #6b6e70;
   overflow: clip;
-  background: var(--color-canvas);
   color: var(--color-contrast-high);
+  background: var(--color-canvas);
 }
 .forged-page p-heading,
-.forged-page p-text {
-  display: block;
-}
-.forged-page p-heading {
-  margin: 0;
-}
-.forged-page p-text {
-  max-width: 66ch;
-}
-.forged-section {
-  padding: clamp(5rem, 9vw, 9rem) var(--forged-gutter);
-}
-.forged-eyebrow,
-.forged-hero__bottom,
-.forged-hero__index,
-.forged-section-index,
-.forged-architecture-card__body > span,
-.forged-detail__copy > span,
-.forged-approach__principles article > span,
-.forged-specification__matrix span,
-.forged-commissioning__steps li > span {
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-.forged-hero {
-  position: relative;
-  isolation: isolate;
-  min-height: min(900px, 100svh);
-  display: flex;
-  align-items: end;
-  padding: clamp(8rem, 17vh, 12rem) clamp(1.5rem, 8vw, 8.5rem) clamp(6rem, 10vh, 8rem);
-  background: #111315;
-  color: #fff;
-}
-.forged-hero__video,
-.forged-hero__shade {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-.forged-hero__video {
-  z-index: -2;
-  object-fit: cover;
-  object-position: center;
-}
-.forged-hero__shade {
-  z-index: -1;
-  background:
-    linear-gradient(90deg, rgb(5 7 9 / 78%) 0%, rgb(5 7 9 / 36%) 54%, rgb(5 7 9 / 7%) 100%),
-    linear-gradient(0deg, rgb(5 7 9 / 66%) 0%, transparent 46%);
-}
-.forged-hero__content {
-  width: min(780px, 100%);
-}
-.forged-hero__content p-heading {
-  margin: 1.4rem 0 1.6rem;
-  font-size: clamp(3.5rem, 8.4vw, 7.8rem);
-  line-height: 0.88;
-  letter-spacing: -0.065em;
-  font-weight: 600;
-}
-.forged-hero__lead {
-  max-width: 42ch;
-  margin-bottom: 2.25rem;
-}
-.forged-hero__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  align-items: center;
-}
-.forged-page p-link {
-  display: inline-flex;
-}
-.forged-page p-link:focus-visible,
-.forged-page p-link-pure:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 4px;
-}
-.forged-hero__bottom {
-  position: absolute;
-  bottom: 1.5rem;
-  left: clamp(1.5rem, 8vw, 8.5rem);
-  right: clamp(1.5rem, 8vw, 8.5rem);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  color: rgb(255 255 255 / 72%);
-  font-size: 0.62rem;
-}
-.forged-hero__index {
-  position: absolute;
-  right: 1.75rem;
-  top: 50%;
-  writing-mode: vertical-rl;
-  color: rgb(255 255 255 / 64%);
-  font-size: 0.62rem;
-}
-.forged-approach {
+.forged-page p-text,
+.forged-page p-display { display: block; }
+.forged-page p-heading,
+.forged-page p-display { margin: 0; }
+.forged-section { padding: clamp(4.5rem, 8vw, 8rem) var(--forged-gutter); }
+.forged-section__heading {
   display: grid;
-  grid-template-columns: 0.55fr 1.45fr 1fr;
-  gap: clamp(2rem, 5vw, 5.5rem);
-  align-items: start;
-  background: #fff;
-}
-.forged-section-index {
-  padding-top: 0.45rem;
-  color: var(--forged-muted);
-  font-size: 0.65rem;
-}
-.forged-approach__main p-heading {
-  margin: 1rem 0 1.5rem;
-  font-size: clamp(2.25rem, 4.4vw, 4.5rem);
-  line-height: 1.02;
-  letter-spacing: -0.045em;
-}
-.forged-approach__main p-text {
-  max-width: 58ch;
-}
-.forged-approach__principles {
-  border-top: 1px solid #d8d9d9;
-}
-.forged-approach__principles article {
-  padding: 1.2rem 0 1.35rem;
-  border-bottom: 1px solid #d8d9d9;
-}
-.forged-approach__principles article > span {
-  color: #85898b;
-  font-size: 0.62rem;
-}
-.forged-approach__principles h3 {
-  margin: 0.65rem 0 0.35rem;
-  font-size: 0.96rem;
-  font-weight: 600;
-}
-.forged-approach__principles p {
-  margin: 0;
-  color: #686d70;
-  font-size: 0.8rem;
-  line-height: 1.65;
-}
-.forged-architecture {
-  background: #f3f3f1;
-}
-.forged-section-heading {
-  display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
-  gap: 3rem;
+  grid-template-columns: minmax(0, 1.15fr) minmax(260px, .85fr);
+  gap: 1.5rem 4rem;
   align-items: end;
   margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
 }
-.forged-section-heading > div {
-  max-width: 720px;
-}
-.forged-section-heading p-heading {
-  margin: 0.9rem 0 0;
-  font-size: clamp(2.1rem, 4.2vw, 4.2rem);
+.forged-section__heading > p-text:first-child { grid-column: 1 / -1; }
+.forged-section__heading p-heading {
+  font-size: clamp(2.2rem, 4.6vw, 4.5rem);
   line-height: 1.02;
-  letter-spacing: -0.045em;
+  letter-spacing: -.045em;
 }
-.forged-section-heading > p-text {
-  justify-self: end;
+.forged-section__heading > p-text:last-child {
   max-width: 48ch;
+  justify-self: end;
   color: var(--color-contrast-medium);
 }
-.forged-architecture-grid {
+.forged-page p-button { display: inline-flex; }
+.forged-page :is(button, input, p-button, p-link, p-select, p-input-text, p-input-email, p-input-tel, p-input-number, p-textarea):focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+.forged-hero {
+  padding: clamp(8rem, 15vh, 11rem) var(--forged-gutter) 2.5rem;
+  background: var(--color-canvas);
+}
+.forged-hero__grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.2rem;
-}
-.forged-architecture-card {
-  min-width: 0;
-  background: #fff;
-}
-.forged-architecture-card__media {
-  aspect-ratio: 4 / 4.5;
-  overflow: hidden;
-  background: #e9e9e7;
-}
-.forged-architecture-card__media img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  transition: transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1);
-}
-.forged-architecture-card:hover img {
-  transform: scale(1.035);
-}
-.forged-architecture-card__body {
-  padding: 1.45rem 1.5rem 1.8rem;
-}
-.forged-architecture-card__body > span {
-  color: #777c7e;
-  font-size: 0.6rem;
-}
-.forged-architecture-card h3 {
-  margin: 0.7rem 0 0.55rem;
-  font-size: 1.35rem;
-  font-weight: 600;
-  letter-spacing: -0.025em;
-}
-.forged-architecture-card p {
-  margin: 0;
-  color: #686d70;
-  font-size: 0.82rem;
-  line-height: 1.7;
-}
-.forged-image-note {
-  display: block;
-  max-width: 100%;
-  margin-top: 1.3rem;
-}
-.forged-specification {
-  display: grid;
-  grid-template-columns: 0.9fr 1.1fr;
-  gap: clamp(3rem, 8vw, 8rem);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(2rem, 6vw, 6rem);
   align-items: center;
-  background: #151719;
-  color: #fff;
+  max-width: 1600px;
+  margin: 0 auto;
 }
-.forged-specification__intro p-heading {
-  margin: 1rem 0 1.25rem;
-  font-size: clamp(2.4rem, 4.6vw, 4.5rem);
-  line-height: 1.02;
-  letter-spacing: -0.05em;
+.forged-hero__copy { grid-column: span 5; max-width: 680px; }
+.forged-hero__copy p-display {
+  margin: 1.25rem 0 1.5rem;
+  font-size: clamp(3.4rem, 6.4vw, 6.8rem);
+  line-height: .94;
+  letter-spacing: -.065em;
 }
-.forged-specification__intro p-text:last-child {
-  color: rgb(255 255 255 / 70%);
+.forged-hero__lead { max-width: 48ch; }
+.forged-hero__subline {
+  margin: 1.5rem 0 2rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
 }
-.forged-specification__matrix {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  border-top: 1px solid rgb(255 255 255 / 28%);
-}
-.forged-specification__matrix > div {
-  min-height: 130px;
-  padding: 1.25rem 1rem 1.1rem 0;
-  border-bottom: 1px solid rgb(255 255 255 / 22%);
-}
-.forged-specification__matrix > div:nth-child(odd) {
-  border-right: 1px solid rgb(255 255 255 / 22%);
-}
-.forged-specification__matrix > div:nth-child(even) {
-  padding-left: 1.5rem;
-}
-.forged-specification__matrix span {
-  color: rgb(255 255 255 / 52%);
-  font-size: 0.6rem;
-}
-.forged-specification__matrix h3 {
-  margin: 0.65rem 0 0.25rem;
-  color: #fff;
-  font-size: 1.1rem;
-  font-weight: 500;
-}
-.forged-specification__matrix p {
-  margin: 0;
-  color: rgb(255 255 255 / 62%);
-  font-size: 0.75rem;
-}
-.forged-specification__note {
-  grid-column: 2;
-  max-width: 100%;
-  margin-top: -2rem;
-  color: rgb(255 255 255 / 58%);
-}
-.forged-individualization {
-  background: #fff;
-}
-.forged-detail-grid {
-  display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
-  gap: 1.1rem;
-}
-.forged-detail {
-  min-width: 0;
-  display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
-  align-items: stretch;
-  background: #f3f3f1;
-}
-.forged-detail--wide {
-  grid-template-columns: 1.2fr 0.8fr;
-}
-.forged-detail__image {
-  min-height: 260px;
-  overflow: hidden;
-  background: #e9e9e7;
-}
-.forged-detail__image img {
+.forged-actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+.forged-hero__visual { grid-column: span 7; margin: 0; min-width: 0; }
+.forged-hero__visual img {
+  display: block;
   width: 100%;
-  height: 100%;
-  min-height: 260px;
-  object-fit: cover;
-  transition: transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  aspect-ratio: 1.18;
+  object-fit: contain;
+  background: var(--color-surface);
 }
-.forged-detail:hover img {
-  transform: scale(1.035);
+.forged-hero__visual figcaption {
+  padding-top: .6rem;
+  color: var(--color-contrast-medium);
+  font-size: .7rem;
 }
-.forged-detail__copy {
+.forged-trustbar {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  max-width: 1600px;
+  margin: clamp(3rem, 6vw, 5.5rem) auto 0;
+  border-top: 1px solid var(--color-contrast-low);
+  border-bottom: 1px solid var(--color-contrast-low);
+}
+.forged-trustbar > div {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: clamp(1.2rem, 2vw, 2rem);
+  gap: .4rem;
+  padding: 1.4rem clamp(.75rem, 2vw, 2rem);
+  border-right: 1px solid var(--color-contrast-low);
 }
-.forged-detail__copy > span {
-  color: #777c7e;
-  font-size: 0.58rem;
-}
-.forged-detail__copy h3 {
-  margin: 0.75rem 0 0.5rem;
-  font-size: 1.35rem;
+.forged-trustbar > div:first-child { padding-left: 0; }
+.forged-trustbar > div:last-child { border-right: 0; }
+.forged-trustbar strong {
+  font-size: clamp(1.6rem, 3vw, 2.6rem);
+  line-height: 1;
+  letter-spacing: -.04em;
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
-.forged-detail__copy p {
-  margin: 0;
-  color: #686d70;
-  font-size: 0.8rem;
-  line-height: 1.65;
-}
-.forged-fitment {
-  position: relative;
-  isolation: isolate;
-  min-height: 650px;
-  display: flex;
-  align-items: center;
-  padding: clamp(5rem, 9vw, 9rem) var(--forged-gutter);
-  color: #fff;
-  background: #17191a;
-}
-.forged-fitment > img,
-.forged-fitment__overlay {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-.forged-fitment > img {
-  z-index: -2;
-  object-fit: cover;
-}
-.forged-fitment__overlay {
-  z-index: -1;
-  background: linear-gradient(
-    90deg,
-    rgb(7 9 11 / 86%) 0%,
-    rgb(7 9 11 / 52%) 52%,
-    rgb(7 9 11 / 10%) 100%
-  );
-}
-.forged-fitment__copy {
-  max-width: 650px;
-}
-.forged-fitment__copy p-heading {
-  margin: 1rem 0 1.25rem;
-  font-size: clamp(2.5rem, 5vw, 4.8rem);
-  line-height: 1.02;
-  letter-spacing: -0.05em;
-}
-.forged-fitment__copy p-text {
-  margin-bottom: 1.8rem;
-  color: rgb(255 255 255 / 76%);
-}
-.forged-commissioning {
+.forged-trustbar span,
+.forged-hero__qualification { color: var(--color-contrast-medium); }
+.forged-trustbar span { font-size: .75rem; }
+.forged-hero__qualification { max-width: 100%; margin: .8rem auto 0; }
+.forged-pain { background: var(--color-surface); }
+.forged-pain__layout {
   display: grid;
-  grid-template-columns: 0.8fr 1.2fr;
-  gap: clamp(3rem, 8vw, 8rem);
-  background: #f3f3f1;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(1.5rem, 4vw, 4rem);
+  align-items: start;
 }
-.forged-commissioning__heading p-heading {
-  margin: 1rem 0 1.25rem;
-  font-size: clamp(2.4rem, 4.5vw, 4.4rem);
-  line-height: 1.02;
-  letter-spacing: -0.05em;
-}
-.forged-commissioning__heading p-text:last-child {
-  color: var(--color-contrast-medium);
-}
-.forged-commissioning__steps {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  border-top: 1px solid #cfd1d1;
-}
-.forged-commissioning__steps li {
-  display: grid;
-  grid-template-columns: 3.5rem 1fr;
-  gap: 1rem;
-  padding: 1.35rem 0;
-  border-bottom: 1px solid #cfd1d1;
-}
-.forged-commissioning__steps li > span {
-  padding-top: 0.25rem;
-  color: #777c7e;
-  font-size: 0.62rem;
-}
-.forged-commissioning__steps h3 {
-  margin: 0 0 0.35rem;
-  font-size: 1rem;
-  font-weight: 600;
-}
-.forged-commissioning__steps p {
-  margin: 0;
-  color: #686d70;
-  font-size: 0.82rem;
-  line-height: 1.65;
-}
-.forged-faq {
-  display: grid;
-  grid-template-columns: 0.75fr 1.25fr;
-  gap: clamp(3rem, 8vw, 8rem);
-  background: #fff;
-}
-.forged-faq__heading p-heading {
-  margin-top: 1rem;
-  font-size: clamp(2.2rem, 4vw, 4rem);
-  line-height: 1.03;
-  letter-spacing: -0.045em;
-}
-.forged-faq__items p-accordion {
+.forged-pain__list { grid-column: span 5; }
+.forged-solution-card { grid-column: span 7; }
+.forged-pain__list p-accordion {
   display: block;
-  border-bottom: 1px solid #d5d7d7;
+  border-bottom: 1px solid var(--color-contrast-low);
 }
-.forged-final {
-  position: relative;
-  isolation: isolate;
-  min-height: 590px;
-  display: flex;
+.forged-pain__list p-tag { display: inline-flex; margin-top: .75rem; }
+.forged-solution-card {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+  gap: 0;
+  padding: 1rem;
+  background: var(--color-canvas);
+}
+.forged-solution-card__visual { min-height: 300px; background: var(--color-surface); }
+.forged-solution-card__visual img { display: block; width: 100%; height: 100%; min-height: 300px; object-fit: cover; }
+.forged-solution-card__copy { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: .9rem; padding: clamp(1.25rem, 2.5vw, 2.5rem); }
+.forged-solution-card__copy p-heading { font-size: clamp(1.4rem, 2vw, 2rem); }
+.forged-solution-card__copy p-inline-notification { margin-top: .5rem; }
+.forged-manufacturing { background: var(--color-canvas); }
+.forged-manufacturing p-stepper-horizontal { display: block; margin: 0 0 2rem; }
+.forged-process-panel {
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr) 160px;
+  gap: 2rem;
   align-items: center;
-  padding: clamp(5rem, 9vw, 9rem) var(--forged-gutter);
-  color: #fff;
-  background: #101214;
+  padding: clamp(1.5rem, 4vw, 3.5rem);
+  background: var(--color-surface);
 }
-.forged-final__image {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background:
-    linear-gradient(90deg, rgb(7 9 11 / 88%), rgb(7 9 11 / 28%)),
-    url('https://precisionforgedwheels.com/cdn/shop/files/20230724_082803_2048x.jpg?v=1700179157')
-      center 52% / cover;
+.forged-process-panel__index { align-self: start; color: var(--color-contrast-medium); font-size: .75rem; letter-spacing: .12em; }
+.forged-process-panel p-heading { margin-bottom: .8rem; }
+.forged-process-panel__facts { display: flex; flex-wrap: wrap; gap: .5rem 2rem; padding: 0; margin: 1.25rem 0 0; list-style: none; }
+.forged-process-panel__facts li { position: relative; padding-left: 1rem; font-size: .8rem; }
+.forged-process-panel__facts li::before { position: absolute; left: 0; content: '—'; color: var(--color-contrast-medium); }
+.forged-process-panel__mark { color: var(--color-contrast-low); font-size: clamp(4rem, 8vw, 8rem); line-height: 1; text-align: right; font-variant-numeric: tabular-nums; }
+.forged-certifications { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 1.5rem 3rem; align-items: center; padding-top: 3rem; }
+.forged-certifications p-heading { margin-top: .5rem; }
+.forged-certifications__list { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .6rem; }
+.forged-certifications__list span { min-width: 78px; padding: .8rem 1rem; border: 1px solid var(--color-contrast-low); font-weight: 600; text-align: center; }
+.forged-certifications > p-text { grid-column: 1 / -1; max-width: 100%; }
+.forged-lineup { background: var(--color-surface); }
+.forged-lineup p-tabs-bar { display: block; margin-bottom: 1.5rem; }
+.forged-lineup__panels { min-height: 350px; }
+.forged-construction-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, .9fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+  background: var(--color-canvas);
 }
-.forged-final__content {
-  max-width: 700px;
+.forged-construction-panel[hidden] { display: none; }
+.forged-construction-panel img { width: 100%; aspect-ratio: 1.2; object-fit: contain; background: var(--color-surface); }
+.forged-construction-panel p-heading { margin: .6rem 0 .9rem; font-size: clamp(1.7rem, 3vw, 2.6rem); }
+.forged-construction-panel ul { display: grid; gap: .5rem; padding-left: 1.2rem; margin: 1.2rem 0 0; font-size: .85rem; }
+.forged-image-note { display: block; max-width: 100%; margin-top: 1rem; }
+.forged-customisation {
+  display: grid;
+  grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+  gap: 2rem 4rem;
+  align-items: start;
+  padding: clamp(2rem, 5vw, 4rem);
+  margin-top: 3rem;
+  background: var(--color-canvas);
 }
-.forged-final__content p-heading {
-  margin: 1rem 0 1.25rem;
-  font-size: clamp(3rem, 6vw, 5.8rem);
-  line-height: 0.98;
-  letter-spacing: -0.055em;
-}
-.forged-final__content p-text {
-  margin-bottom: 2rem;
-  color: rgb(255 255 255 / 76%);
-}
-.forged-credits {
-  padding: 1.2rem var(--forged-gutter);
-  background: #f3f3f1;
-}
-.forged-credits p-text {
-  max-width: 100%;
-  line-height: 1.7;
-}
-.forged-credits a {
-  color: inherit;
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
-}
+.forged-customisation__intro p-heading { margin: .6rem 0 .8rem; }
+.forged-finish-selector { min-width: 0; }
+.forged-finish-selector p-segmented-control { display: block; margin-bottom: 1.25rem; }
+.forged-finish-swatches { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .7rem; }
+.forged-swatch { display: grid; gap: .6rem; padding: .5rem; border: 1px solid transparent; background: transparent; color: inherit; text-align: left; cursor: pointer; }
+.forged-swatch.is-selected { border-color: var(--color-contrast-high); }
+.forged-swatch > span:last-child { font-size: .72rem; }
+.swatch { display: block; width: 100%; aspect-ratio: 1.3; border: 1px solid var(--color-contrast-low); }
+.swatch--titanium { background: linear-gradient(135deg, #777b7d, #c4c6c5 42%, #55595b); }
+.swatch--silver { background: linear-gradient(135deg, #d9dcdd, #8d9294 50%, #eceeed); }
+.swatch--dark { background: linear-gradient(135deg, #272a2c, #74787a 48%, #17191a); }
+.swatch--bronze { background: linear-gradient(135deg, #6e5540, #c39a6d 48%, #795b42); }
+.forged-customisation__options { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-column: 1 / -1; gap: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--color-contrast-low); }
+.forged-customisation__options > div { display: grid; gap: .4rem; }
+.forged-customisation__options p-icon { color: var(--color-contrast-medium); }
+.forged-customisation__options strong { font-size: .95rem; }
+.forged-customisation__options span { color: var(--color-contrast-medium); font-size: .72rem; }
+.forged-customisation > p-text { grid-column: 1 / -1; max-width: 100%; }
+.forged-gallery { background: var(--color-canvas); }
+.forged-gallery > p-segmented-control { display: block; margin-bottom: 1.5rem; }
+.forged-gallery__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+.forged-fitment-card { min-width: 0; background: var(--color-surface); }
+.forged-fitment-card[hidden] { display: none; }
+.forged-fitment-card img { display: block; width: 100%; aspect-ratio: 1.45; object-fit: cover; }
+.forged-fitment-card > div { padding: 1.25rem; }
+.forged-fitment-card > div > span { color: var(--color-contrast-medium); font-size: .62rem; letter-spacing: .12em; }
+.forged-fitment-card h3 { margin: .6rem 0; font-size: 1.15rem; font-weight: 600; }
+.forged-fitment-card p { min-height: 4.2em; margin: 0 0 1rem; color: var(--color-contrast-medium); font-size: .8rem; line-height: 1.6; }
+.forged-text-button { min-height: 44px; padding: .5rem 0; border: 0; background: transparent; color: var(--color-contrast-high); font: inherit; font-size: .78rem; text-decoration: underline; text-underline-offset: .25em; cursor: pointer; }
+.forged-aftercare { background: var(--color-surface); }
+.forged-aftercare__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+.forged-aftercare__grid article { display: flex; flex-direction: column; align-items: flex-start; min-height: 270px; padding: clamp(1.5rem, 3vw, 2.5rem); background: var(--color-canvas); }
+.forged-aftercare__grid p-icon { margin-bottom: 1.5rem; }
+.forged-aftercare__grid p-heading { margin-bottom: .8rem; }
+.forged-aftercare__grid p-text { flex: 1; }
+.forged-enquiry { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(2rem, 6vw, 6rem); background: var(--color-canvas); }
+.forged-enquiry__faq { grid-column: span 5; }
+.forged-enquiry__form-wrap { grid-column: span 7; }
+.forged-enquiry__faq > p-heading { margin: .8rem 0 2rem; font-size: clamp(2rem, 4vw, 3.8rem); line-height: 1.03; }
+.forged-enquiry__faq p-accordion { display: block; border-bottom: 1px solid var(--color-contrast-low); }
+.forged-enquiry__form-wrap { padding: clamp(1.5rem, 3vw, 3rem); background: var(--color-surface); }
+.forged-enquiry__form-heading p-heading { margin: .6rem 0 .7rem; }
+.forged-enquiry-form { display: grid; gap: 1.5rem; margin-top: 2rem; }
+.forged-enquiry-form fieldset { min-width: 0; padding: 0; border: 0; }
+.forged-enquiry-form legend { margin-bottom: .8rem; font-size: .85rem; font-weight: 600; }
+.forged-enquiry-form p-radio-group { display: block; }
+.forged-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.1rem; }
+.forged-form-grid label { display: grid; gap: .45rem; min-width: 0; }
+.forged-form-grid label > span { font-size: .78rem; font-weight: 600; }
+.forged-form-grid p-input-text,
+.forged-form-grid p-input-email,
+.forged-form-grid p-input-tel,
+.forged-form-grid p-input-number,
+.forged-form-grid p-select,
+.forged-form-grid p-textarea { display: block; width: 100%; }
+.forged-form-grid__full { grid-column: 1 / -1; }
+.forged-form-grid input[type='file'] { width: 100%; min-height: 48px; padding: .8rem; border: 1px solid var(--color-contrast-low); background: var(--color-canvas); font: inherit; font-size: .75rem; }
+.forged-form-consent { max-width: 100%; }
+.forged-form-feedback { display: block; }
+.forged-form-feedback[hidden] { display: none; }
+.forged-trade-field[hidden], .forged-quantity-field[hidden] { display: none; }
 
-@media (max-width: 960px) {
-  .forged-approach {
-    grid-template-columns: 0.35fr 1.3fr;
-  }
-  .forged-approach__principles {
-    grid-column: 2;
-  }
-  .forged-specification,
-  .forged-commissioning {
-    grid-template-columns: 1fr;
-  }
-  .forged-specification__note {
-    grid-column: 1;
-    margin-top: -1rem;
-  }
+@media (max-width: 1000px) {
+  .forged-pain__layout,
+  .forged-enquiry { grid-template-columns: 1fr; }
+  .forged-pain__list,
+  .forged-solution-card,
+  .forged-enquiry__faq,
+  .forged-enquiry__form-wrap { grid-column: 1; }
+  .forged-customisation { grid-template-columns: 1fr; }
+  .forged-customisation__options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .forged-gallery__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 700px) {
-  .forged-hero {
-    min-height: 86svh;
-    padding: 7rem 1.25rem 6.5rem;
-  }
-  .forged-hero__content p-heading {
-    font-size: clamp(3.2rem, 15vw, 5rem);
-  }
-  .forged-hero__bottom {
-    left: 1.25rem;
-    right: 1.25rem;
-    bottom: 1rem;
-    font-size: 0.53rem;
-  }
-  .forged-hero__bottom > span {
-    max-width: 55%;
-    line-height: 1.5;
-  }
-  .forged-hero__index {
-    display: none;
-  }
-  .forged-section {
-    padding: 4.5rem 1.25rem;
-  }
-  .forged-approach {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-  .forged-approach__principles {
-    grid-column: 1;
-  }
-  .forged-section-heading {
-    grid-template-columns: 1fr;
-    gap: 1.2rem;
-    margin-bottom: 2rem;
-  }
-  .forged-section-heading > p-text {
-    justify-self: start;
-  }
-  .forged-architecture-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  .forged-architecture-card {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-items: center;
-  }
-  .forged-architecture-card__media {
-    aspect-ratio: 1 / 1;
-  }
-  .forged-architecture-card__body {
-    padding: 1rem;
-  }
-  .forged-architecture-card h3 {
-    font-size: 1.1rem;
-  }
-  .forged-architecture-card p {
-    font-size: 0.75rem;
-  }
-  .forged-specification {
-    gap: 2.5rem;
-  }
-  .forged-specification__matrix > div {
-    min-height: 115px;
-  }
-  .forged-detail-grid {
-    grid-template-columns: 1fr;
-  }
-  .forged-detail,
-  .forged-detail--wide {
-    grid-template-columns: 1fr 1fr;
-  }
-  .forged-detail__image,
-  .forged-detail__image img {
-    min-height: 190px;
-  }
-  .forged-detail__copy {
-    padding: 1rem;
-  }
-  .forged-detail__copy h3 {
-    font-size: 1.1rem;
-  }
-  .forged-detail__copy p {
-    font-size: 0.73rem;
-  }
-  .forged-fitment {
-    min-height: 560px;
-    padding: 4.5rem 1.25rem;
-  }
-  .forged-fitment__overlay {
-    background: linear-gradient(90deg, rgb(7 9 11 / 84%), rgb(7 9 11 / 38%));
-  }
-  .forged-faq {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-  .forged-final {
-    min-height: 560px;
-    padding: 5rem 1.25rem;
-  }
-}
-@media (max-width: 380px) {
-  .forged-detail,
-  .forged-detail--wide {
-    grid-template-columns: 1fr;
-  }
-  .forged-detail__image,
-  .forged-detail__image img {
-    min-height: 220px;
-  }
+  .forged-section { padding: 4.5rem 1.25rem; }
+  .forged-section__heading { grid-template-columns: 1fr; gap: 1rem; }
+  .forged-section__heading > p-text:last-child { justify-self: start; }
+  .forged-hero { padding: 7rem 1.25rem 2rem; }
+  .forged-hero__grid { grid-template-columns: 1fr; gap: 2rem; }
+  .forged-hero__copy,
+  .forged-hero__visual { grid-column: 1; }
+  .forged-hero__copy p-display { font-size: clamp(3rem, 14vw, 4.8rem); }
+  .forged-hero__visual img { aspect-ratio: 1.15; }
+  .forged-trustbar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .forged-trustbar > div { padding: 1rem .75rem; border-bottom: 1px solid var(--color-contrast-low); }
+  .forged-trustbar > div:first-child { padding-left: .75rem; }
+  .forged-trustbar > div:nth-child(2) { border-right: 0; }
+  .forged-trustbar > div:nth-child(3),
+  .forged-trustbar > div:nth-child(4) { border-bottom: 0; }
+  .forged-solution-card { grid-template-columns: 1fr; }
+  .forged-solution-card__visual,
+  .forged-solution-card__visual img { min-height: 220px; }
+  .forged-process-panel { grid-template-columns: 1fr; gap: 1rem; }
+  .forged-process-panel__mark { display: none; }
+  .forged-certifications { grid-template-columns: 1fr; }
+  .forged-certifications__list { justify-content: flex-start; }
+  .forged-construction-panel { grid-template-columns: 1fr; }
+  .forged-construction-panel img { aspect-ratio: 1.2; }
+  .forged-finish-swatches { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .forged-gallery__grid,
+  .forged-aftercare__grid { grid-template-columns: 1fr; }
+  .forged-fitment-card p { min-height: 0; }
+  .forged-form-grid { grid-template-columns: 1fr; }
+  .forged-form-grid__full { grid-column: auto; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .forged-architecture-card__media img,
-  .forged-detail__image img {
-    transition: none;
-  }
-  .forged-hero__video {
-    display: none;
-  }
+  .forged-page * { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }

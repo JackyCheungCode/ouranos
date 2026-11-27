@@ -1,42 +1,218 @@
 import './style.css';
 
-const video = document.querySelector('.forged-hero__video');
-const toggle = document.querySelector('#forged-video-toggle');
-if (video instanceof HTMLVideoElement && toggle instanceof HTMLElement) {
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  if (reducedMotion.matches) video.pause();
-  const syncVideoControl = () => {
-    const paused = video.paused;
-    toggle.textContent = paused ? 'Play film' : 'Pause film';
-    toggle.setAttribute('icon', paused ? 'play' : 'pause');
-    toggle.setAttribute('aria-label', paused ? 'Play background video' : 'Pause background video');
-  };
+const processSteps = [
+  { title: '6061-T6 aluminium selection', description: 'Material selection and incoming inspection, including the specified alloy verification and spectrometric material check.', facts: ['6061-T6 aluminium billet', 'Incoming material inspection', 'Material traceability review'] },
+  { title: 'High-pressure forging & forming', description: 'The specified forging route uses high-tonnage forming followed by flow forming where applicable to the selected construction.', facts: ['10,000-tonne-class press specification', 'Forging and forming route', 'Process records per production batch'] },
+  { title: 'Five-axis CNC machining', description: 'Five-axis machining resolves the spoke geometry, mounting interfaces and designed surface transitions.', facts: ['Five-axis CNC process', 'Drawing-led machining', 'Critical interface control'] },
+  { title: 'Surface preparation & finishing', description: 'Manual surface preparation precedes the selected coating, plating or machined finish route.', facts: ['Manual surface preparation', 'Multi-stage coating or plating', 'Finish sample approval'] },
+  { title: 'Coordinate measurement inspection', description: 'Dimensional inspection checks the wheel against the approved drawing and critical fitment dimensions.', facts: ['CMM dimensional inspection', 'Drawing and tolerance review', 'Inspection record'] },
+  { title: 'Laboratory and durability testing', description: 'The programme specifies radial fatigue, cornering fatigue and impact tests. Test scope and reports must match the applicable wheel model and market.', facts: ['Radial fatigue testing', 'Bending fatigue testing', '13° / 90° impact testing'] }
+];
 
-  toggle.addEventListener('click', async () => {
-    if (video.paused) {
-      try {
-        await video.play();
-      } catch {
-        syncVideoControl();
-      }
-    } else {
-      video.pause();
-    }
-    syncVideoControl();
-  });
+const solutionCopy = {
+  fitment: { kicker: 'FITMENT REVIEW', title: 'Vehicle-first specification', description: 'A fitment decision begins with the exact vehicle, brake package and intended setup.' },
+  strength: { kicker: 'STRUCTURAL REVIEW', title: 'Designed around load requirements', description: 'Material, construction and FEA review are considered against the intended wheel application.' },
+  leadtime: { kicker: 'PROJECT CONTROL', title: 'A visible approval path', description: 'Keep drawing review, production planning and delivery expectations aligned.' },
+  custom: { kicker: 'INDIVIDUAL DETAIL', title: 'One set. Your specification.', description: 'Discuss custom dimensions, finish, engraving and centre-cap branding in one enquiry.' }
+};
 
-  video.addEventListener('play', syncVideoControl);
-  video.addEventListener('pause', syncVideoControl);
-  reducedMotion.addEventListener('change', (event) => {
-    if (event.matches) video.pause();
+const stepper = document.querySelector('#manufacturing-stepper');
+const stepItems = Array.from(document.querySelectorAll('p-stepper-horizontal-item'));
+const processIndex = document.querySelector('#process-index');
+const processTitle = document.querySelector('#process-title');
+const processDescription = document.querySelector('#process-description');
+const processFacts = document.querySelector('#process-facts');
+const processMark = document.querySelector('#process-mark');
+
+function renderProcessStep(index) {
+  const step = processSteps[index];
+  if (!step) return;
+  stepItems.forEach((item, itemIndex) => {
+    item.state = itemIndex < index ? 'complete' : itemIndex === index ? 'current' : undefined;
   });
-  syncVideoControl();
+  processIndex.textContent = String(index + 1).padStart(2, '0') + ' / 06';
+  processTitle.textContent = step.title;
+  processDescription.textContent = step.description;
+  processFacts.replaceChildren(...step.facts.map((fact) => {
+    const li = document.createElement('li');
+    li.textContent = fact;
+    return li;
+  }));
+  processMark.textContent = String(index + 1).padStart(2, '0');
 }
+stepper?.addEventListener('update', (event) => renderProcessStep(event.detail.activeStepIndex));
 
-document.querySelectorAll('p-accordion').forEach((accordion) => {
+document.querySelectorAll('.forged-pain__list p-accordion').forEach((accordion) => {
   accordion.addEventListener('update', (event) => {
     event.target.open = event.detail.open;
+    if (!event.detail.open) return;
+    document.querySelectorAll('.forged-pain__list p-accordion').forEach((item) => {
+      if (item !== event.target) item.open = false;
+    });
+    const content = solutionCopy[event.target.dataset.solution];
+    if (!content) return;
+    document.querySelector('#solution-kicker').textContent = content.kicker;
+    document.querySelector('#solution-heading').textContent = content.title;
+    document.querySelector('#solution-description').textContent = content.description;
   });
+});
+
+const constructionTabs = document.querySelector('#construction-tabs');
+const constructionPanels = Array.from(document.querySelectorAll('.forged-construction-panel'));
+constructionTabs?.addEventListener('update', (event) => {
+  constructionTabs.activeTabIndex = event.detail.activeTabIndex;
+  constructionPanels.forEach((panel, index) => {
+    const active = index === event.detail.activeTabIndex;
+    panel.hidden = !active;
+    panel.classList.toggle('is-active', active);
+  });
+});
+
+const finishOptions = {
+  brushed: ['Brushed Titanium', 'Brushed Silver', 'Brushed Dark Grey', 'Brushed Bronze'],
+  polished: ['Mirror Polish', 'Bright Silver', 'Polished Smoke', 'Polished Bronze'],
+  chrome: ['Bright Chrome', 'Dark Chrome', 'Satin Chrome', 'Black Chrome'],
+  paint: ['Gloss Black', 'Matte Black', 'Satin Graphite', 'Custom Colour']
+};
+const finishSwatches = document.querySelector('#finish-swatches');
+function renderFinishes(category) {
+  const names = finishOptions[category] || finishOptions.brushed;
+  finishSwatches.replaceChildren(...names.map((name, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'forged-swatch' + (index === 0 ? ' is-selected' : '');
+    button.dataset.finish = name;
+    button.setAttribute('aria-pressed', index === 0 ? 'true' : 'false');
+    const swatch = document.createElement('span');
+    swatch.className = 'swatch swatch--' + ['titanium', 'silver', 'dark', 'bronze'][index];
+    const label = document.createElement('span');
+    label.textContent = name;
+    button.append(swatch, label);
+    return button;
+  }));
+}
+document.querySelector('#finish-selector')?.addEventListener('change', (event) => {
+  event.target.value = event.detail.value;
+  renderFinishes(event.detail.value);
+});
+finishSwatches?.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-finish]');
+  if (!button) return;
+  finishSwatches.querySelectorAll('[data-finish]').forEach((item) => {
+    const selected = item === button;
+    item.classList.toggle('is-selected', selected);
+    item.setAttribute('aria-pressed', String(selected));
+  });
+});
+
+const vehicleFilter = document.querySelector('#vehicle-filter');
+vehicleFilter?.addEventListener('change', (event) => {
+  vehicleFilter.value = event.detail.value;
+  const selected = event.detail.value;
+  document.querySelectorAll('.forged-fitment-card').forEach((card) => {
+    card.hidden = selected !== 'all' && card.dataset.vehicle !== selected;
+  });
+});
+
+document.querySelectorAll('.forged-text-button[data-case]').forEach((button) => {
+  button.addEventListener('click', () => {
+    const vehicle = button.dataset.case;
+    const labels = {
+      porsche: 'Porsche: exact model year, generation, trim, brake package, front/rear wheel dimensions, PCD, centre bore, ET and tyre sizes.',
+      amg: 'Mercedes-AMG: exact model, generation, brake package, axle loads, front/rear dimensions, PCD, centre bore, ET and tyre sizes.',
+      bmw: 'BMW M: exact chassis code, model year, brake package, front/rear dimensions, PCD, centre bore, ET and tyre sizes.',
+      tesla: 'Tesla: exact model and year, wheel load rating, brake package, front/rear dimensions, PCD, centre bore, ET, tyre sizes and TPMS.',
+      offroad: 'Off-road: vehicle, axle load, suspension and brake setup, tyre envelope, PCD, centre bore, offset and intended terrain.'
+    };
+    document.querySelector('#notes').value = labels[vehicle] || '';
+    document.querySelector('#enquiry').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+document.querySelector('#warranty-details')?.addEventListener('click', () => {
+  document.querySelector('#enquiry').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.querySelector('[name="notes"]').value = 'Please provide the written structural and finish warranty terms, including exclusions and market coverage.';
+});
+
+const customerType = document.querySelector('#customer-type');
+const tradeFields = Array.from(document.querySelectorAll('.forged-trade-field, .forged-quantity-field'));
+function syncCustomerType(value) {
+  tradeFields.forEach((field) => { field.hidden = value !== 'trade'; });
+}
+customerType?.addEventListener('change', (event) => {
+  customerType.value = event.detail.value;
+  syncCustomerType(event.detail.value);
+});
+syncCustomerType(customerType?.value || 'owner');
+
+const form = document.querySelector('#forged-enquiry-form');
+const submitButton = document.querySelector('#forged-submit');
+const feedback = document.querySelector('#forged-form-feedback');
+const referenceInput = document.querySelector('#reference-image');
+
+function showFeedback(state, message) {
+  feedback.setAttribute('state', state);
+  feedback.textContent = message;
+  feedback.hidden = false;
+}
+
+function readReferenceImage(file) {
+  if (!file) return Promise.resolve('');
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 5 * 1024 * 1024) {
+    throw new Error('Please choose a JPG, PNG or WebP image smaller than 5 MB.');
+  }
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ''));
+    reader.onerror = () => reject(new Error('The reference image could not be read.'));
+    reader.readAsDataURL(file);
+  });
+}
+
+form?.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  feedback.hidden = true;
+  if (!form.reportValidity()) return;
+  submitButton.setAttribute('loading', 'true');
+  submitButton.setAttribute('disabled', 'true');
+  try {
+    const data = new FormData(form);
+    const image = await readReferenceImage(referenceInput.files[0]);
+    const quantity = Number(data.get('quantity') || 1);
+    const constructionChoice = String(data.get('construction_choice') || 'Monoblock');
+    const payload = {
+      product: { id: 'ouranos-forged-custom', model: 'Custom forged wheel specification', construction: 'Forged' },
+      customer_name: data.get('customer_name'),
+      customer_email: data.get('customer_email'),
+      customer_phone: data.get('customer_phone'),
+      customer_company: data.get('customer_company'),
+      customer_type: customerType.value,
+      business_type: data.get('business_type'),
+      quantity,
+      finish: data.get('finish') || document.querySelector('.forged-swatch.is-selected')?.dataset.finish || '',
+      finish_details: 'Requested construction: ' + constructionChoice,
+      vehicle_make: data.get('vehicle_make'),
+      vehicle_model: data.get('vehicle_model'),
+      notes: data.get('notes'),
+      reference_image: image
+    };
+    const response = await fetch('/api/wheel-inquiries', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+    if (!response.ok || !result.ok) throw new Error(result.message || 'Your enquiry could not be submitted. Please try again.');
+    showFeedback('success', 'Your enquiry has been received. Reference: ' + result.reference + '. Our team will review your brief.');
+    form.reset();
+    syncCustomerType('owner');
+    renderFinishes('brushed');
+  } catch (error) {
+    showFeedback('error', error instanceof Error ? error.message : 'Your enquiry could not be submitted. Please try again.');
+  } finally {
+    submitButton.removeAttribute('loading');
+    submitButton.removeAttribute('disabled');
+  }
 });
 
 document.documentElement.dataset.forgedWheelsPage = 'ready';

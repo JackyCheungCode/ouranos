@@ -145,6 +145,9 @@ async function createWheelInquiry(request: Request, env: Env): Promise<Response>
     typeof product.construction === 'string' ? product.construction.trim().slice(0, 40) : '';
   const customerName = textField('customer_name', 120);
   const customerEmail = textField('customer_email', 254);
+  const customerPhone = textField('customer_phone', 80);
+  const customerCompany = textField('customer_company', 160);
+  const customerType = textField('customer_type', 20);
   const quantity = Number(body.quantity);
   if (
     !productId ||
@@ -154,18 +157,50 @@ async function createWheelInquiry(request: Request, env: Env): Promise<Response>
     !customerName ||
     !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail) ||
     !Number.isInteger(quantity) ||
-    quantity < 4 ||
-    quantity > 10000
+    quantity < 1 ||
+    quantity > 10000 ||
+    (customerType && !['owner', 'trade'].includes(customerType))
   ) {
     return json(
       {
         error: 'INVALID_INQUIRY',
-        message: 'Check the selected wheel, contact details and quantity (minimum 4 PCS).',
+        message: 'Check the selected wheel, contact details and quantity (minimum 1 set).',
       },
       400,
     );
   }
+
   const reference = 'WR-' + crypto.randomUUID().slice(0, 8).toUpperCase();
+  let referenceImageKey = '';
+  const referenceImage = typeof body.reference_image === 'string' ? body.reference_image : '';
+  if (referenceImage) {
+    const match = referenceImage.match(/^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/);
+    if (!match || match[2].length > 7_000_000) {
+      return json({ error: 'INVALID_REFERENCE_IMAGE', message: 'Use a JPG, PNG or WebP image smaller than 5 MB.' }, 400);
+    }
+    const mime = match[1];
+    const binary = atob(match[2]);
+    if (binary.length > 5 * 1024 * 1024) {
+      return json({ error: 'REFERENCE_IMAGE_TOO_LARGE', message: 'The reference image must be smaller than 5 MB.' }, 413);
+    }
+    const bytes = new Uint8Array(binary.length);
+    for (let index = 0; index < binary.length; index++) bytes[index] = binary.charCodeAt(index);
+    const validSignature =
+      (mime === 'image/jpeg' && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) ||
+      (mime === 'image/png' && bytes.length >= 8 && bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) ||
+      (mime === 'image/webp' && bytes.length >= 12 && String.fromCharCode(...bytes.slice(0, 4)) === 'RIFF' && String.fromCharCode(...bytes.slice(8, 12)) === 'WEBP');
+    if (!validSignature) {
+      return json({ error: 'INVALID_REFERENCE_IMAGE', message: 'The uploaded file is not a valid supported image.' }, 400);
+    }
+    const extension = mime === 'image/jpeg' ? 'jpg' : mime === 'image/png' ? 'png' : 'webp';
+    referenceImageKey = 'inquiries/' + reference.toLowerCase() + '.' + extension;
+    try {
+      await env.MODELS_BUCKET.put(referenceImageKey, bytes, { httpMetadata: { contentType: mime } });
+    } catch {
+      return json({ error: 'REFERENCE_IMAGE_STORAGE_FAILED', message: 'The reference image could not be stored. Please try again.' }, 503);
+    }
+  }
+
   const payload = {
     front: {
       diameter: textField('front_diameter', 20),
@@ -189,9 +224,17 @@ async function createWheelInquiry(request: Request, env: Env): Promise<Response>
       model: textField('vehicle_model', 100),
       year: textField('vehicle_year', 8),
     },
-    customer: { name: customerName, email: customerEmail },
+    customer: {
+      name: customerName,
+      email: customerEmail,
+      phone: customerPhone,
+      company: customerCompany,
+      type: customerType || 'owner',
+      business_type: textField('business_type', 120),
+    },
     quantity,
     notes: textField('notes', 3000),
+    reference_image_key: referenceImageKey || null,
     product: { id: productId, model: productModel, construction },
   };
   try {
@@ -209,6 +252,7 @@ async function createWheelInquiry(request: Request, env: Env): Promise<Response>
       .run();
     return json({ ok: true, reference }, 201);
   } catch {
+    if (referenceImageKey) await env.MODELS_BUCKET.delete(referenceImageKey).catch(() => undefined);
     return json(
       {
         error: 'INQUIRY_STORAGE_FAILED',
