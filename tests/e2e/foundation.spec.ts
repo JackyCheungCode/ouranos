@@ -78,6 +78,19 @@ test('Home header uses white branding while image tiles retain the light PDS sch
     'rgb(255, 255, 255)',
   );
   await expect(header.locator('p-button-pure').first()).toHaveAttribute('color', 'primary');
+  const headerButtons = header.locator('p-button-pure');
+  await expect(headerButtons).toHaveCount(4);
+  for (let index = 0; index < (await headerButtons.count()); index += 1) {
+    const button = headerButtons.nth(index);
+    await expect(button).toHaveCSS('color-scheme', 'dark');
+    const foreground = await button.evaluate((element) => {
+      const internalButton = element.shadowRoot?.querySelector('button');
+      return internalButton ? getComputedStyle(internalButton).color : null;
+    });
+    expect(foreground, `PDS header button ${index} must resolve to white in its dark scheme`).toBe(
+      'rgb(255, 255, 255)',
+    );
+  }
 
   for (const tile of [
     page.locator('p-link-tile[label="Find Wheels for Your Vehicle"]'),
