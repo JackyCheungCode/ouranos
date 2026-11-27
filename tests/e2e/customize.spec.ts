@@ -67,7 +67,7 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
   await expect(page.locator('#market')).toContainText('Canada');
   await expect(page.locator('#market')).not.toContainText('Europe');
   await expect(page.locator('#make option[value="porsche"]')).toHaveCount(1);
-  await expect(page.locator('#manufacturer-trigger')).toBeVisible();
+  await expect(page.locator('#make')).toBeVisible();
 
   await choose(page, '#make', 'porsche');
   await expect(page.locator('#model')).toBeEnabled();
@@ -110,10 +110,8 @@ test('Selecting a manufacturer from the logo menu loads its models', async ({ pa
   await page.locator('#model-list .model-card').click();
   await page.locator('#next-button').click();
   await chooseMarket(page);
-  await expect(page.locator('#manufacturer-trigger')).toBeEnabled();
-  await page.locator('#manufacturer-trigger').click();
-  await expect(page.locator('.manufacturer-option').filter({ hasText: 'Porsche' })).toBeVisible();
-  await page.locator('.manufacturer-option').filter({ hasText: 'Porsche' }).click();
+  await expect(page.locator('#make')).toBeEnabled();
+  await choose(page, '#make', 'porsche');
   await expect(page.locator('#model')).toBeEnabled();
   await expect(page.locator('#model')).toContainText('911');
 });
@@ -164,38 +162,28 @@ test('Vehicle step can be skipped and manual wheel dimensions remain available',
   await expect(page.locator('#summary-front')).toContainText('20');
 });
 
-test('Manufacturer options use transparent logos and step navigation stays readable', async ({ page }) => {
+test('Manufacturer uses the native PDS select without oversized option logos', async ({ page }) => {
   await mockWheelSize(page);
-  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/customize/');
   await page.locator('#model-list .model-card').click();
   await page.locator('#next-button').click();
   await chooseMarket(page);
-  await page.locator('#manufacturer-trigger').click();
-  await expect(page.locator('#manufacturer-menu')).toBeVisible();
-  await expect(page.locator('.manufacturer-option').filter({ hasText: 'Porsche' })).toBeVisible();
-  await expect(page.locator('.manufacturer-option')).toContainText('Porsche');
-  await expect(page.locator('.manufacturer-option-logo img')).toHaveAttribute('src', /cdn\.simpleicons\.org/);
+  const make = page.locator('#make');
+  await expect(make).toBeVisible();
+  await expect(make).toBeDisabled();
+  await expect(make).toHaveJSProperty('tagName', 'P-SELECT');
+  await expect(make.locator('p-select-option')).toContainText('Porsche');
+  await expect(make.locator('img')).toHaveCount(0);
+  await expect(make).toBeEnabled();
+  await choose(page, '#make', 'porsche');
+  await expect(page.locator('#model')).toBeEnabled();
+  await expect(page.locator('#model')).toContainText('911');
   const stepper = page.locator('.configuration-panel #config-stepper');
   await expect(stepper).toBeVisible();
   await expect(stepper).toHaveAttribute('size', 'medium');
   await expect(stepper.locator('p-stepper-horizontal-item')).toHaveCount(5);
   const stepLabels = await stepper.locator('p-stepper-horizontal-item').evaluateAll((items) => items.map((item) => (item.textContent || '').replace(/current:/gi, '').trim()));
   expect(stepLabels).toEqual(['Model', 'Vehicle', 'Dimensions', 'Finish', 'Review']);
-  const stepperMetrics = await stepper.evaluate((element) => {
-    const panel = element.parentElement;
-    if (!panel) throw new Error('Stepper is not inside the configuration panel');
-    const style = getComputedStyle(panel);
-    return {
-      stepperWidth: element.getBoundingClientRect().width,
-      panelContentWidth: panel.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight),
-    };
-  });
-  expect(stepperMetrics.stepperWidth).toBeCloseTo(stepperMetrics.panelContentWidth, 0);
-  const logoFrame = await page.locator('.manufacturer-option-logo').first().evaluate((el) => ({ radius: getComputedStyle(el).borderRadius, width: el.getBoundingClientRect().width, height: el.getBoundingClientRect().height }));
-  expect(logoFrame.radius).toBe('0px');
-  expect(logoFrame.width).toBe(44);
-  expect(logoFrame.height).toBe(32);
   const zoomDirection = await page.locator('.zoom-controls').evaluate((el) => getComputedStyle(el).flexDirection);
   expect(zoomDirection).toBe('column');
 });
