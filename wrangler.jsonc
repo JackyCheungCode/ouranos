@@ -3,7 +3,9 @@
   "name": "ouranos",
   "main": "src/index.ts",
   "compatibility_date": "2026-11-26",
-  "compatibility_flags": ["nodejs_compat"],
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
   "workers_dev": true,
   "assets": {
     "directory": "./dist",
@@ -12,10 +14,16 @@
   },
   "observability": {
     "enabled": true,
-    "logs": { "enabled": true, "invocation_logs": true }
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true
+    }
   },
   "r2_buckets": [
-    { "binding": "MODELS_BUCKET", "bucket_name": "ouranos-media" }
+    {
+      "binding": "MODELS_BUCKET",
+      "bucket_name": "ouranos-media"
+    }
   ],
   "d1_databases": [
     {
@@ -27,15 +35,31 @@
   ],
   "queues": {
     "producers": [
-      { "binding": "DISCOVERY_QUEUE", "queue": "ouranos-discovery-jobs" }
+      {
+        "binding": "DISCOVERY_QUEUE",
+        "queue": "ouranos-discovery-jobs"
+      }
     ],
     "consumers": [
-      { "queue": "ouranos-discovery-jobs", "max_batch_size": 10, "max_batch_timeout": 5, "max_retries": 3 }
+      {
+        "queue": "ouranos-discovery-jobs",
+        "max_batch_size": 10,
+        "max_batch_timeout": 5,
+        "max_retries": 3
+      }
     ]
   },
   "vectorize": [
-    { "binding": "WHEEL_INDEX", "index_name": "ouranos-wheel-visual-v1" }
+    {
+      "binding": "WHEEL_INDEX",
+      "index_name": "ouranos-wheel-visual-v1"
+    }
   ],
-  "ai": { "binding": "AI" },
-  "account_id": "ea4e98dce9c478d7dd5c07f10e5c722d"
+  "ai": {
+    "binding": "AI"
+  },
+  "account_id": "ea4e98dce9c478d7dd5c07f10e5c722d",
+  "browser": {
+    "binding": "BROWSER"
+  }
 }
