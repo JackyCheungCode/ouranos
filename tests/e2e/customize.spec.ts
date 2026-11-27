@@ -366,5 +366,6 @@ test('Configurator preloads wheel dimensions and source wheel from the catalogue
   await page.locator('#next-button').click();
   await page.locator('#next-button').click();
   await page.locator('#next-button').click();
+  await page.locator('#next-button').click();
   await expect(page.locator('#review-summary')).toContainText('VS-5RS');
 });
