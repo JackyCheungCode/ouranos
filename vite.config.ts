@@ -51,12 +51,9 @@ function sharedLayoutPartials() {
         readPartial('sidebar.html'),
       );
 
-      return {
-        html: html
-          .replace('<!-- OURANOS:HEADER -->', header.replace('<!-- OURANOS:TOPBAR -->', topbar))
-          .replace('<!-- OURANOS:FOOTER -->', readPartial('footer.html')),
-
-      };
+      return html
+        .replace('<!-- OURANOS:HEADER -->', header.replace('<!-- OURANOS:TOPBAR -->', topbar))
+        .replace('<!-- OURANOS:FOOTER -->', readPartial('footer.html'));
     },
   };
 }
