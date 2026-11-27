@@ -253,7 +253,8 @@ test('Configure opens a product-specific form and submits an enquiry to the Work
     inquiryRequests += 1;
     await route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify({ ok: true, reference: 'WR-TEST1234' }) });
   });
+  await expect(page.locator('#wheel-config-form').evaluate((form) => (form as HTMLFormElement).checkValidity())).resolves.toBe(true);
   await page.locator('#submit-wheel-enquiry').click();
-  await expect(page.locator('#configure-status')).toContainText('WR-TEST1234');
   await expect.poll(() => inquiryRequests).toBe(1);
+  await expect(page.locator('#configure-status')).toContainText('WR-TEST1234');
 });
