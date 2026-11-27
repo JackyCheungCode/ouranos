@@ -51,9 +51,18 @@ function sharedLayoutPartials() {
         readPartial('sidebar.html'),
       );
 
-      return html
-        .replace('<!-- OURANOS:HEADER -->', header.replace('<!-- OURANOS:TOPBAR -->', topbar))
-        .replace('<!-- OURANOS:FOOTER -->', readPartial('footer.html'));
+      return {
+        html: html
+          .replace('<!-- OURANOS:HEADER -->', header.replace('<!-- OURANOS:TOPBAR -->', topbar))
+          .replace('<!-- OURANOS:FOOTER -->', readPartial('footer.html')),
+        tags: [
+          {
+            tag: 'script',
+            attrs: { type: 'module', src: '/src/components/ai-assistant.js' },
+            injectTo: 'body',
+          },
+        ],
+      };
     },
   };
 }
