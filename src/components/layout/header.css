@@ -1,6 +1,6 @@
 .ouranos-header {
   position: relative;
-  z-index: 20;
+  z-index: 60;
   width: 100%;
   color: var(--pds-theme-light-primary, #000);
   color-scheme: light;
