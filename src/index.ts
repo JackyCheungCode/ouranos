@@ -1039,11 +1039,8 @@ async function leadTimeSimulationRequest(request: Request): Promise<Response> {
     const result = new Date(date);
     let added = 0;
     while (added < count) {
-      if (added > 0 || !isWorkday(result)) {
-        result.setUTCDate(result.getUTCDate() + 1);
-        if (!isWorkday(result)) continue;
-      }
-      added++;
+      result.setUTCDate(result.getUTCDate() + 1);
+      if (isWorkday(result)) added++;
     }
     return result;
   };
