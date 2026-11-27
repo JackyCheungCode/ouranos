@@ -1,6 +1,7 @@
 @import '@porsche-design-system/components-js';
 @import 'tailwindcss';
 @import '@porsche-design-system/components-js/tailwindcss';
+@import '../../components/layout/header.css';
 
 :root {
   color-scheme: dark;

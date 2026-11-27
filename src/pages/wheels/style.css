@@ -1,6 +1,7 @@
 @import '@porsche-design-system/components-js';
 @import 'tailwindcss';
 @import '@porsche-design-system/components-js/tailwindcss';
+@import '../../components/layout/header.css';
 
 :root {
   color-scheme: light;
@@ -12,10 +13,8 @@ body.wheels-page {
 body.drawer-open {
   overflow: hidden;
 }
-.wheels-page header,
 .wheels-page p-select,
-.wheels-page p-button,
-.wheels-page p-button-pure {
+.wheels-page p-button {
   color-scheme: light;
 }
 .wheels-shell {

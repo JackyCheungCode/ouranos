@@ -1,0 +1,23 @@
+/* PDS v4 derives Button Pure foreground and icon colors from color-scheme.
+   Keep the site light; isolate the shared topbar in its own dark scheme. */
+header {
+  color: #fff !important;
+  color-scheme: dark !important;
+}
+header a,
+header a:visited,
+header a:hover,
+header a:focus-visible,
+header .ouranos-wordmark {
+  color: #fff !important;
+  text-decoration-color: #fff;
+}
+header p-button-pure {
+  color: #fff !important;
+  color-scheme: dark !important;
+}
+header .ouranos-wordmark {
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-decoration: none;
+}

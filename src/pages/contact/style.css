@@ -1,6 +1,7 @@
 @import '@porsche-design-system/components-js';
 @import 'tailwindcss';
 @import '@porsche-design-system/components-js/tailwindcss';
+@import '../../components/layout/header.css';
 
 :root {
   color-scheme: light;
@@ -9,9 +10,7 @@ body.contact-page {
   color-scheme: light;
   background: var(--pds-theme-light-background-base, #fff);
 }
-.contact-page header,
-.contact-page p-button,
-.contact-page p-button-pure {
+.contact-page p-button {
   color-scheme: light;
 }
 .contact-shell {
