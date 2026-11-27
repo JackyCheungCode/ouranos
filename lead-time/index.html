@@ -1,29 +1,106 @@
 <!doctype html>
 <html lang="en" class="scheme-light bg-canvas">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="OURANOS manufacturing lead time estimator."><title>OURANOS | Lead Time Estimator</title></head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Estimate the production completion date for your OURANOS wheel order.">
+  <title>OURANOS | Production Lead Time</title>
+</head>
 <body class="scheme-light lead-time-page">
-<!-- OURANOS:HEADER -->
-<main class="grid-template gap-y-fluid-xl pb-fluid-2xl">
-<section class="scheme-light z-0 col-full grid grid-cols-subgrid items-end h-[clamp(480px,80vh,1000px)] relative before:absolute before:inset-[50%_0_0_0] before:z-2 before:pointer-events-none before:bg-linear-to-t before:from-canvas before:to-transparent" aria-labelledby="heading-section-1">
-<video class="z-1 col-span-full row-span-full min-w-full w-full min-h-full h-full object-cover object-center" loop muted autoplay playsinline aria-hidden="true"><source src="/videos/mood-porsche-gts.mp4" type="video/mp4"></video>
-<div class="z-2 col-extended row-span-full mb-fluid-lg"><p-heading id="heading-section-1" class="pb-fluid-md" tag="h1" size="3xl"><span class="text-md block">OURANOS</span>Precision in Every Form.</p-heading><p-button href="/wheels/" variant="secondary">Explore Wheels</p-button></div>
-<p-button class="z-3 col-wide place-self-end row-span-full mb-fluid-lg" variant="secondary" compact="true" hide-label="true" icon="pause" id="pause-button">Pause Video</p-button>
-</section>
-<section class="lead-shell">
-<header class="lead-page-heading"><p-text size="xs" color="contrast-medium">OURANOS / MANUFACTURING INTELLIGENCE</p-text><p-heading tag="h2" size="2xl">LEAD TIME ESTIMATOR</p-heading><p-text color="contrast-medium" size="lg">A production-led view of your wheel's manufacturing journey.</p-text></header>
-<section class="lead-order"><div class="lead-section-heading"><div><p-text size="xs" color="contrast-medium">ORDER CONFIGURATION</p-text><p-heading tag="h2" size="lg">Configure your production request</p-heading></div><p-text size="xs" color="contrast-medium">SIMULATION · WORKING DAYS</p-text></div>
-<form id="lead-form" class="lead-form">
-<label><span>Product</span><p-select id="lead-product" label="Select wheel model" required><p-select-option value="">Choose a product</p-select-option></p-select></label>
-<label><span>Order quantity</span><p-input-number id="lead-quantity" label="Quantity" min="1" max="5000" value="4" required></p-input-number></label>
-<label><span>Order date</span><p-input-date id="lead-order-date" label="Order date" required></p-input-date></label>
-<div class="lead-form__action"><p-text id="lead-form-status" size="xs" color="contrast-medium" aria-live="polite">Select a product and submit to check the production schedule.</p-text><p-button id="lead-submit" type="submit">ESTIMATE LEAD TIME</p-button></div>
-</form></section>
-<section id="lead-loading" class="lead-loading" hidden aria-live="polite"><div class="lead-loading__heading"><p-text size="xs" color="contrast-medium">OURANOS / PRODUCTION INTELLIGENCE</p-text><strong id="loading-percent">0%</strong></div><div class="lead-loading__track"><i id="loading-progress"></i></div><ol id="loading-steps" class="loading-steps"><li>Connecting to OURANOS MES system</li><li>Consolidating current PMC production schedule</li><li>Verifying active shop-floor jobs</li><li>Checking aluminium billet inventory</li><li>Complete</li></ol></section>
-<section id="production-results" class="production-results" hidden>
-<div class="lead-result-summary"><div><p-text size="xs" color="contrast-medium">PRODUCTION SCHEDULE / SIMULATED DATA</p-text><p-heading tag="h2" size="lg">Estimated manufacturing completion</p-heading></div><div class="lead-result-date"><strong id="result-finish"></strong><span>ESTIMATED COMPLETION</span></div></div>
-<div class="result-facts"><div><span>PRODUCT</span><strong id="result-product"></strong></div><div><span>QUANTITY</span><strong id="result-quantity"></strong></div><div><span>PRODUCTION START</span><strong id="result-start"></strong></div><div><span>LEAD TIME</span><strong id="result-duration"></strong></div></div>
-</section>
-<p class="lead-footnote">LEAD TIME ESTIMATES ARE SIMULATED USING STANDARD WORKING-DAY ROUTES. ACTUAL DELIVERY DATES REQUIRE FACTORY CAPACITY CONFIRMATION.</p>
-</section></main>
-<!-- OURANOS:FOOTER -->
-<script type="module" src="/src/pages/lead-time/main.js"></script></body></html>
+  <!-- OURANOS:HEADER -->
+  <main class="grid-template gap-y-fluid-xl pb-fluid-2xl">
+    <section class="scheme-light z-0 col-full grid grid-cols-subgrid items-end h-[clamp(480px,80vh,1000px)] relative before:absolute before:inset-[50%_0_0_0] before:z-2 before:pointer-events-none before:bg-linear-to-t before:from-canvas before:to-transparent" aria-labelledby="heading-section-1">
+      <video class="z-1 col-span-full row-span-full min-w-full w-full min-h-full h-full object-cover object-center" loop muted autoplay playsinline aria-hidden="true">
+        <source src="/videos/mood-porsche-gts.mp4" type="video/mp4">
+      </video>
+      <div class="z-2 col-extended row-span-full mb-fluid-lg">
+        <p-heading id="heading-section-1" class="pb-fluid-md" tag="h1" size="3xl"><span class="text-md block">OURANOS</span>Precision in Every Form.</p-heading>
+        <p-button href="/wheels/" variant="secondary">Explore Wheels</p-button>
+      </div>
+      <p-button class="z-3 col-wide place-self-end row-span-full mb-fluid-lg" variant="secondary" compact="true" hide-label="true" icon="pause" id="pause-button">Pause Video</p-button>
+    </section>
+
+    <section class="lead-shell" aria-labelledby="lead-title">
+      <header class="lead-intro">
+        <p-text size="xs" color="contrast-medium">OURANOS / PRODUCTION</p-text>
+        <p-heading id="lead-title" tag="h2" size="2xl">When will your wheels be ready?</p-heading>
+        <p-text color="contrast-medium" size="md">Get an estimated production completion date for your wheel order.</p-text>
+      </header>
+
+      <section class="lead-configurator" aria-labelledby="config-title">
+        <div class="lead-configurator__heading">
+          <div>
+            <p-text size="xs" color="contrast-medium">01 / ORDER DETAILS</p-text>
+            <p-heading id="config-title" tag="h3" size="lg">Configure your estimate</p-heading>
+          </div>
+          <p-text size="xs" color="contrast-medium">ABOUT 30 SECONDS</p-text>
+        </div>
+        <form id="lead-form" class="lead-form">
+          <label class="lead-field lead-field--product">
+            <span class="lead-field__label">Wheel model</span>
+            <p-select id="lead-product" label="Select a wheel model" required>
+              <p-select-option value="">Choose a wheel model</p-select-option>
+            </p-select>
+            <span id="product-detail" class="lead-field__hint">Select a model to view its configuration.</span>
+          </label>
+          <label class="lead-field">
+            <span class="lead-field__label">Order quantity</span>
+            <p-input-number id="lead-quantity" label="Number of wheels" min="1" max="5000" value="4" required></p-input-number>
+            <span class="lead-field__hint">Enter the total number of wheels.</span>
+          </label>
+          <label class="lead-field">
+            <span class="lead-field__label">Order date</span>
+            <p-input-date id="lead-order-date" label="Planned order date" required></p-input-date>
+            <span class="lead-field__hint">Production is scheduled from the next available working day.</span>
+          </label>
+          <div class="lead-form__footer">
+            <p-text id="lead-form-status" size="xs" color="contrast-medium" aria-live="polite">Choose your wheel model, quantity and order date.</p-text>
+            <p-button id="lead-submit" type="submit">ESTIMATE LEAD TIME</p-button>
+          </div>
+        </form>
+      </section>
+
+      <section id="lead-loading" class="lead-loading" hidden aria-live="polite">
+        <div class="lead-loading__top"><p-text size="xs" color="contrast-medium">CALCULATING YOUR ESTIMATE</p-text><strong id="loading-percent">0%</strong></div>
+        <div class="lead-loading__track"><i id="loading-progress"></i></div>
+        <ol id="loading-steps" class="lead-loading__steps">
+          <li>Reviewing wheel configuration</li>
+          <li>Applying the standard manufacturing route</li>
+          <li>Calculating the estimated completion date</li>
+        </ol>
+      </section>
+
+      <section id="production-results" class="estimate-result" hidden aria-labelledby="result-title">
+        <div class="estimate-result__eyebrow"><p-text size="xs" color="contrast-medium">02 / YOUR PRODUCTION ESTIMATE</p-text><span class="estimate-status">SIMULATED ESTIMATE</span></div>
+        <div class="estimate-result__hero">
+          <div>
+            <p-heading id="result-title" tag="h3" size="lg">Estimated production completion</p-heading>
+            <p id="result-product" class="estimate-result__model"></p>
+          </div>
+          <div class="estimate-result__date">
+            <strong id="result-finish"></strong>
+            <span>ESTIMATED COMPLETION</span>
+          </div>
+        </div>
+        <div class="estimate-result__metrics">
+          <div><strong id="result-duration"></strong><span>WORKING DAYS</span></div>
+          <div><strong id="result-quantity"></strong><span>ORDER QUANTITY</span></div>
+          <div><strong id="result-start"></strong><span>ESTIMATED START</span></div>
+        </div>
+        <div class="estimate-journey">
+          <div class="estimate-journey__heading">
+            <div><p-text size="xs" color="contrast-medium">03 / PRODUCTION JOURNEY</p-text><p-heading tag="h4" size="md">From order to completion</p-heading></div>
+            <p-text size="xs" color="contrast-medium">WORKING DAYS</p-text>
+          </div>
+          <ol id="production-journey" class="production-journey"></ol>
+        </div>
+        <p class="estimate-disclaimer">This is an indicative estimate based on standard manufacturing routes and simulated batch assumptions. It is not a live factory-capacity confirmation. The confirmed schedule may vary after order review.</p>
+        <div class="estimate-result__actions"><p-button id="new-estimate" variant="secondary">EDIT ESTIMATE</p-button><a href="/contact/" class="estimate-contact">CONTACT OURANOS <span aria-hidden="true">↗</span></a></div>
+      </section>
+    </section>
+  </main>
+  <!-- OURANOS:FOOTER -->
+  <script type="module" src="/src/pages/lead-time/main.js"></script>
+  <script type="module" src="/src/components/ai-assistant.js"></script>
+</body>
+</html>
