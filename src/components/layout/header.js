@@ -160,12 +160,20 @@ if (header) {
     });
   }
 
-  languageOptions.forEach((option) => {
-    option.addEventListener('click', () => {
-      applyLocale(option.dataset.locale, true);
-      if (languagePopover) languagePopover.open = false;
-    });
-  });
+  if (languagePopover) {
+    languagePopover.addEventListener(
+      'click',
+      (event) => {
+        const option = event.composedPath().find(
+          (node) => node instanceof HTMLElement && node.hasAttribute('data-locale'),
+        );
+        if (!(option instanceof HTMLElement)) return;
+        applyLocale(option.dataset.locale, true);
+        languagePopover.open = false;
+      },
+      true,
+    );
+  }
 
   let savedLocale = 'en';
   try {
