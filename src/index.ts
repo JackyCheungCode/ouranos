@@ -25,6 +25,8 @@ interface D1Statement {
 }
 interface D1Database { prepare(query: string): D1Statement; }
 interface DiscoveryQueue { send(message: Record<string, unknown>): Promise<void>; }
+interface DiscoveryQueueMessage { body: { jobId?: string; type?: string }; ack(): void; retry(): void; }
+interface DiscoveryQueueBatch { messages: DiscoveryQueueMessage[]; }
 
 export interface Env {
   ASSETS: { fetch(request: Request): Promise<Response> };
@@ -271,6 +273,34 @@ async function getDiscoveryJob(request: Request, env: Env): Promise<Response> {
 }
 
 const handler = {
+  async queue(batch: DiscoveryQueueBatch, env: Env) {
+    for (const message of batch.messages) {
+      const jobId = message.body?.jobId;
+      if (!jobId || !/^[0-9a-f-]{36}$/i.test(jobId)) {
+        message.ack();
+        continue;
+      }
+      try {
+        const job = await env.DB.prepare(
+          "SELECT id, status FROM discovery_jobs WHERE id = ?"
+        ).bind(jobId).first<{ id: string; status: string }>();
+        if (!job || job.status === 'completed' || job.status === 'failed') {
+          message.ack();
+          continue;
+        }
+        await env.DB.prepare(
+          "UPDATE discovery_jobs SET status = 'failed', error_code = ?, error_message = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND status IN ('queued', 'processing')"
+        ).bind(
+          'MATCHING_NOT_CONFIGURED',
+          'Your reference was received, but visual matching is not available yet because the OURANOS product catalogue and image index are not ready.',
+          jobId,
+        ).run();
+        message.ack();
+      } catch {
+        message.retry();
+      }
+    }
+  },
   async fetch(request: Request, env: Env) {
     const url = new URL(request.url);
     if (url.pathname === '/api/discover/image') return createImageDiscovery(request, env);
