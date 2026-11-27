@@ -83,7 +83,7 @@ function sharedLayoutPartials() {
       if (transformed.includes('<!-- OURANOS:HEADER -->')) {
         transformed = transformed.replace('<!-- OURANOS:HEADER -->', header);
       } else if (!transformed.includes('class="ouranos-header"')) {
-        transformed = transformed.replace(/<body\\b[^>]*>/i, (openingTag) => `${openingTag}\\n${header}`);
+        transformed = transformed.replace(/<body\b[^>]*>/i, (openingTag) => `${openingTag}\n${header}`);
       }
 
       if (transformed.includes('<!-- OURANOS:FOOTER -->')) {
