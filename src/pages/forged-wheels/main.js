@@ -17,7 +17,7 @@ const solutionCopy = {
 };
 
 const stepper = document.querySelector('#manufacturing-stepper');
-const stepItems = Array.from(document.querySelectorAll('p-stepper-horizontal-item'));
+const stepItems = Array.from(stepper?.querySelectorAll('button[role="tab"]') || []);
 const processIndex = document.querySelector('#process-index');
 const processTitle = document.querySelector('#process-title');
 const processDescription = document.querySelector('#process-description');
@@ -40,7 +40,20 @@ function renderProcessStep(index) {
   }));
   processMark.textContent = String(index + 1).padStart(2, '0');
 }
-stepper?.addEventListener('update', (event) => renderProcessStep(event.detail.activeStepIndex));
+function activateProcessStep(index) {
+  if (!Number.isInteger(index) || index < 0 || index >= processSteps.length) return;
+  stepper.activeTabIndex = index;
+  stepItems.forEach((item, itemIndex) => item.setAttribute('aria-selected', String(itemIndex === index)));
+  renderProcessStep(index);
+}
+stepItems.forEach((item, index) => {
+  item.addEventListener('click', () => activateProcessStep(index));
+});
+stepper?.addEventListener('update', (event) => {
+  const index = Number(event.detail?.activeTabIndex);
+  if (Number.isInteger(index)) activateProcessStep(index);
+});
+renderProcessStep(0);
 
 document.querySelectorAll('.forged-pain__list p-accordion').forEach((accordion) => {
   accordion.addEventListener('update', (event) => {
@@ -84,7 +97,8 @@ function renderFinishes(category) {
     button.dataset.finish = name;
     button.setAttribute('aria-pressed', index === 0 ? 'true' : 'false');
     const swatch = document.createElement('span');
-    swatch.className = 'swatch swatch--' + ['titanium', 'silver', 'dark', 'bronze', 'black'][index];
+    swatch.className = 'swatch swatch--' + category + '-' + (index + 1);
+    swatch.setAttribute('aria-hidden', 'true');
     const label = document.createElement('span');
     label.textContent = name;
     button.append(swatch, label);

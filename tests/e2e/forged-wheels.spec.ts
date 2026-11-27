@@ -32,13 +32,22 @@ test('forged wheels landing page follows the seven-section business brief', asyn
   await expect(page.locator('#forged-hero-title')).toContainText('Forged to perform.');
   await expect(page.locator('.forged-trustbar > div')).toHaveCount(4);
   await expect(page.locator('.forged-pain__list p-accordion')).toHaveCount(4);
-  await expect(page.locator('p-stepper-horizontal-item')).toHaveCount(6);
+  await expect(page.locator('#manufacturing-stepper button[role="tab"]')).toHaveCount(6);
+  await expect(page.locator('.forged-brand-logo')).toHaveCount(30);
+  await expect(page.locator('.forged-certification-mark img')).toHaveCount(2);
+  await expect(page.locator('.forged-header__video, .ouranos-header__video')).toBeAttached();
   await expect(page.locator('.forged-construction-panel')).toHaveCount(4);
   await expect(page.locator('p-carousel')).toBeVisible();
-  await expect(page.locator('.forged-certifications__scroller')).toBeVisible();
+  await expect(page.locator('.forged-certifications__list')).toBeVisible();
   await expect(page.locator('.forged-fitment-card')).toHaveCount(5);
   await expect(page.locator('.forged-aftercare__grid article')).toHaveCount(3);
   await expect(page.locator('#forged-enquiry-form')).toBeVisible();
+
+  await page.locator('#manufacturing-stepper button[role="tab"]').nth(3).click();
+  await expect(page.locator('#process-title')).toHaveText('Surface preparation & finishing');
+  await expect(page.locator('#process-index')).toHaveText('04 / 06');
+  await page.locator('#manufacturing-stepper button[role="tab"]').nth(5).click();
+  await expect(page.locator('#process-title')).toHaveText('Laboratory and durability testing');
 
   await page.locator('#construction-tabs').evaluate((element) => {
     element.dispatchEvent(new CustomEvent('update', { detail: { activeTabIndex: 2 } }));
@@ -88,4 +97,6 @@ test('forged wheels enquiry supports a one-set private owner enquiry and respons
   }));
   expect(dimensions.body).toBeLessThanOrEqual(dimensions.viewport);
   await expect(page.locator('#forged-submit')).toBeVisible();
+  await expect(page.locator('.forged-swatch .swatch').first()).toHaveCSS('border-radius', '50%');
+  await expect(page.locator('.forged-form-grid label:has(> p-input-text) > span')).toHaveCount(0);
 });
