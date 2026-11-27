@@ -22,8 +22,8 @@ test('Lead time estimator presents a focused customer estimate and manufacturing
       { name: 'Order and material preparation', durationDays: 1, startDate: start.toISOString().slice(0, 10), endDate: start.toISOString().slice(0, 10) },
       { name: 'Forging and forming', durationDays: 2, startDate: addWorkdayDate(start, 1), endDate: addWorkdayDate(start, 2) },
       { name: 'CNC machining', durationDays: 2, startDate: addWorkdayDate(start, 3), endDate: addWorkdayDate(start, 4) },
-      { name: 'Surface finishing', durationDays: 1, startDate: addWorkdayDate(start, 5), endDate: addWorkdays(start, 5) },
-      { name: 'Quality inspection', durationDays: 1, startDate: addWorkdayDate(start, 6), endDate: addWorkdays(start, 6) },
+      { name: 'Surface finishing', durationDays: 1, startDate: addWorkdayDate(start, 5), endDate: addWorkdayDate(start, 5) },
+      { name: 'Quality inspection', durationDays: 1, startDate: addWorkdayDate(start, 6), endDate: addWorkdayDate(start, 6) },
     ];
     await route.fulfill({
       status: 200,
