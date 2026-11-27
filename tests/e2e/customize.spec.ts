@@ -73,7 +73,7 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
   await mockWheelSize(page);
   await page.goto('/customize/');
 
-  await expect(page).toHaveTitle('Ouranos | Wheel Atelier');
+  await expect(page).toHaveTitle('Ouranos | Wheel Configurator');
   await expect(page.getByRole('heading', { name: /Choose your wheel model/i })).toBeVisible();
   await expect(page.locator('#model-list .model-card')).toHaveCount(1);
   await expect(page.locator('#model-page-label')).toHaveText('PAGE 1 / 1');
