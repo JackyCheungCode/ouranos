@@ -1,6 +1,23 @@
 <p-drilldown id="nav-drilldown">
-  <p-drilldown-link><a href="/wheels/">Wheels Catalogue</a></p-drilldown-link>
-  <p-drilldown-link><a href="/discover/">Discover Wheels</a></p-drilldown-link>
-  <p-drilldown-link><a href="/customize/">Wheel Configurator</a></p-drilldown-link>
-  <p-drilldown-link><a href="/lead-time/">Lead Time Estimator</a></p-drilldown-link>
+  <p-drilldown-item identifier="ouranos-wheels" label="Ouranos Wheels">
+    <p-drilldown-link href="/wheels/">
+      <p-icon name="grid" size="sm"></p-icon>
+      Wheels Catalogue
+    </p-drilldown-link>
+    <p-drilldown-link href="/discover/">
+      <p-icon name="search" size="sm"></p-icon>
+      Discover Wheels
+    </p-drilldown-link>
+    <p-drilldown-link href="/customize/">
+      <p-icon name="configurate" size="sm"></p-icon>
+      <span class="nav-design-studio-label">Wheel Design Studio <p-tag variant="info">BETA</p-tag></span>
+    </p-drilldown-link>
+  </p-drilldown-item>
 </p-drilldown>
+<style>
+  .nav-design-studio-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+</style>
