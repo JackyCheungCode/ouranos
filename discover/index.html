@@ -71,7 +71,18 @@
             </div>
             <p-text id="url-help" size="xs" color="contrast-medium">Only public product pages can be analysed. Pages requiring sign-in or blocking automated access may need a reference image instead.</p-text>
             <div class="discover-progress" id="url-progress" hidden><div class="discover-progress-meta"><span id="url-progress-step">Waiting to analyse</span><span id="url-progress-value">0%</span></div><progress id="url-progress-bar" max="100" value="0" aria-label="Product link analysis progress"></progress></div>
-            <p-text id="url-status" class="discover-status" color="contrast-medium" aria-live="polite">Supported URL intake is being prepared. No page content is fetched at this stage.</p-text>
+            <p-text id="url-status" class="discover-status" color="contrast-medium" aria-live="polite">Paste a product page URL to extract its image and specifications before searching.</p-text>
+            <section id="url-product-preview" class="discover-product-preview" hidden aria-live="polite">
+              <img id="url-product-image" alt="Extracted reference product image" hidden>
+              <div class="discover-product-details">
+                <p-text size="xs" color="contrast-medium">EXTRACTED PRODUCT INFORMATION</p-text>
+                <h3 id="url-product-title"></h3>
+                <dl id="url-product-fields" class="discover-product-fields"></dl>
+                <p-text id="url-product-source" size="xs" color="contrast-medium"></p-text>
+                <p-text size="sm" color="contrast-medium">Please review the extracted details. OURANOS catalogue search will only start after you confirm.</p-text>
+                <p-button id="url-confirm-search" type="button">Search OURANOS catalogue</p-button>
+              </div>
+            </section>
           </section>
         </div>
       </section>

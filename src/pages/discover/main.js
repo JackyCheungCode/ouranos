@@ -172,38 +172,99 @@ document.querySelectorAll('[data-method]').forEach((button) => {
 });
 
 urlInput.addEventListener('input', () => {
+  document.querySelector('#url-product-preview').hidden = true;
+  const oldResults = document.querySelector('#discovery-results');
+  if (oldResults) oldResults.remove();
+  window.__ouranosDiscoveryJobId = null;
   setPdsDisabled(urlSubmit, !urlInput.value.trim());
   urlStatus.textContent = 'Paste a public product page URL. Page extraction runs in an isolated, hostname-restricted browser session after submission.';
   urlStatus.dataset.state = '';
 });
 
-async function pollUrlDiscoveryJob(jobId) {
+function renderExtractedProduct(reference) {
+  const section = document.querySelector('#url-product-preview');
+  const image = document.querySelector('#url-product-image');
+  const title = document.querySelector('#url-product-title');
+  const fields = document.querySelector('#url-product-fields');
+  const source = document.querySelector('#url-product-source');
+  const confirm = document.querySelector('#url-confirm-search');
+  section.hidden = false;
+  title.textContent = reference.extracted_title || 'Product title not available';
+  image.hidden = !reference.extracted_image_url;
+  if (reference.extracted_image_url) image.src = reference.extracted_image_url;
+  else image.removeAttribute('src');
+  source.textContent = reference.source_domain ? 'Source: ' + reference.source_domain : '';
+  let specs = {};
+  try { specs = JSON.parse(reference.extracted_specs_json || '{}'); } catch { specs = {}; }
+  const entries = [
+    ['Brand', reference.extracted_brand],
+    ['Model', reference.extracted_model],
+    ['SKU', specs.sku],
+    ['Diameter', specs.diameter ? specs.diameter + ' in' : ''],
+    ['Width', specs.width ? specs.width + ' in' : ''],
+    ['PCD', specs.pcdHoles && specs.pcdMm ? specs.pcdHoles + ' × ' + specs.pcdMm : ''],
+    ['Offset', specs.offsetMm !== null && specs.offsetMm !== undefined ? 'ET' + specs.offsetMm : ''],
+  ];
+  fields.replaceChildren();
+  let count = 0;
+  for (const [label, value] of entries) {
+    if (value === null || value === undefined || value === '') continue;
+    const wrapper = document.createElement('div');
+    const term = document.createElement('dt');
+    const description = document.createElement('dd');
+    term.textContent = label;
+    description.textContent = String(value);
+    wrapper.append(term, description);
+    fields.append(wrapper);
+    count++;
+  }
+  if (!count) {
+    const wrapper = document.createElement('div');
+    const term = document.createElement('dt');
+    const description = document.createElement('dd');
+    term.textContent = 'Specifications';
+    description.textContent = 'No specifications could be extracted from this page.';
+    wrapper.append(term, description);
+    fields.append(wrapper);
+  }
+  confirm.hidden = false;
+  setPdsDisabled(confirm, false);
+}
+
+async function pollUrlDiscoveryJob(jobId, waitForMatching = false) {
   const started = Date.now();
   while (Date.now() - started < 120000) {
     const response = await fetch(`/api/discover/jobs/${encodeURIComponent(jobId)}`, { headers: { accept: 'application/json' } });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.error || 'Unable to retrieve discovery status.');
-    if (data.job.status === 'completed') {
-      urlProgress.set(100, '分析完成', 'success');
-      urlStatus.textContent = '已提取商品信息，并完成商品库检索。';
+    if (!waitForMatching && data.job.status === 'completed' && data.reference?.confirmation_status === 'pending') {
+      urlProgress.set(100, '商品信息提取完成', 'success');
+      urlStatus.textContent = '商品信息已提取。请核对图片和参数，确认后再搜索 OURANOS 商品库。';
+      urlStatus.dataset.state = 'success';
+      renderExtractedProduct(data.reference);
+      return;
+    }
+    if (waitForMatching && data.job.status === 'completed' && data.reference?.confirmation_status === 'confirmed') {
+      urlProgress.set(100, '商品库搜索完成', 'success');
+      urlStatus.textContent = 'OURANOS 商品库搜索完成。';
       urlStatus.dataset.state = 'success';
       renderDiscoveryMatches(data.matches || [], urlPanel);
       return;
     }
     if (data.job.status === 'failed') throw new Error(data.job.error_message || 'Product page analysis failed.');
+    const elapsed = (Date.now() - started) / 1000;
     if (data.job.status === 'processing') {
-      const elapsed = (Date.now() - started) / 1000;
-      urlProgress.set(Math.min(90, 35 + elapsed * 1.4), elapsed < 8 ? '正在打开商品页面' : elapsed < 20 ? '正在提取轮毂参数' : '正在比对 OURANOS 商品库');
-      urlStatus.textContent = '正在读取商品信息并查找匹配结果。';
+      urlProgress.set(Math.min(90, 35 + elapsed * 1.4), waitForMatching ? '正在搜索 OURANOS 商品库' : '正在提取商品信息');
+      urlStatus.textContent = waitForMatching ? '正在根据已确认的信息搜索 OURANOS 商品库。' : '正在读取商品图片、型号和轮毂参数。';
     } else {
-      urlProgress.set(15, '等待分析任务启动');
-      urlStatus.textContent = '链接已接收，等待分析任务启动。';
+      urlProgress.set(15, waitForMatching ? '等待商品库搜索启动' : '等待商品页面分析');
+      urlStatus.textContent = waitForMatching ? '确认已提交，等待商品库搜索。' : '链接已接收，等待提取商品信息。';
     }
     urlStatus.dataset.state = 'info';
     await new Promise((resolve) => setTimeout(resolve, 1800));
   }
-  urlProgress.set(90, '分析仍在进行');
-  urlStatus.textContent = '分析耗时较长，任务仍在处理中。';
+  urlProgress.set(90, '任务仍在进行');
+  urlStatus.textContent = '任务耗时较长，仍在处理中。';
   urlStatus.dataset.state = 'info';
 }
 
@@ -228,8 +289,11 @@ urlSubmit.addEventListener('click', async () => {
     return;
   }
   setPdsDisabled(urlSubmit, true);
+  document.querySelector('#url-product-preview').hidden = true;
+  const existingResults = document.querySelector('#discovery-results');
+  if (existingResults) existingResults.remove();
   urlProgress.set(8, '正在提交商品链接');
-  urlStatus.textContent = '正在提交链接并创建分析任务。';
+  urlStatus.textContent = '正在提取商品信息，暂不会搜索 OURANOS 商品库。';
   urlStatus.dataset.state = 'info';
   try {
     const response = await fetch('/api/discover/url', {
@@ -239,13 +303,38 @@ urlSubmit.addEventListener('click', async () => {
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(intakeError(data, '无法提交商品链接。'));
-    await pollUrlDiscoveryJob(data.jobId);
+    window.__ouranosDiscoveryJobId = data.jobId;
+    await pollUrlDiscoveryJob(data.jobId, false);
   } catch (error) {
-    urlProgress.set(0, '分析失败', 'error');
+    urlProgress.set(0, '提取失败', 'error');
     urlStatus.textContent = error instanceof Error ? error.message : '链接分析失败。';
     urlStatus.dataset.state = 'error';
   } finally {
     setPdsDisabled(urlSubmit, !urlInput.value.trim());
+  }
+});
+
+document.querySelector('#url-confirm-search').addEventListener('click', async () => {
+  const button = document.querySelector('#url-confirm-search');
+  const jobId = window.__ouranosDiscoveryJobId;
+  if (!jobId || button.disabled) return;
+  setPdsDisabled(button, true);
+  urlProgress.set(10, '正在提交确认');
+  urlStatus.textContent = '已确认商品信息，正在启动 OURANOS 商品库搜索。';
+  urlStatus.dataset.state = 'info';
+  try {
+    const response = await fetch(`/api/discover/jobs/${encodeURIComponent(jobId)}/confirm`, {
+      method: 'POST',
+      headers: { accept: 'application/json' },
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.message || data.error || '无法启动商品库搜索。');
+    await pollUrlDiscoveryJob(jobId, true);
+  } catch (error) {
+    setPdsDisabled(button, false);
+    urlProgress.set(0, '搜索启动失败', 'error');
+    urlStatus.textContent = error instanceof Error ? error.message : '商品库搜索失败。';
+    urlStatus.dataset.state = 'error';
   }
 });
 
