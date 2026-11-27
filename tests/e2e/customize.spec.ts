@@ -262,7 +262,6 @@ test('Manufacturer uses the native PDS select without oversized option logos', a
   expect(zoomDirection).toBe('column');
 });
 
-
 test('Configurator defaults to the first wheel model and supports Back and the primary menu', async ({
   page,
 }) => {
