@@ -5,6 +5,18 @@
 - Cloudflare Worker serves the Vite production build through the Assets binding.
 - Application entry: `src/main.tsx`.
 - Provider boundary: `src/app/providers.tsx`.
+- Static public pages are Vite multi-page HTML entries; every `index.html` page is discovered automatically at build time.
+
+## Shared public layout
+- `src/components/layout/header.html` is the shared header insertion point.
+- `src/components/layout/topbar.html` owns the Header Pattern markup, including the global OURANOS AI entry and PDS Popover language selector.
+- `src/components/layout/header.js` owns global navigation behavior and locale preference.
+- `src/components/layout/header.css` owns shared Header styling.
+- `src/components/layout/sidebar.html` owns the PDS Drilldown navigation content.
+- Vite injects the shared Header and AI assistant into every public HTML page by default. The admin panel is excluded.
+- The home page receives the Overlay variant; all other public pages receive the Stacked variant.
+- A new public page only needs its own `index.html` and page-specific assets. It inherits the shared Header, language preference, navigation and AI assistant automatically.
+- To intentionally omit the shared Header on a special public page, add `<!-- OURANOS:NO-SHARED-HEADER -->` before the closing body tag.
 
 ## Dependency direction
 - Pages/features may depend on shared components, hooks, services and utilities.
