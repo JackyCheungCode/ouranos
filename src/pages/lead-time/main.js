@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { demoProducts } from '../wheels/demo-products.js';
 import './style.css';
-const $=(s,root=document)=>root.querySelector(s), $=(s,root=document)=>[...root.querySelectorAll(s)];
+const $=(s,root=document)=>root.querySelector(s); const $all=(s,root=document)=>[...root.querySelectorAll(s)];
 const routes={
 casting:[['MATERIAL PREPARATION','Alloy charge, weighing and batch preparation'],['MELTING & HOLDING','Controlled melt temperature and conditioning'],['CASTING','Wheel blank casting and solidification'],['COOLING & DEMOULDING','Cooling, release and blank inspection'],['HEAT TREATMENT','Solution treatment, quenching and ageing'],['CNC MACHINING','Precision turning, milling and drilling'],['SURFACE FINISH & QC','Finishing, dimensional inspection and quality control']],
 forging:[['BILLET PREPARATION','Alloy billet cutting and traceability'],['BILLET HEATING','Controlled billet heating'],['FORGING','Multi-stage press forming'],['HEAT TREATMENT','Solution treatment, quenching and ageing'],['CNC MACHINING','Precision machining of barrel, hub and bolt pattern'],['SURFACE FINISH','Surface preparation, coating and curing'],['FINAL INSPECTION','Runout, dimensions, balance and release']]
@@ -38,7 +38,7 @@ for(const l of data.lines){const selected=l.id===data.selectedLine;html+='<div c
 $('#gantt-chart').innerHTML=html;
 }
 
-function stage(i){stageIndex=i;const list=routes[routeData.process];$$('.stage-card').forEach((el,n)=>{el.classList.toggle('is-active',n===i);el.classList.toggle('is-complete',n<i);$('.stage-card__state',el).textContent=n<i?'COMPLETE':n===i?'IN PROGRESS':'PENDING';});$('#stage-counter').textContent='STAGE '+String(i+1).padStart(2,'0')+' / 07';$('#twin-workcell').textContent='CELL '+String(i+1).padStart(2,'0')+' · '+list[i][0];$('#animation-status').textContent=list[i][0]+' · '+list[i][1];}
+function stage(i){stageIndex=i;const list=routes[routeData.process];$all('.stage-card').forEach((el,n)=>{el.classList.toggle('is-active',n===i);el.classList.toggle('is-complete',n<i);$('.stage-card__state',el).textContent=n<i?'COMPLETE':n===i?'IN PROGRESS':'PENDING';});$('#stage-counter').textContent='STAGE '+String(i+1).padStart(2,'0')+' / 07';$('#twin-workcell').textContent='CELL '+String(i+1).padStart(2,'0')+' · '+list[i][0];$('#animation-status').textContent=list[i][0]+' · '+list[i][1];}
 function stop(){clearInterval(timer);playing=false;$('#animation-play').textContent='PLAY SIMULATION';}
 function play(){if(playing){stop();return;}playing=true;$('#animation-play').textContent='PAUSE SIMULATION';$('#twin-status').textContent='RUNNING';let tick=0;timer=setInterval(()=>{tick++;progress=Math.min(100,tick/70*100);$('#progress-value').textContent=Math.round(progress)+'%';$('#progress-bar').style.width=progress+'%';const next=Math.min(6,Math.floor(tick/70*7));if(next!==stageIndex)stage(next);if(tick>=70){stop();$('#twin-status').textContent='COMPLETE';$('#animation-play').textContent='PLAY AGAIN';$('#animation-status').textContent='Manufacturing simulation completed · '+fmt(routeData.finish);}},180);}
 async function submit(e){e.preventDefault();const id=$('#lead-product').value;if(!id){$('#lead-form-status').textContent='Select a product to continue.';return;}stop();const product=demoProducts.find(p=>p.id===id),process=$('input[name="process"]:checked').value,quantity=Number($('#lead-quantity').value||4),orderDate=$('#lead-order-date').value||iso(new Date());$('#lead-submit').loading=true;$('#lead-form-status').textContent='Building production schedule…';
