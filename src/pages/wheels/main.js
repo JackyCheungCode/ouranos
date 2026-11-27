@@ -159,6 +159,8 @@ document.querySelector('#mobile-filter-clear').addEventListener('click', () => {
 });
 document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeDrawer(); });
 
+const requestedSort = params.get('sort');
+if (['featured', 'newest', 'az'].includes(requestedSort || '')) setValue('#sort-products', requestedSort);
 const modelId = params.get('model');
 if (!modelId || !showDetail(modelId)) render();
 
