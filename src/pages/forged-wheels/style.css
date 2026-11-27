@@ -20,8 +20,6 @@
 .forged-hero__lead { margin-bottom: 2rem; }
 .forged-hero__actions { display: flex; flex-wrap: wrap; gap: .8rem; align-items: center; }
 .forged-hero__bottom { position: absolute; bottom: 1.5rem; left: clamp(1.25rem, 7vw, 8rem); right: clamp(1.25rem, 7vw, 8rem); display: flex; justify-content: space-between; align-items: center; gap: 1rem; color: rgb(255 255 255 / 72%); font-size: .65rem; }
-.forged-video-toggle { display: inline-flex; gap: .6rem; align-items: center; color: white; border: 0; background: transparent; font: inherit; letter-spacing: .08em; cursor: pointer; padding: .5rem; }
-.forged-video-toggle__icon { display: inline-grid; place-items: center; width: 1.7rem; height: 1.7rem; border: 1px solid rgb(255 255 255 / 55%); border-radius: 50%; font-size: .7rem; }
 .forged-hero__index { position: absolute; right: 1.5rem; top: 50%; writing-mode: vertical-rl; font-size: .62rem; color: rgb(255 255 255 / 65%); }
 .forged-intro { display: grid; grid-template-columns: minmax(130px, .65fr) minmax(0, 1.8fr) minmax(180px, .8fr); gap: clamp(2rem, 5vw, 6rem); align-items: start; }
 .forged-intro__index { padding-top: .55rem; font-size: .65rem; color: var(--color-contrast-medium); }
