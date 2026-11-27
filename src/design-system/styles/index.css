@@ -2,6 +2,10 @@
 @import 'tailwindcss';
 @import '@porsche-design-system/components-react/tailwindcss';
 
+:root {
+  color-scheme: only light;
+}
+
 /* Prevent unregistered PDS Web Components from flashing before hydration. */
 :not(:defined) {
   visibility: hidden;
