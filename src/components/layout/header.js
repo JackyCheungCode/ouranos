@@ -137,16 +137,10 @@ if (header) {
     });
   }
 
-  if (languagePopover) {
-    languagePopover.addEventListener('dismiss', () => {
-      languagePopover.open = false;
-    });
-  }
-
   languageOptions.forEach((option) => {
     option.addEventListener('click', () => {
       applyLocale(option.dataset.locale, true);
-      languagePopover.open = false;
+      if (languagePopover) languagePopover.open = false;
     });
   });
 
