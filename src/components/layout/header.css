@@ -115,8 +115,6 @@
 .ouranos-header[data-header-variant="overlay"] .ouranos-header__main-inner {
   min-height: 80px;
 }
-.ouranos-header[data-header-variant="overlay"] .ouranos-header__primary-nav {
-}
 .ouranos-header[data-header-variant="overlay"] p-popover {
   color-scheme: light;
 }
@@ -131,8 +129,6 @@
   .ouranos-header__primary-nav {
     grid-column: 2;
     gap: 16px;
-  }
-  .ouranos-header[data-header-variant="overlay"] .ouranos-header__primary-nav {
   }
   .ouranos-header__actions {
     gap: 10px;
@@ -181,7 +177,3 @@
   }
 }
 
-.ouranos-header[data-header-variant="overlay"] p-popover p-button-pure {
-  color: var(--pds-theme-light-primary, #000);
-  color-scheme: light;
-}
