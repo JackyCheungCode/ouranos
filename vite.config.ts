@@ -106,7 +106,11 @@ function sharedLayoutPartials() {
       ];
       if (sharedScripts.length) {
         const scriptTags = sharedScripts
-          .map((src) => `<script type="module" src="${src}"></script>`)
+          .map((src) =>
+            src === '/src/components/layout/header.js'
+              ? '<script type="module">import "/src/components/layout/header.js";</script>'
+              : `<script type="module" src="${src}"></script>`,
+          )
           .join('\\n');
         transformed = transformed.replace('</body>', `\\n${scriptTags}\\n</body>`);
       }
