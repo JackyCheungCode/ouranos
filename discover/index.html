@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en" class="scheme-light bg-canvas">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Find OURANOS wheel designs from a reference image or product link.">
+    <title>OURANOS | Discover Wheels</title>
+  </head>
+  <body class="scheme-light">
+    <!-- OURANOS:HEADER -->
+    <main class="grid-template gap-y-fluid-xl pb-fluid-2xl">
+      <section class="col-extended pt-[clamp(112px,16vh,190px)] grid gap-fluid-md" aria-labelledby="discover-title">
+        <p-text size="xs" color="contrast-medium">OURANOS / WHEEL DISCOVERY</p-text>
+        <p-heading id="discover-title" tag="h1" size="2xl">Discover Wheels.</p-heading>
+        <p-text class="max-w-[680px]" size="lg">Found a wheel you love? Show us the design. We’ll help you find the closest match in the OURANOS collection.</p-text>
+      </section>
+
+      <section class="col-extended grid gap-fluid-lg" aria-label="Choose a discovery method">
+        <div class="discover-methods grid md:grid-cols-2 gap-fluid-md">
+          <button class="discover-method is-active" type="button" data-method="image" aria-pressed="true">
+            <span class="discover-method-number">01</span>
+            <span class="discover-method-icon" aria-hidden="true">↥</span>
+            <span class="discover-method-title">Search by image</span>
+            <span class="discover-method-description">Upload or paste a photo of the wheel you want.</span>
+          </button>
+          <button class="discover-method" type="button" data-method="url" aria-pressed="false">
+            <span class="discover-method-number">02</span>
+            <span class="discover-method-icon" aria-hidden="true">↗</span>
+            <span class="discover-method-title">Search by product link</span>
+            <span class="discover-method-description">Paste a product page from a wheel brand or retailer.</span>
+          </button>
+        </div>
+
+        <div class="discover-workspace">
+          <section id="image-panel" class="discover-panel grid gap-fluid-md" aria-labelledby="image-heading">
+            <div class="grid gap-static-sm">
+              <p-heading id="image-heading" tag="h2" size="lg">Upload a reference image.</p-heading>
+              <p-text color="contrast-medium">Use a clear front or three-quarter view. JPG, PNG or WEBP · up to 10 MB.</p-text>
+            </div>
+            <label id="image-dropzone" class="discover-dropzone" for="wheel-image">
+              <input id="wheel-image" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+              <span class="discover-upload-icon" aria-hidden="true">＋</span>
+              <span class="discover-drop-title">Drop your wheel image here</span>
+              <span class="discover-drop-hint">or choose a file from your device</span>
+              <span class="discover-browse">Choose image</span>
+            </label>
+            <div id="image-preview" class="discover-preview" hidden>
+              <img id="preview-image" alt="Selected wheel reference preview">
+              <div class="discover-preview-meta">
+                <strong id="preview-name"></strong>
+                <span id="preview-size"></span>
+                <button id="remove-image" class="discover-text-button" type="button">Remove image</button>
+              </div>
+            </div>
+            <div class="discover-actions">
+              <p-text id="image-status" class="discover-status" color="contrast-medium" aria-live="polite">Your image stays in this browser until you choose to continue.</p-text>
+              <p-button id="image-submit" type="button" disabled>Find matching wheels</p-button>
+            </div>
+          </section>
+
+          <section id="url-panel" class="discover-panel grid gap-fluid-md" aria-labelledby="url-heading" hidden>
+            <div class="grid gap-static-sm">
+              <p-heading id="url-heading" tag="h2" size="lg">Paste a product link.</p-heading>
+              <p-text color="contrast-medium">Use the original product page URL from a wheel brand, retailer or marketplace.</p-text>
+            </div>
+            <label class="discover-field-label" for="product-url">Product page URL</label>
+            <div class="discover-url-row">
+              <input id="product-url" type="url" inputmode="url" autocomplete="url" placeholder="https://www.example.com/product/wheel" aria-describedby="url-help url-status">
+              <p-button id="url-submit" type="button" disabled>Analyse link</p-button>
+            </div>
+            <p-text id="url-help" size="xs" color="contrast-medium">Only public product pages can be analysed. Pages requiring sign-in or blocking automated access may need a reference image instead.</p-text>
+            <p-text id="url-status" class="discover-status" color="contrast-medium" aria-live="polite">Supported URL intake is being prepared. No page content is fetched at this stage.</p-text>
+          </section>
+        </div>
+      </section>
+
+      <section class="col-extended discover-process grid gap-fluid-md" aria-labelledby="process-heading">
+        <div class="grid gap-static-sm">
+          <p-text size="xs" color="contrast-medium">HOW IT WORKS</p-text>
+          <p-heading id="process-heading" tag="h2" size="xl">From inspiration to your match.</p-heading>
+        </div>
+        <div class="grid md:grid-cols-3 gap-fluid-md">
+          <article><span>01</span><h3>Share a reference</h3><p>Upload a wheel photo or paste the product page you found.</p></article>
+          <article><span>02</span><h3>Identify the design</h3><p>We’ll extract visual details and available product specifications.</p></article>
+          <article><span>03</span><h3>Explore alternatives</h3><p>Compare exact candidates, similar designs and technical fitment separately.</p></article>
+        </div>
+      </section>
+    </main>
+    <!-- OURANOS:FOOTER -->
+    <script type="module" src="/src/pages/discover/main.js"></script>
+  </body>
+</html>
