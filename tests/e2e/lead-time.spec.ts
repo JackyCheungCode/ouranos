@@ -48,7 +48,7 @@ test('Lead time estimator presents a focused customer estimate and manufacturing
     element.value = 'vs-5rs';
     element.dispatchEvent(new Event('change', { bubbles: true }));
   });
-  await expect(page.locator('#product-detail')).toContainText('Forged Sprint Line');
+  await expect(page.locator('#product-detail')).toContainText('Split-Spoke');
   await page.locator('#lead-submit').click();
   await expect(page.locator('#lead-loading')).toBeVisible();
   await expect(page.locator('#loading-steps li').first()).toHaveClass(/is-active/);
