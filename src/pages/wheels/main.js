@@ -270,6 +270,60 @@ function showDetail(id) {
   return true;
 }
 
+
+async function showPublishedProduct(slug) {
+  if (!slug || !/^[a-z0-9][a-z0-9-]*$/i.test(slug)) return false;
+  try {
+    const response = await fetch('/api/products/' + encodeURIComponent(slug), { headers: { accept: 'application/json' } });
+    if (!response.ok) return false;
+    const data = await response.json();
+    const source = data.product;
+    if (!source?.id || !source?.slug) return false;
+    const specifications = Array.isArray(data.specifications) ? data.specifications : [];
+    const primary = specifications[0] || {};
+    const product = {
+      id: source.id, model: source.product_name, line: 'OURANOS COLLECTION',
+      collection: 'OURANOS COLLECTION', construction: primary.construction || '',
+      design: primary.structure || '', diameter: primary.diameter_in || '',
+      width: primary.width_in || '', finish: primary.finish_code || '',
+      fitment: specifications.length + ' published specifications',
+      image: source.image_key ? '/api/products/media?key=' + encodeURIComponent(source.image_key) : '/images/wheel-placeholder.svg',
+      description: source.summary || source.description || '',
+      specs: { pcd: primary.pcd_holes && primary.pcd_mm ? primary.pcd_holes + '×' + primary.pcd_mm : '', offset: primary.offset_mm === null ? '' : 'ET' + primary.offset_mm, bore: primary.center_bore_mm || '', load: primary.load_rating_kg || '', weight: '', profile: '' },
+    };
+    catalogue.hidden = true;
+    $('.wheels-hero').hidden = true;
+    $('.wheels-engineering').hidden = true;
+    $('.wheels-fitment').hidden = true;
+    $('.wheels-demo-note').hidden = true;
+    detail.hidden = false;
+    document.title = 'OURANOS | ' + product.model;
+    $('#detail-title').textContent = product.model;
+    $('#detail-collection').textContent = 'OURANOS COLLECTION';
+    $('#detail-description').textContent = product.description;
+    const image = $('#detail-image');
+    image.src = product.image;
+    image.alt = product.model + ' wheel product image';
+    image.onerror = () => { image.src = '/images/wheel-placeholder.svg'; image.onerror = null; };
+    const entries = [
+      ['Construction', product.construction], ['Design', product.design],
+      ['Diameter', product.diameter ? product.diameter + '″' : ''], ['Width', product.width ? product.width + 'J' : ''],
+      ['Finish', product.finish], ['Published specifications', specifications.length],
+      ['PCD', product.specs.pcd], ['Offset', product.specs.offset], ['Centre bore', product.specs.bore],
+      ['Load rating', product.specs.load],
+    ];
+    $('#detail-specs').innerHTML = entries.filter(([, value]) => value !== '' && value !== null && value !== undefined).map(([label, value]) =>
+      '<div class="wheel-detail__spec"><span>' + escapeHtml(label) + '</span><strong>' + escapeHtml(value) + '</strong></div>'
+    ).join('');
+    $('#detail-actions').innerHTML = '<p-button variant="secondary" href="' + inquiryUrl(product) + '">INQUIRE</p-button>';
+    history.replaceState({}, '', '/wheels/?product=' + encodeURIComponent(slug));
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function parseRim(value) {
   const match = String(value || '').match(/([\d.]+)\s*J?\s*[x×]\s*([\d.]+)(?:\s*ET\s*(-?[\d.]+))?/i);
   return match ? { width: match[1], diameter: match[2], offset: match[3] || '' } : {};
@@ -502,7 +556,7 @@ async function init() {
   restoreUrlFilters();
   const requestedSort = params.get('sort');
   if (['featured', 'newest', 'az'].includes(requestedSort || '')) setValue('#sort-products', requestedSort);
-  if (params.get('model') && showDetail(params.get('model'))) {
+  if (params.get('product') && await showPublishedProduct(params.get('product'))) {\n    // Published D1 product detail.\n  } else if (params.get('model') && showDetail(params.get('model'))) {
     // Detail state is rendered above.
   } else render();
   await loadRegions();
