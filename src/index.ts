@@ -78,6 +78,7 @@ export interface Env {
   /** Server-side Wheel Size API credential. Never expose this to browser code. */
   WHEEL_SIZE_API_KEY?: string;
   MODELS_BUCKET: ModelsBucket;
+  INQUIRY_UPLOADS: ModelsBucket;
   AI: AiBinding;
   WHEEL_INDEX: VectorizeBinding;
   DISCOVERY_ADMIN_TOKEN?: string;
@@ -195,7 +196,7 @@ async function createWheelInquiry(request: Request, env: Env): Promise<Response>
     const extension = mime === 'image/jpeg' ? 'jpg' : mime === 'image/png' ? 'png' : 'webp';
     referenceImageKey = 'inquiries/' + reference.toLowerCase() + '.' + extension;
     try {
-      await env.MODELS_BUCKET.put(referenceImageKey, bytes, { httpMetadata: { contentType: mime } });
+      await env.INQUIRY_UPLOADS.put(referenceImageKey, bytes, { httpMetadata: { contentType: mime } });
     } catch {
       return json({ error: 'REFERENCE_IMAGE_STORAGE_FAILED', message: 'The reference image could not be stored. Please try again.' }, 503);
     }
@@ -252,7 +253,7 @@ async function createWheelInquiry(request: Request, env: Env): Promise<Response>
       .run();
     return json({ ok: true, reference }, 201);
   } catch {
-    if (referenceImageKey) await env.MODELS_BUCKET.delete(referenceImageKey).catch(() => undefined);
+    if (referenceImageKey) await env.INQUIRY_UPLOADS.delete(referenceImageKey).catch(() => undefined);
     return json(
       {
         error: 'INQUIRY_STORAGE_FAILED',
