@@ -9,15 +9,6 @@
 :not(:defined) {
   visibility: hidden;
 }
-header {
-  color-scheme: light;
-}
-header a {
-  color: inherit;
-}
-header p-button-pure {
-  color-scheme: light;
-}
 p-link-tile {
   color-scheme: light;
 }
