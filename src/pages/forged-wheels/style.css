@@ -1,0 +1,140 @@
+@import '@porsche-design-system/components-js';
+@import 'tailwindcss';
+@import '@porsche-design-system/components-js/tailwindcss';
+@import '../../components/layout/header.css';
+
+:root { color-scheme: light; }
+:not(:defined) { visibility: hidden; }
+.forged-page { overflow: clip; background: var(--color-canvas); color: var(--color-contrast-high); }
+.forged-page p-heading, .forged-page p-text { display: block; }
+.forged-page p-heading { margin: 0; }
+.forged-page p-text { max-width: 66ch; }
+.forged-section { padding: clamp(4rem, 8vw, 8rem) clamp(1.25rem, 6.2vw, 7rem); }
+.forged-eyebrow, .forged-intro__index, .forged-hero__bottom, .forged-hero__index, .forged-process span, .forged-structure-list article > span { letter-spacing: .16em; text-transform: uppercase; }
+.forged-hero { position: relative; isolation: isolate; min-height: min(900px, calc(100svh - 0px)); display: flex; align-items: end; padding: clamp(7rem, 15vh, 11rem) clamp(1.25rem, 7vw, 8rem) clamp(4.5rem, 9vh, 7rem); background: #111315; color: white; }
+.forged-hero__video, .forged-hero__shade { position: absolute; inset: 0; width: 100%; height: 100%; }
+.forged-hero__video { z-index: -2; object-fit: cover; object-position: center; }
+.forged-hero__shade { z-index: -1; background: linear-gradient(90deg, rgb(7 9 11 / 78%) 0%, rgb(7 9 11 / 40%) 48%, rgb(7 9 11 / 8%) 100%), linear-gradient(0deg, rgb(7 9 11 / 66%) 0%, transparent 42%); }
+.forged-hero__content { width: min(850px, 100%); }
+.forged-hero__content p-heading { margin: 1.1rem 0 1.25rem; font-size: clamp(3.5rem, 8.8vw, 8.5rem); line-height: .92; letter-spacing: -.055em; }
+.forged-hero__lead { margin-bottom: 2rem; }
+.forged-hero__actions { display: flex; flex-wrap: wrap; gap: .8rem; align-items: center; }
+.forged-hero__bottom { position: absolute; bottom: 1.5rem; left: clamp(1.25rem, 7vw, 8rem); right: clamp(1.25rem, 7vw, 8rem); display: flex; justify-content: space-between; align-items: center; gap: 1rem; color: rgb(255 255 255 / 72%); font-size: .65rem; }
+.forged-hero__index { position: absolute; right: 1.5rem; top: 50%; writing-mode: vertical-rl; font-size: .62rem; color: rgb(255 255 255 / 65%); }
+.forged-intro { display: grid; grid-template-columns: minmax(130px, .65fr) minmax(0, 1.8fr) minmax(180px, .8fr); gap: clamp(2rem, 5vw, 6rem); align-items: start; }
+.forged-intro__index { padding-top: .55rem; font-size: .65rem; color: var(--color-contrast-medium); }
+.forged-intro__copy p-heading { margin: 1rem 0 1.5rem; max-width: 720px; }
+.forged-intro__copy p-text { max-width: 58ch; }
+.forged-intro__statement { border-left: 1px solid var(--color-contrast-low); padding: .2rem 0 .2rem 1.5rem; margin-top: 3.5rem; }
+.forged-intro__statement span { font-size: .65rem; letter-spacing: .2em; font-weight: 600; }
+.forged-intro__statement p { margin: .8rem 0 0; font-size: .95rem; line-height: 1.6; color: var(--color-contrast-medium); }
+.forged-collection { background: var(--color-surface); }
+.forged-section-heading { display: flex; justify-content: space-between; align-items: end; gap: 2rem; margin-bottom: 2.5rem; }
+.forged-section-heading > div { max-width: 720px; }
+.forged-section-heading p-heading { margin: .8rem 0 1rem; }
+.forged-section-heading p-link-pure { flex: 0 0 auto; }
+.forged-construction-carousel { --p-carousel-gap: 20px; }
+.forged-construction-tile { display: block; overflow: hidden; }
+.forged-construction-tile img { width: 100%; height: 100%; object-fit: contain; background: #f1f1ef; }
+.forged-image-note { display: block; margin-top: 1.25rem; max-width: 100%; }
+.forged-construction { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(2rem, 7vw, 8rem); align-items: center; }
+.forged-construction__visual { min-height: 520px; background: #191b1d; }
+.forged-construction__visual img { width: 100%; height: 100%; min-height: 520px; object-fit: cover; }
+.forged-construction__copy p-heading { margin: .9rem 0 2.5rem; max-width: 620px; }
+.forged-structure-list article { display: grid; grid-template-columns: 3rem 1fr; gap: 1rem; padding: 1.25rem 0; border-top: 1px solid var(--color-contrast-low); }
+.forged-structure-list article > span { font-size: .65rem; color: var(--color-contrast-medium); padding-top: .35rem; }
+.forged-structure-list h3, .forged-process h3, .forged-custom-card h3, .forged-ordering h3 { margin: 0 0 .45rem; font-size: 1.1rem; font-weight: 600; }
+.forged-structure-list p, .forged-process p, .forged-custom-card p, .forged-ordering p { margin: 0; color: var(--color-contrast-medium); font-size: .9rem; line-height: 1.65; }
+.forged-engineering { background: #141719; color: #fff; }
+.forged-section-heading--light p-text { color: rgb(255 255 255 / 68%); }
+.forged-engineering__signature { font-size: .65rem; letter-spacing: .17em; color: rgb(255 255 255 / 56%); white-space: nowrap; padding-bottom: .5rem; }
+.forged-process-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
+.forged-process { min-width: 0; }
+.forged-process img { width: 100%; aspect-ratio: 5 / 4; object-fit: cover; background: #262a2c; }
+.forged-process > div { padding: 1.25rem .1rem 0; }
+.forged-process span { display: block; margin-bottom: .9rem; color: #aaa; font-size: .65rem; }
+.forged-process h3 { color: #fff; }
+.forged-process p { color: rgb(255 255 255 / 65%); }
+.forged-engineering .forged-image-note { color: rgb(255 255 255 / 55%); }
+.forged-customization { background: var(--color-canvas); }
+.forged-custom-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+.forged-custom-card { min-width: 0; background: var(--color-surface); }
+.forged-custom-card__image { overflow: hidden; background: #eeefed; }
+.forged-custom-card__image img { width: 100%; height: 240px; object-fit: cover; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+.forged-custom-card--finish .forged-custom-card__image img { object-fit: contain; }
+.forged-custom-card:hover img { transform: scale(1.035); }
+.forged-custom-card__body { padding: 1.25rem; }
+.forged-custom-card__body p-icon { display: block; margin-bottom: 1rem; }
+.forged-custom-card h3 { font-size: 1rem; }
+.forged-ordering { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: clamp(2rem, 6vw, 7rem); background: var(--color-surface); }
+.forged-ordering__intro p-heading { margin: .9rem 0 1rem; }
+.forged-ordering__facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--color-contrast-low); border-bottom: 1px solid var(--color-contrast-low); }
+.forged-ordering__facts article { padding: 1.5rem 1rem 1.5rem 0; display: flex; flex-direction: column; gap: 1.4rem; }
+.forged-ordering__facts article + article { border-left: 1px solid var(--color-contrast-low); padding-left: 1.25rem; }
+.forged-ordering__facts p-icon { color: var(--color-contrast-medium); }
+.forged-ordering__facts h3 { font-size: .95rem; }
+.forged-ordering__facts p { font-size: .8rem; }
+.forged-fitment { min-height: 620px; position: relative; isolation: isolate; display: flex; align-items: center; padding: clamp(3rem, 7vw, 7rem); color: #fff; background: #17191a; }
+.forged-fitment > img, .forged-fitment__overlay { position: absolute; inset: 0; width: 100%; height: 100%; }
+.forged-fitment > img { z-index: -2; object-fit: cover; }
+.forged-fitment__overlay { z-index: -1; background: linear-gradient(90deg, rgb(9 11 13 / 82%), rgb(9 11 13 / 25%) 75%); }
+.forged-fitment__copy { max-width: 610px; }
+.forged-fitment__copy p-heading { margin: .9rem 0 1rem; }
+.forged-fitment__copy p-text { margin-bottom: 1.75rem; color: rgb(255 255 255 / 76%); }
+.forged-design { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(2rem, 7vw, 8rem); align-items: center; }
+.forged-design__copy p-heading { margin: .9rem 0 1.2rem; }
+.forged-design__image { background: #f1f1ef; }
+.forged-design__image img { width: 100%; max-height: 620px; object-fit: contain; }
+.forged-faq { display: grid; grid-template-columns: minmax(0, .75fr) minmax(0, 1.25fr); gap: clamp(2rem, 7vw, 8rem); background: var(--color-surface); }
+.forged-faq__heading p-heading { margin-top: .9rem; }
+.forged-faq__items p-accordion { border-bottom: 1px solid var(--color-contrast-low); }
+.forged-final { position: relative; isolation: isolate; min-height: 590px; display: flex; align-items: center; padding: clamp(3rem, 8vw, 8rem); color: white; background: #101214; }
+.forged-final__image { position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgb(7 9 11 / 88%), rgb(7 9 11 / 32%)), url('https://precisionforgedwheels.com/cdn/shop/files/20230724_082803_2048x.jpg?v=1700179157') center 52% / cover; }
+.forged-final__content { max-width: 700px; }
+.forged-final__content p-heading { margin: .9rem 0 1rem; }
+.forged-final__content p-text { margin-bottom: 2rem; color: rgb(255 255 255 / 75%); }
+.forged-credits { padding: 1.25rem clamp(1.25rem, 6.2vw, 7rem); background: var(--color-surface); }
+.forged-credits p-text { max-width: 100%; line-height: 1.7; }
+.forged-credits a { color: inherit; text-decoration: underline; text-underline-offset: .2em; }
+
+@media (max-width: 900px) {
+  .forged-intro { grid-template-columns: 1fr 2fr; }
+  .forged-intro__statement { grid-column: 2; margin-top: 0; }
+  .forged-construction { gap: 2.5rem; }
+  .forged-construction__visual, .forged-construction__visual img { min-height: 420px; }
+  .forged-custom-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .forged-ordering { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .forged-hero { min-height: 760px; min-height: 88svh; padding: 7rem 1.25rem 6.5rem; }
+  .forged-hero__content p-heading { font-size: clamp(3.25rem, 16vw, 5.5rem); }
+  .forged-hero__bottom { left: 1.25rem; right: 1.25rem; bottom: 1rem; font-size: .55rem; }
+  .forged-hero__bottom > span { max-width: 50%; line-height: 1.5; }
+  .forged-hero__index { display: none; }
+  .forged-section { padding: 4rem 1.25rem; }
+  .forged-intro { grid-template-columns: 1fr; gap: 1.5rem; }
+  .forged-intro__statement { grid-column: auto; margin: .5rem 0 0; }
+  .forged-section-heading { align-items: start; flex-direction: column; gap: 1.25rem; }
+  .forged-construction { grid-template-columns: 1fr; }
+  .forged-construction__visual, .forged-construction__visual img { min-height: 320px; }
+  .forged-process-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .forged-process img { aspect-ratio: 16 / 10; }
+  .forged-custom-grid { gap: .7rem; }
+  .forged-custom-card__image img { height: 170px; }
+  .forged-custom-card__body { padding: .9rem; }
+  .forged-custom-card__body p-icon { margin-bottom: .7rem; }
+  .forged-custom-card p { font-size: .8rem; }
+  .forged-ordering__facts { grid-template-columns: 1fr; }
+  .forged-ordering__facts article { flex-direction: row; align-items: start; gap: 1rem; padding: 1rem 0; }
+  .forged-ordering__facts article + article { border-left: 0; border-top: 1px solid var(--color-contrast-low); padding-left: 0; }
+  .forged-ordering__facts article p-icon { flex: 0 0 2rem; }
+  .forged-fitment { min-height: 540px; padding: 3rem 1.25rem; }
+  .forged-design, .forged-faq { grid-template-columns: 1fr; }
+  .forged-design { gap: 2rem; }
+  .forged-faq { gap: 1.5rem; }
+  .forged-final { min-height: 560px; padding: 3.5rem 1.25rem; }
+  .forged-credits { padding: 1rem 1.25rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .forged-custom-card__image img { transition: none; }
+}
