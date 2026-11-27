@@ -864,6 +864,104 @@ async function getDiscoveryJob(request: Request, env: Env): Promise<Response> {
   return json({ job, reference, matches: matches.results || [] });
 }
 
+
+function normalizeVehicleQuery(input: string) {
+  const year = input.match(/\\b(?:19|20)\\d{2}\\b/)?.[0] || '';
+  const aliases: Array<[RegExp, string]> = [
+    [/宝马|寶馬/i, 'BMW'], [/奔驰|賓士/i, 'Mercedes-Benz'], [/奥迪|奧迪/i, 'Audi'],
+    [/保时捷|保時捷/i, 'Porsche'], [/大众|福斯/i, 'Volkswagen'], [/丰田|豐田/i, 'Toyota'],
+    [/本田/i, 'Honda'], [/日产|日產/i, 'Nissan'], [/雷克萨斯|凌志/i, 'Lexus'], [/特斯拉/i, 'Tesla'],
+  ];
+  let normalized = input;
+  for (const [pattern, value] of aliases) normalized = normalized.replace(pattern, value);
+  const make = aliases.find(([pattern]) => pattern.test(input))?.[1] ||
+    normalized.match(/\\b(BMW|Mercedes-Benz|Audi|Porsche|Volkswagen|Toyota|Honda|Nissan|Lexus|Tesla)\\b/i)?.[0] || '';
+  let remainder = normalized.replace(year, ' ');
+  if (make) remainder = remainder.replace(new RegExp(make.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\const CHAT_MODEL = '@cf/meta/llama-3.3-70b-instruct-fp8-fast';'), 'i'), ' ');
+  const model = remainder.replace(/\\b(?:year|model|车型|車型|适合|适配|轮毂|轮圈|wheels?|fitment|will|fit|for|my|the|a|an)\\b/gi, ' ')
+    .replace(/[，,。.!?？]/g, ' ').replace(/\\s+/g, ' ').trim();
+  return { year, make, model };
+}
+function extractJsonObjects(source: string): unknown[] {
+  const cleaned = source.replace(/^\\s*`{3}(?:json)?\\s*/i, '').replace(/\\s*`{3}\\s*$/i, '').trim();
+  const values: unknown[] = [];
+  let start = -1, depth = 0, quoted = false, escaped = false;
+  for (let i = 0; i < cleaned.length; i++) {
+    const char = cleaned[i];
+    if (quoted) {
+      if (escaped) escaped = false;
+      else if (char === '\\\\') escaped = true;
+      else if (char === '"') quoted = false;
+      continue;
+    }
+    if (char === '"') { quoted = true; continue; }
+    if (char === '{') { if (depth === 0) start = i; depth++; }
+    else if (char === '}') {
+      depth--;
+      if (depth === 0 && start >= 0) {
+        try { values.push(JSON.parse(cleaned.slice(start, i + 1))); } catch { /* malformed fragment */ }
+        start = -1;
+      }
+    }
+  }
+  return values;
+}
+async function searchPublishedProducts(env: Env, query: string): Promise<Record<string, unknown>[]> {
+  const terms = [...new Set(query.toLowerCase().match(/[a-z0-9-]{2,}|[\\u4e00-\\u9fff]{2,}/g) || [])]
+    .filter((term) => !['wheel','wheels','rim','rims','轮毂','轮圈','推荐','商品','产品','please','show','find'].includes(term))
+    .slice(0, 4);
+  const clauses = terms.map(() => "(LOWER(p.product_name) LIKE ? OR LOWER(COALESCE(p.summary,'')) LIKE ? OR LOWER(COALESCE(p.description,'')) LIKE ?)");
+  const params = terms.flatMap((term) => { const like = '%' + term + '%'; return [like, like, like]; });
+  const where = clauses.length ? ' AND ' + clauses.join(' AND ') : '';
+  const result = await env.DB.prepare(
+    `SELECT p.id, p.slug, p.product_name, p.summary, p.description,
+      (SELECT pm.object_key FROM product_media pm WHERE pm.product_id=p.id AND pm.publication_status='published' ORDER BY CASE pm.media_role WHEN 'hero' THEN 0 ELSE 1 END, pm.sort_order LIMIT 1) AS image_key,
+      (SELECT json_group_array(json_object('sku',ws.sku,'diameter',ws.diameter_in,'width',ws.width_in,'pcd_holes',ws.pcd_holes,'pcd_mm',ws.pcd_mm,'offset',ws.offset_mm,'center_bore',ws.center_bore_mm,'load_rating',ws.load_rating_kg,'construction',ws.construction,'finish',ws.finish_code)) FROM wheel_specs ws WHERE ws.product_id=p.id AND ws.record_status='active') AS specifications_json
+     FROM products p WHERE p.publication_status='published'${where}
+     ORDER BY p.sort_order, p.product_name LIMIT 6`,
+  ).bind(...params).all();
+  return (result.results || []) as Record<string, unknown>[];
+}
+async function getVerifiedVehicleFitments(env: Env, make: string, model: string, year: string): Promise<Record<string, unknown>[]> {
+  if (!make || !model || !year) return [];
+  const result = await env.DB.prepare(
+    `SELECT vmk.name AS make, vm.name AS model, vg.name AS generation, vv.name AS variant,
+      vv.market_code, ws.sku, ws.diameter_in, ws.width_in, ws.pcd_holes, ws.pcd_mm,
+      ws.offset_mm, ws.center_bore_mm, ws.load_rating_kg, p.product_name, p.slug,
+      f.verification_source, f.verification_reference, f.verified_at
+     FROM fitments f JOIN vehicle_variants vv ON vv.id=f.vehicle_variant_id
+     JOIN vehicle_generations vg ON vg.id=vv.generation_id
+     JOIN vehicle_models vm ON vm.id=vg.model_id JOIN vehicle_makes vmk ON vmk.id=vm.make_id
+     JOIN wheel_specs ws ON ws.id=f.wheel_spec_id JOIN products p ON p.id=ws.product_id
+     WHERE f.verification_status='verified' AND ws.record_status='active' AND p.publication_status='published'
+       AND LOWER(vmk.name)=LOWER(?) AND LOWER(vm.name) LIKE LOWER(?)
+       AND (vg.start_year IS NULL OR vg.start_year<=?) AND (vg.end_year IS NULL OR vg.end_year>=?)
+     ORDER BY p.sort_order, ws.sku LIMIT 12`,
+  ).bind(make, '%' + model + '%', Number(year), Number(year)).all();
+  return (result.results || []) as Record<string, unknown>[];
+}
+async function productRequest(request: Request, env: Env): Promise<Response> {
+  if (request.method !== 'GET') return json({ error: 'METHOD_NOT_ALLOWED' }, 405);
+  const url = new URL(request.url);
+  if (url.pathname === '/api/products/media') {
+    const key = url.searchParams.get('key') || '';
+    if (!key || key.includes('..') || key.startsWith('/') || key.includes('\\\\')) return json({ error: 'INVALID_MEDIA_KEY' }, 400);
+    const published = await env.DB.prepare("SELECT id FROM product_media WHERE object_key=? AND publication_status='published' LIMIT 1").bind(key).first();
+    if (!published) return json({ error: 'MEDIA_NOT_FOUND' }, 404);
+    const object = await env.MODELS_BUCKET.get(key);
+    if (!object) return json({ error: 'MEDIA_NOT_FOUND' }, 404);
+    return new Response(object.body, { headers: { 'content-type': object.httpMetadata?.contentType || 'application/octet-stream', 'cache-control': 'public, max-age=3600', etag: object.httpEtag } });
+  }
+  const slug = decodeURIComponent(url.pathname.replace(/^\\/api\\/products\\/?/, ''));
+  if (!slug || slug === 'search') return json({ products: await searchPublishedProducts(env, url.searchParams.get('q') || '') });
+  const product = await env.DB.prepare(
+    "SELECT p.id,p.slug,p.product_name,p.summary,p.description,(SELECT pm.object_key FROM product_media pm WHERE pm.product_id=p.id AND pm.publication_status='published' ORDER BY CASE pm.media_role WHEN 'hero' THEN 0 ELSE 1 END,pm.sort_order LIMIT 1) AS image_key FROM products p WHERE p.slug=? AND p.publication_status='published' LIMIT 1",
+  ).bind(slug).first<Record<string, unknown>>();
+  if (!product) return json({ error: 'PRODUCT_NOT_FOUND' }, 404);
+  const specs = await env.DB.prepare("SELECT id,sku,diameter_in,width_in,pcd_holes,pcd_mm,offset_mm,center_bore_mm,load_rating_kg,construction,structure,finish_code FROM wheel_specs WHERE product_id=? AND record_status='active' ORDER BY sku").bind(String(product.id)).all();
+  return json({ product, specifications: specs.results || [] });
+}
+
 const CHAT_MODEL = '@cf/meta/llama-3.3-70b-instruct-fp8-fast';
 
 interface ChatMessage {
@@ -1081,7 +1179,7 @@ const handler = {
   },
   async fetch(request: Request, env: Env) {
     const url = new URL(request.url);
-    if (url.pathname === '/api/ai/chat') return aiAssistantRequest(request, env);
+    if (url.pathname.startsWith('/api/products/')) return productRequest(request, env);\n    if (url.pathname === '/api/ai/chat') return aiAssistantRequest(request, env);
     if (url.pathname === '/api/discover/image') return createImageDiscovery(request, env);
     if (url.pathname === '/api/discover/url') return createUrlDiscovery(request, env);
     if (url.pathname.startsWith('/api/discover/jobs/') && url.pathname.endsWith('/confirm'))
