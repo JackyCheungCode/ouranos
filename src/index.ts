@@ -941,7 +941,8 @@ async function getVerifiedVehicleFitments(env: Env, make: string, model: string,
   ).bind(make, '%' + model + '%', Number(year), Number(year)).all();
   return (result.results || []) as Record<string, unknown>[];
 }
-// Public product routes expose only published catalogue records and published R2 media.\nasync function productRequest(request: Request, env: Env): Promise<Response> {
+// Public product routes expose only published catalogue records and published R2 media.
+async function productRequest(request: Request, env: Env): Promise<Response> {
   if (request.method !== 'GET') return json({ error: 'METHOD_NOT_ALLOWED' }, 405);
   const url = new URL(request.url);
   if (url.pathname === '/api/products/media') {
