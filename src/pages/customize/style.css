@@ -1092,3 +1092,7 @@ p-heading, p-text, p-select, p-input-number, p-input-text, p-textarea, p-stepper
     background:linear-gradient(0deg,rgba(248,248,245,.96) 0%,rgba(248,248,245,.78) 48%,rgba(248,248,245,.12) 100%);
   }
 }
+
+
+/* Manufacturer uses the native Porsche Design System select; no oversized option marks. */
+.manufacturer-field, .manufacturer-field > p-select { width:100%; min-width:0; }
