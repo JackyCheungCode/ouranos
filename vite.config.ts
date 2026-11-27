@@ -16,7 +16,7 @@ import {
 import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { defineConfig } from 'vite';
+import { defineConfig, type HtmlTagDescriptor } from 'vite';
 
 const rootDir = dirname(fileURLToPath(import.meta.url));
 const excludedDirectories = new Set(['.git', '.wrangler', 'coverage', 'dist', 'node_modules']);
@@ -92,15 +92,22 @@ function sharedLayoutPartials() {
         transformed = transformed.replace('<!-- OURANOS:FOOTER -->', readPartial('footer.html'));
       }
 
-      const sharedScripts = [
-        transformed.includes('/src/components/layout/header.js')
-          ? ''
-          : '<script type="module" src="/src/components/layout/header.js"></script>',
-        transformed.includes('/src/components/ai-assistant.js')
-          ? ''
-          : '<script type="module" src="/src/components/ai-assistant.js"></script>',
-      ].join('');
-      return transformed.replace('</body>', `${sharedScripts}</body>`);
+      const sharedScripts: HtmlTagDescriptor[] = [];
+      if (!transformed.includes('/src/components/layout/header.js')) {
+        sharedScripts.push({
+          tag: 'script',
+          attrs: { type: 'module', src: '/src/components/layout/header.js' },
+          injectTo: 'body',
+        });
+      }
+      if (!transformed.includes('/src/components/ai-assistant.js')) {
+        sharedScripts.push({
+          tag: 'script',
+          attrs: { type: 'module', src: '/src/components/ai-assistant.js' },
+          injectTo: 'body',
+        });
+      }
+      return { html: transformed, tags: sharedScripts };
     },
   };
 }
