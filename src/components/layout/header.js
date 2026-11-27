@@ -137,6 +137,11 @@ if (header) {
     });
   }
 
+  window.OURANOS_SET_LOCALE = (locale) => {
+    applyLocale(locale, true);
+    if (languagePopover) languagePopover.open = false;
+  };
+
   // Capture the composed click before PDS Popover handles dismissal/retargeting.
   document.addEventListener(
     'click',
