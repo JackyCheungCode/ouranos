@@ -88,7 +88,7 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
   await page.locator('#next-button').click();
   await expect(page.locator('[data-panel="2"]')).toBeVisible();
   await expect(page.locator('[data-panel="2"]')).not.toContainText(/Wheel Size|API key|API source/i);
-  await expect(page.locator('.axle-spec')).toHaveCSS('color-scheme', 'light');
+  await expect(page.locator('.axle-spec').first()).toHaveCSS('color-scheme', 'light');
   await expect(page.locator('.axle-spec')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(page.locator('#front-diameter')).toHaveJSProperty('value', '20');
   await expect(page.locator('#front-width')).toHaveJSProperty('value', '8.5');
@@ -178,7 +178,7 @@ test('Manufacturer uses the native PDS select without oversized option logos', a
   await expect(make).toHaveJSProperty('disabled', true);
   await expect(make.locator('p-select-option > img')).toHaveCount(0);
   await chooseMarket(page);
-  await expect(make.locator('p-select-option')).toContainText('Porsche');
+  await expect(make.locator('p-select-option').filter({ hasText: 'Porsche' })).toHaveCount(1);
   await expect(make).toHaveJSProperty('disabled', false);
   await expect(make).toBeEnabled();
   await choose(page, '#make', 'porsche');
