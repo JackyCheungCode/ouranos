@@ -38,7 +38,7 @@ test('forged wheels landing page follows the seven-section business brief', asyn
   await expect(page.locator('.forged-header__video, .ouranos-header__video')).toBeAttached();
   await expect(page.locator('.forged-construction-panel')).toHaveCount(4);
   await expect(page.locator('p-carousel')).toBeVisible();
-  await expect(page.locator('.forged-certifications__scroller')).toBeVisible();
+  await expect(page.locator('.forged-certifications__list')).toBeVisible();
   await expect(page.locator('.forged-fitment-card')).toHaveCount(5);
   await expect(page.locator('.forged-aftercare__grid article')).toHaveCount(3);
   await expect(page.locator('#forged-enquiry-form')).toBeVisible();
@@ -98,4 +98,5 @@ test('forged wheels enquiry supports a one-set private owner enquiry and respons
   expect(dimensions.body).toBeLessThanOrEqual(dimensions.viewport);
   await expect(page.locator('#forged-submit')).toBeVisible();
   await expect(page.locator('.forged-swatch .swatch').first()).toHaveCSS('border-radius', '50%');
+  await expect(page.locator('.forged-form-grid label > span')).toHaveCount(1);
 });
