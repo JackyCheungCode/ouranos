@@ -18,7 +18,6 @@ test('Wheels catalogue uses the PDS Vehicle Listing pattern with multi-parameter
   await expect(page.locator('body')).not.toContainText('Add to cart');
 });
 
-
 test('Wheels catalogue fills the viewport and cards form aligned, equal-height responsive grid rows', async ({
   page,
 }) => {
@@ -60,7 +59,8 @@ test('Wheels catalogue fills the viewport and cards form aligned, equal-height r
         firstCardLeft: cardRects[0]?.left,
         cardLefts: cardRects.map((rect) => Math.round(rect.left)),
         rows: [...rows.values()],
-        horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+        horizontalOverflow:
+          document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
       };
     });
 
@@ -73,7 +73,9 @@ test('Wheels catalogue fills the viewport and cards form aligned, equal-height r
     expect(layout.horizontalOverflow).toBe(false);
 
     for (const row of layout.rows) {
-      expect(Math.max(...row) - Math.min(...row), `card heights at ${width}px`).toBeLessThanOrEqual(1);
+      expect(Math.max(...row) - Math.min(...row), `card heights at ${width}px`).toBeLessThanOrEqual(
+        1,
+      );
     }
     for (let index = 0; index < layout.cardLefts.length; index += columns) {
       const rowLefts = layout.cardLefts.slice(index, index + columns);
