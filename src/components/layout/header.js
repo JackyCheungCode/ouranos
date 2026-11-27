@@ -108,7 +108,36 @@ if (header) {
       languageTrigger.setAttribute('title', label);
     }
 
-    // Capture the composed click before PDS Popover handles dismissal/retargeting.
+    languageOptions.forEach((option) => {
+      option.setAttribute('aria-pressed', String(option.dataset.locale === selected));
+    });
+
+    if (persist) {
+      try {
+        localStorage.setItem('ouranos-locale', selected);
+      } catch {
+        // Locale remains active for this page even when storage is unavailable.
+      }
+    }
+
+    window.dispatchEvent(new CustomEvent('ouranos:locale-change', { detail: { locale: selected } }));
+  }
+
+  if (navDrilldown && navButton) {
+    navButton.addEventListener('click', () => {
+      navDrilldown.open = true;
+    });
+
+    navDrilldown.addEventListener('dismiss', (event) => {
+      event.target.open = false;
+    });
+
+    navDrilldown.addEventListener('update', (event) => {
+      event.target.activeIdentifier = event.detail.activeIdentifier;
+    });
+  }
+
+  // Capture the composed click before PDS Popover handles dismissal/retargeting.
   header.addEventListener(
     'click',
     (event) => {
