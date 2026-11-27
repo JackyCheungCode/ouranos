@@ -88,8 +88,10 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
   await page.locator('#next-button').click();
   await expect(page.locator('[data-panel="2"]')).toBeVisible();
   await expect(page.locator('[data-panel="2"]')).not.toContainText(/Wheel Size|API key|API source/i);
-  await expect(page.locator('.axle-spec').first().first()).toHaveCSS('color-scheme', 'light');
-  await expect(page.locator('.axle-spec').first()).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  await expect(page.locator('.axle-spec').first()).toHaveCSS('color-scheme', 'light');
+  await expect(page.locator('.axle-spec').nth(0)).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  await expect(page.locator('.axle-spec').nth(1)).toHaveCSS('color-scheme', 'light');
+  await expect(page.locator('.axle-spec').nth(1)).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(page.locator('#front-diameter')).toHaveJSProperty('value', '20');
   await expect(page.locator('#front-width')).toHaveJSProperty('value', '8.5');
   await expect(page.locator('#front-offset')).toHaveJSProperty('value', '50');
