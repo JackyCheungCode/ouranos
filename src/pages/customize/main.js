@@ -82,7 +82,7 @@ async function loadModelLibrary(){
 try{const d=JSON.parse(localStorage.getItem('ouranos-config-v2')||'null');if(d){for(const [id,v] of Object.entries(d.fields||{}))if(ids.includes(id)&&typeof v==='string')put(id,v);}}catch{}
 const incomingWheelName=catalogueParams.get('wheelName')||'';
 if(incomingWheelName){
-  const rawOffset=(catalogueParams.get('offset')||'').replace(/^ET\\s*/i,'');
+  const rawOffset=(catalogueParams.get('offset')||'').replace(/^ET\s*/i,'');
   S.catalogueWheel={id:catalogueParams.get('wheel')||'',name:incomingWheelName,source:'wheels-catalogue'};
   const incoming={diameter:catalogueParams.get('diameter')||'',width:catalogueParams.get('width')||'',offset:rawOffset,pcd:catalogueParams.get('pcd')||'',bore:catalogueParams.get('bore')||''};
   for(const axle of ['front','rear'])for(const [key,value] of Object.entries(incoming))if(value)put(axle+'-'+key,value);
