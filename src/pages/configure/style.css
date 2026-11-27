@@ -1,0 +1,23 @@
+@import '@porsche-design-system/components-js';
+@import 'tailwindcss';
+@import '@porsche-design-system/components-js/tailwindcss';
+@import '../../components/layout/header.css';
+.wheel-configure-page{background:#fff;color:#171717}
+.wheel-configure{width:min(100% - 40px,1240px);margin:0 auto;padding:40px 0 96px;display:grid;gap:32px}
+.configure-back{color:#333;text-decoration:none;font-size:13px}
+.configure-heading{max-width:720px;display:grid;gap:12px}
+.configure-product{display:grid;grid-template-columns:minmax(220px,360px) 1fr;gap:32px;align-items:center;background:#f1f1f0;padding:24px}
+.configure-product__image{aspect-ratio:1;background:#fff;display:grid;place-items:center}
+.configure-product__image img{width:88%;height:88%;object-fit:contain}
+.configure-product__identity{display:grid;gap:10px}
+.configure-section{display:grid;gap:22px;padding:28px 0;border-top:1px solid #d8d8d6}
+.configure-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.configure-fields label,.configure-wide{display:grid;gap:8px;font-size:13px;color:#555}
+.configure-fields input,.configure-fields select,.configure-wide textarea{width:100%;min-height:46px;border:1px solid #a8a8a5;border-radius:0;background:#fff;padding:10px 12px;color:#171717;font:inherit}
+.configure-wide{margin-top:18px}
+.configure-wide textarea{resize:vertical}
+.configure-submit{display:flex;justify-content:space-between;align-items:center;gap:24px;padding-top:22px;border-top:1px solid #d8d8d6}
+#configure-status{padding:16px;background:#f1f1f0;font-size:14px}
+@media(max-width:680px){.wheel-configure{width:calc(100% - 32px);padding-top:24px}.configure-product{grid-template-columns:1fr;gap:18px;padding:16px}.configure-fields{grid-template-columns:1fr}.configure-submit{align-items:stretch;flex-direction:column}}
+
+.configure-submit-button{min-height:48px;padding:0 28px;border:1px solid #171717;background:#171717;color:#fff;font:inherit;font-size:13px;font-weight:600;cursor:pointer}.configure-submit-button:hover{background:#333;border-color:#333}.configure-submit-button:disabled{opacity:.55;cursor:wait}
