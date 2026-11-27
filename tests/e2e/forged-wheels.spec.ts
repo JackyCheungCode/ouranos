@@ -33,7 +33,9 @@ test('forged wheels landing page follows the seven-section business brief', asyn
   await expect(page.locator('.forged-trustbar > div')).toHaveCount(4);
   await expect(page.locator('.forged-pain__list p-accordion')).toHaveCount(4);
   await expect(page.locator('#manufacturing-stepper button[role="tab"]')).toHaveCount(6);
-  await expect(page.locator('.forged-brand-logo')).toHaveCount(30);
+  await expect(page.locator('.forged-brand-logo:not([aria-hidden="true"])')).toHaveCount(30);
+  await expect(page.locator('.forged-brand-marquee')).toHaveCount(2);
+  await expect(page.locator('.forged-brand-logo img')).not.toHaveCSS('filter', 'grayscale(1)');
   await expect(page.locator('.forged-certification-mark img')).toHaveCount(2);
   await expect(page.locator('.forged-header__video, .ouranos-header__video')).toBeAttached();
   await expect(page.locator('.forged-construction-panel')).toHaveCount(4);
@@ -85,11 +87,9 @@ test('forged wheels enquiry supports a one-set private owner enquiry and respons
   await page.goto('/forged-wheels/', { waitUntil: 'domcontentloaded' });
 
   await expect(page.locator('#ouranos-ai-open')).toBeVisible();
-  await page.locator('#customer-type').evaluate((element) => {
-    element.dispatchEvent(new CustomEvent('change', { detail: { value: 'trade' } }));
-  });
-  await expect(page.locator('.forged-trade-field').first()).toBeVisible();
-  await expect(page.locator('.forged-quantity-field')).toBeVisible();
+  await expect(page.getByText('Enquiry type', { exact: true })).toHaveCount(0);
+  await expect(page.locator('#customer-type')).toHaveCount(0);
+  await expect(page.locator('[name="customer_company"], [name="business_type"]')).toHaveCount(0);
 
   const dimensions = await page.evaluate(() => ({
     body: document.body.scrollWidth,
