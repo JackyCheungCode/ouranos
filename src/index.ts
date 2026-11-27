@@ -14,10 +14,22 @@ interface ModelsBucket {
     cursor?: string;
   }>;
   get(key: string): Promise<ModelsBucketBody | null>;
+  put(key: string, value: ArrayBuffer | Uint8Array, options?: { httpMetadata?: { contentType?: string } }): Promise<unknown>;
 }
+
+interface D1Result<T = Record<string, unknown>> { results?: T[]; success: boolean; }
+interface D1Statement {
+  bind(...values: unknown[]): D1Statement;
+  first<T = Record<string, unknown>>(): Promise<T | null>;
+  run<T = Record<string, unknown>>(): Promise<D1Result<T>>;
+}
+interface D1Database { prepare(query: string): D1Statement; }
+interface DiscoveryQueue { send(message: Record<string, unknown>): Promise<void>; }
 
 export interface Env {
   ASSETS: { fetch(request: Request): Promise<Response> };
+  DB: D1Database;
+  DISCOVERY_QUEUE: DiscoveryQueue;
   /** Server-side Wheel Size API credential. Never expose this to browser code. */
   WHEEL_SIZE_API_KEY?: string;
   MODELS_BUCKET: ModelsBucket;
@@ -187,9 +199,82 @@ async function modelRequest(request: Request, env: Env): Promise<Response> {
   return json({ error: 'NOT_FOUND' }, 404);
 }
 
+
+const MAX_DISCOVERY_IMAGE_BYTES = 10 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+
+function imageSignature(bytes: Uint8Array, mime: string): boolean {
+  if (mime === 'image/jpeg')
+    return bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+  if (mime === 'image/png')
+    return bytes.length >= 8 && bytes[0] === 0x89 && bytes[1] === 0x50 &&
+      bytes[2] === 0x4e && bytes[3] === 0x47 && bytes[4] === 0x0d &&
+      bytes[5] === 0x0a && bytes[6] === 0x1a && bytes[7] === 0x0a;
+  if (mime === 'image/webp')
+    return bytes.length >= 12 && String.fromCharCode(...bytes.slice(0, 4)) === 'RIFF' &&
+      String.fromCharCode(...bytes.slice(8, 12)) === 'WEBP';
+  return false;
+}
+
+async function createImageDiscovery(request: Request, env: Env): Promise<Response> {
+  if (request.method !== 'POST') return json({ error: 'METHOD_NOT_ALLOWED' }, 405);
+  const contentType = request.headers.get('content-type') || '';
+  if (!contentType.toLowerCase().startsWith('multipart/form-data'))
+    return json({ error: 'MULTIPART_REQUIRED' }, 415);
+
+  let form: FormData;
+  try { form = await request.formData(); }
+  catch { return json({ error: 'INVALID_MULTIPART' }, 400); }
+
+  const file = form.get('image');
+  if (!(file instanceof File)) return json({ error: 'IMAGE_REQUIRED' }, 400);
+  if (!ALLOWED_IMAGE_TYPES.has(file.type)) return json({ error: 'UNSUPPORTED_IMAGE_TYPE' }, 415);
+  if (file.size < 1 || file.size > MAX_DISCOVERY_IMAGE_BYTES)
+    return json({ error: 'IMAGE_SIZE_LIMIT' }, 413);
+
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  if (!imageSignature(bytes, file.type)) return json({ error: 'IMAGE_SIGNATURE_MISMATCH' }, 415);
+
+  const id = crypto.randomUUID();
+  const objectKey = 'discovery/references/' + id;
+  try {
+    await env.MODELS_BUCKET.put(objectKey, bytes, { httpMetadata: { contentType: file.type } });
+    await env.DB.prepare(
+      'INSERT INTO discovery_jobs (id, input_type, status, reference_object_key, reference_mime_type, reference_size_bytes) VALUES (?, ?, ?, ?, ?, ?)'
+    ).bind(id, 'image', 'queued', objectKey, file.type, file.size).run();
+    await env.DB.prepare(
+      'INSERT INTO discovery_references (id, job_id, source_type) VALUES (?, ?, ?)'
+    ).bind(crypto.randomUUID(), id, 'image').run();
+    await env.DISCOVERY_QUEUE.send({ jobId: id, type: 'image_discovery' });
+    return json({ jobId: id, status: 'queued' }, 202);
+  } catch {
+    await env.MODELS_BUCKET.get(objectKey).then(async (object) => {
+      if (object) return;
+      return;
+    }).catch(() => undefined);
+    return json({ error: 'DISCOVERY_INTAKE_FAILED' }, 500);
+  }
+}
+
+async function getDiscoveryJob(request: Request, env: Env): Promise<Response> {
+  if (request.method !== 'GET') return json({ error: 'METHOD_NOT_ALLOWED' }, 405);
+  const id = new URL(request.url).pathname.split('/').filter(Boolean).at(-1) || '';
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return json({ error: 'INVALID_JOB_ID' }, 400);
+  const job = await env.DB.prepare(
+    'SELECT id, input_type, status, error_code, error_message, created_at, updated_at, completed_at FROM discovery_jobs WHERE id = ?'
+  ).bind(id).first();
+  if (!job) return json({ error: 'DISCOVERY_JOB_NOT_FOUND' }, 404);
+  const matches = await env.DB.prepare(
+    'SELECT m.id, m.match_type, m.similarity_score, m.explanation, p.id AS product_id, p.slug, p.product_name FROM discovery_matches m JOIN products p ON p.id = m.product_id WHERE m.job_id = ? ORDER BY CASE m.match_type WHEN \'exact\' THEN 0 WHEN \'visual_similar\' THEN 1 ELSE 2 END, m.similarity_score DESC'
+  ).bind(id).run();
+  return json({ job, matches: matches.results || [] });
+}
+
 const handler = {
   async fetch(request: Request, env: Env) {
     const url = new URL(request.url);
+    if (url.pathname === '/api/discover/image') return createImageDiscovery(request, env);
+    if (url.pathname.startsWith('/api/discover/jobs/')) return getDiscoveryJob(request, env);
     if (url.pathname.startsWith('/api/wheel-size/')) return wheelSizeRequest(request, env);
     if (url.pathname.startsWith('/api/models')) return modelRequest(request, env);
     return env.ASSETS.fetch(request);
