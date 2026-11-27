@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Create a bespoke forged wheel configuration with Ouranos.">
-    <title>Ouranos | Wheel Atelier</title>
+    <title>Ouranos | Wheel Configurator</title>
     <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"}}</script>
   </head>
   <body>
@@ -45,14 +45,14 @@
 
         <div class="configuration-panel">
           <p-stepper-horizontal id="config-stepper" class="step-navigation" size="medium" aria-label="Configuration steps">
-            <p-stepper-horizontal-item state="current">Model</p-stepper-horizontal-item>
-            <p-stepper-horizontal-item>Vehicle</p-stepper-horizontal-item>
-            <p-stepper-horizontal-item>Dimensions</p-stepper-horizontal-item>
-            <p-stepper-horizontal-item>Finish</p-stepper-horizontal-item>
-            <p-stepper-horizontal-item>Review</p-stepper-horizontal-item>
+            <p-stepper-horizontal-item state="current"><p-icon name="tire" size="sm"></p-icon> Model</p-stepper-horizontal-item>
+            <p-stepper-horizontal-item><p-icon name="car" size="sm"></p-icon> Vehicle</p-stepper-horizontal-item>
+            <p-stepper-horizontal-item><p-icon name="configurate" size="sm"></p-icon> Dimensions</p-stepper-horizontal-item>
+            <p-stepper-horizontal-item><p-icon name="color-picker" size="sm"></p-icon> Finish</p-stepper-horizontal-item>
+            <p-stepper-horizontal-item><p-icon name="document" size="sm"></p-icon> Review</p-stepper-horizontal-item>
           </p-stepper-horizontal>
           <div class="config-heading">
-            <div><p class="eyebrow">THE CONFIGURATOR</p><p-heading tag="h2" size="lg">Create your specification</p-heading></div>
+            <div><p class="eyebrow">THE CONFIGURATOR</p><p-heading tag="h2" size="xl">Create your specification</p-heading></div>
             <span class="step-counter" id="step-counter">01 / 05</span>
           </div>
 
@@ -60,7 +60,7 @@
           <form id="config-form">
             <section class="config-step active model-step" data-panel="0">
               <p class="step-kicker">01 — WHEEL MODEL</p>
-              <h3>Choose your wheel model.</h3>
+              <p-heading tag="h3" size="md">Choose your wheel model.</p-heading>
               <p class="step-description">Select a model from the Ouranos R2 library. Select a model to load its actual GLB geometry in the 3D preview.</p>
               <div class="model-selection" aria-label="Wheel model library">
                 <div class="fitment-heading"><div><span class="micro-label">R2 MODEL LIBRARY</span><strong>Available wheel models</strong></div><span id="model-count" class="fitment-count">LOADING</span></div>
@@ -75,10 +75,10 @@
             <section class="config-step" data-panel="1">
               <div class="step-skip-row"><button type="button" id="skip-vehicle" class="skip-vehicle-button">SKIP VEHICLE SELECTION <span aria-hidden="true">→</span></button></div>
               <p class="step-kicker">02 — VEHICLE & FACTORY FITMENT</p>
-              <h3>Find your vehicle.</h3>
+              <p-heading tag="h3" size="md">Find your vehicle.</p-heading>
               <p class="step-description">Select your vehicle to retrieve factory and alternative wheel specifications. Choose a vehicle market to load the manufacturers and fitment data available for that region.</p>
               <div class="market-row">
-                <div class="field-block market-select"><p-select id="market" name="market" label="Vehicle market" value="" disabled><p-select-option value="">Loading vehicle markets…</p-select-option></p-select></div>
+                <div class="field-block market-select"><p-select id="market" name="market" label="Vehicle market" value="usdm" disabled><p-select-option value="usdm">United States</p-select-option></p-select></div>
                 <div class="api-status" id="api-status" role="status"></div>
               </div>
               <div class="vehicle-fields">
@@ -106,7 +106,7 @@
 
             <section class="config-step" data-panel="2">
               <p class="step-kicker">03 — ENGINEERING PARAMETERS</p>
-              <h3>Refine the dimensions.</h3>
+              <p-heading tag="h3" size="md">Refine the dimensions.</p-heading>
               <p class="step-description">Available vehicle specifications are prefilled below. Edit any field as required. Front and rear specifications are independent for staggered fitments.</p>
               <div class="axle-spec-grid">
                 <section class="axle-spec">
@@ -134,12 +134,12 @@
                   <div class="axle-source" id="rear-source">Awaiting vehicle specification</div>
                 </section>
               </div>
-              <div class="engineering-note"><span>i</span><p>Missing API values remain blank for manual entry. Rear values are never copied from the front axle automatically.</p></div>
+              <div class="engineering-note"><span>i</span><p>When the API does not provide a rear axle specification, the front axle values are used as the initial rear values. You can edit either axle independently.</p></div>
             </section>
 
             <section class="config-step" data-panel="3">
               <p class="step-kicker">04 — MATERIAL EXPRESSION</p>
-              <h3>Define the finish.</h3>
+              <p-heading tag="h3" size="md">Define the finish.</p-heading>
               <p class="step-description">Select a colour and surface treatment. The preview updates the GLB material; final production samples may vary.</p>
               <div class="field-grid">
                 <div class="field-block"><p-select id="wheel-color" name="wheel-color" label="Colour" value="black"><p-select-option value="black">Black</p-select-option><p-select-option value="silver">Silver</p-select-option><p-select-option value="bronze">Bronze</p-select-option></p-select></div>
@@ -150,7 +150,7 @@
 
             <section class="config-step" data-panel="4">
               <p class="step-kicker">05 — CONTACT & REVIEW</p>
-              <h3>Complete your request.</h3>
+              <p-heading tag="h3" size="md">Complete your request.</p-heading>
               <p class="step-description">Your selected vehicle and wheel parameters will be included in the specification for engineering review.</p>
               <div class="review-summary" id="review-summary"></div>
               <div class="field-block"><p-textarea id="vehicle-mods" name="vehicle-mods" label="Vehicle modifications" rows="3" placeholder="Brakes, suspension, bodywork or other modifications."></p-textarea></div>
@@ -161,7 +161,7 @@
               </div>
             </section>
             <div class="form-actions">
-              <p-button type="button" variant="secondary" class="back-button" id="back-button" disabled>Back</p-button>
+              <p-button type="button" variant="secondary" class="back-button" id="back-button">Back</p-button>
               <p-button type="button" variant="primary" class="next-button" id="next-button">Continue</p-button>
               <p-button type="submit" variant="primary" class="next-button submit-button" id="submit-button" hidden>Prepare specification</p-button>
             </div>

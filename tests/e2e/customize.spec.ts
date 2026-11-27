@@ -73,7 +73,7 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
   await mockWheelSize(page);
   await page.goto('/customize/');
 
-  await expect(page).toHaveTitle('Ouranos | Wheel Atelier');
+  await expect(page).toHaveTitle('Ouranos | Wheel Configurator');
   await expect(page.getByRole('heading', { name: /Choose your wheel model/i })).toBeVisible();
   await expect(page.locator('#model-list .model-card')).toHaveCount(1);
   await expect(page.locator('#model-page-label')).toHaveText('PAGE 1 / 1');
@@ -82,9 +82,9 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
   await page.locator('#next-button').click();
   await expect(page.getByRole('heading', { name: /Find your vehicle/i })).toBeVisible();
   await expect(page.locator('#market')).toBeEnabled();
-  await expect(page.locator('#market')).toHaveJSProperty('value', '');
+  await expect(page.locator('#market')).toHaveJSProperty('value', 'usdm');
   await chooseMarket(page);
-  await expect(page.locator('#market')).toContainText('USA+');
+  await expect(page.locator('#market')).toContainText('United States (USDM)');
   await expect(page.locator('#market')).toContainText('Canada');
   await expect(page.locator('#market')).not.toContainText('Europe');
   await expect(page.locator('#make')).toBeVisible();
@@ -233,11 +233,8 @@ test('Manufacturer uses the native PDS select without oversized option logos', a
   const make = page.locator('#make');
   await expect(make).toBeVisible();
   await expect(make).toHaveJSProperty('tagName', 'P-SELECT');
-  await expect(make).toHaveJSProperty('disabled', true);
-  await expect(make.locator('p-select-option > img')).toHaveCount(0);
-  await chooseMarket(page);
   await expect(make.locator('p-select-option').filter({ hasText: 'Porsche' })).toHaveCount(1);
-  await expect(make).toHaveJSProperty('disabled', false);
+  await expect(make.locator('p-select-option > img')).toHaveCount(1);
   await expect(make).toBeEnabled();
   await choose(page, '#make', 'porsche');
   await expect(page.locator('#model')).toBeEnabled();
@@ -246,6 +243,13 @@ test('Manufacturer uses the native PDS select without oversized option logos', a
   await expect(stepper).toBeVisible();
   await expect(stepper).toHaveAttribute('size', 'medium');
   await expect(stepper.locator('p-stepper-horizontal-item')).toHaveCount(5);
+  for (const iconName of ['tire', 'car', 'configurate', 'color-picker', 'document']) {
+    await expect(
+      stepper.locator('p-stepper-horizontal-item p-icon[name="' + iconName + '"]'),
+    ).toHaveCount(1);
+  }
+  await expect(page.locator('.config-heading p-heading')).toHaveAttribute('size', 'xl');
+  await expect(page.locator('.config-step.active > p-heading')).toHaveAttribute('size', 'md');
   const stepLabels = await stepper
     .locator('p-stepper-horizontal-item')
     .evaluateAll((items) =>
@@ -256,6 +260,65 @@ test('Manufacturer uses the native PDS select without oversized option logos', a
     .locator('.zoom-controls')
     .evaluate((el) => getComputedStyle(el).flexDirection);
   expect(zoomDirection).toBe('column');
+});
+
+
+test('Configurator defaults to the first wheel model and supports Back and the primary menu', async ({
+  page,
+}) => {
+  await mockWheelSize(page);
+  await page.goto('/customize/');
+  const firstModel = page.locator('#model-list .model-card').first();
+  await expect(firstModel).toHaveAttribute('aria-selected', 'true');
+  await expect(page.locator('#back-button')).toHaveAttribute('disabled', '');
+  await page.locator('#next-button').click();
+  await expect(page.locator('[data-panel="1"]')).toBeVisible();
+  await expect(page.locator('#back-button')).not.toHaveAttribute('disabled');
+  await page.locator('#back-button').click();
+  await expect(page.locator('[data-panel="0"]')).toBeVisible();
+  await page.locator('#next-button').click();
+  await page.locator('#nav-button').click();
+  await expect(page.locator('#nav-drilldown')).toHaveJSProperty('open', true);
+  await expect(page.locator('#nav-drilldown')).toContainText('Wheel Configurator');
+});
+
+test('Missing rear axle API data is initialized from the front axle', async ({ page }) => {
+  await mockWheelSize(page);
+  await page.route('**/api/wheel-size/search/by_model**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        data: [
+          {
+            type: 'oe',
+            technical: { bolt_pattern: '5x130', centre_bore: 71.6 },
+            wheels: [{ front: { rim: { diameter: 20, width: 8.5, offset: 50 } } }],
+          },
+        ],
+      }),
+    });
+  });
+  await page.goto('/customize/');
+  await page.locator('#next-button').click();
+  await chooseMarket(page);
+  await choose(page, '#make', 'porsche');
+  await choose(page, '#model', '911');
+  await choose(page, '#year', '2024');
+  await expect(page.locator('#fitment-table-wrap')).toBeVisible();
+  await page.locator('.fitment-select-button').first().click();
+  await page.locator('#next-button').click();
+  const expectedAxleValues = {
+    diameter: '20',
+    width: '8.5',
+    offset: '50',
+    pcd: '5x130',
+    bore: '71.6',
+  };
+  for (const [field, expected] of Object.entries(expectedAxleValues)) {
+    await expect(page.locator('#front-' + field)).toHaveJSProperty('value', expected);
+    await expect(page.locator('#rear-' + field)).toHaveJSProperty('value', expected);
+  }
 });
 
 test('Configurator prepares a downloadable engineering specification', async ({ page }) => {
