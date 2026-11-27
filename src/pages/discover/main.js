@@ -11,6 +11,31 @@ const imageSubmit = document.querySelector('#image-submit');
 const urlInput = document.querySelector('#product-url');
 const urlSubmit = document.querySelector('#url-submit');
 const urlStatus = document.querySelector('#url-status');
+const imageProgress = progressUI('image');
+const urlProgress = progressUI('url');
+
+function progressUI(prefix) {
+  const root = document.querySelector('#' + prefix + '-progress');
+  const bar = document.querySelector('#' + prefix + '-progress-bar');
+  const label = document.querySelector('#' + prefix + '-progress-step');
+  const value = document.querySelector('#' + prefix + '-progress-value');
+  return {
+    set(percent, text, state = 'active') {
+      root.hidden = false;
+      bar.value = Math.max(0, Math.min(100, percent));
+      value.textContent = Math.round(bar.value) + '%';
+      label.textContent = text;
+      root.dataset.state = state;
+    }
+  };
+}
+
+function intakeError(data, fallback) {
+  if (data && data.error === 'DISCOVERY_INTAKE_FAILED') {
+    return '无法创建分析任务：服务端数据库尚未完成初始化，请稍后重试。';
+  }
+  return (data && (data.message || data.error)) || fallback;
+}
 const imagePanel = document.querySelector('#image-panel');
 const urlPanel = document.querySelector('#url-panel');
 let selectedFile = null;
@@ -50,17 +75,25 @@ async function pollDiscoveryJob(jobId) {
     if (!response.ok) throw new Error('Unable to retrieve discovery status.');
     const data = await response.json();
     if (data.job.status === 'completed') {
-      setImageStatus('Discovery processing finished.', 'success');
+      imageProgress.set(100, '匹配完成', 'success');
+      setImageStatus('分析完成，结果如下。', 'success');
       renderDiscoveryMatches(data.matches || []);
       return;
     }
     if (data.job.status === 'failed') {
       throw new Error(data.job.error_message || 'Discovery processing failed.');
     }
-    setImageStatus(data.job.status === 'processing' ? 'Analysing your reference…' : 'Your reference is queued…', 'info');
+    if (data.job.status === 'processing') {
+      const elapsed = (Date.now() - started) / 1000;
+      imageProgress.set(Math.min(90, 35 + elapsed * 1.4), elapsed < 8 ? '正在识别轮毂图像' : elapsed < 24 ? '正在生成视觉特征' : '正在检索 OURANOS 商品库');
+      setImageStatus('正在分析图片并查找相似轮毂。', 'info');
+    } else {
+      imageProgress.set(15, '等待分析任务启动');
+      setImageStatus('图片已接收，等待分析任务启动。', 'info');
+    }
     await new Promise((resolve) => setTimeout(resolve, 1800));
   }
-  if (activeJobId === jobId) setImageStatus('Processing is taking longer than expected. You can retry checking this job later.', 'info');
+  if (activeJobId === jobId) { imageProgress.set(90, '分析仍在进行'); setImageStatus('分析耗时较长，任务仍在处理中。', 'info'); }
 }
 
 function setPdsDisabled(element, disabled) {
@@ -151,17 +184,26 @@ async function pollUrlDiscoveryJob(jobId) {
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.error || 'Unable to retrieve discovery status.');
     if (data.job.status === 'completed') {
-      urlStatus.textContent = 'Product page analysed.';
+      urlProgress.set(100, '分析完成', 'success');
+      urlStatus.textContent = '已提取商品信息，并完成商品库检索。';
       urlStatus.dataset.state = 'success';
       renderDiscoveryMatches(data.matches || [], urlPanel);
       return;
     }
     if (data.job.status === 'failed') throw new Error(data.job.error_message || 'Product page analysis failed.');
-    urlStatus.textContent = data.job.status === 'processing' ? 'Analysing product page…' : 'Product page queued…';
+    if (data.job.status === 'processing') {
+      const elapsed = (Date.now() - started) / 1000;
+      urlProgress.set(Math.min(90, 35 + elapsed * 1.4), elapsed < 8 ? '正在打开商品页面' : elapsed < 20 ? '正在提取轮毂参数' : '正在比对 OURANOS 商品库');
+      urlStatus.textContent = '正在读取商品信息并查找匹配结果。';
+    } else {
+      urlProgress.set(15, '等待分析任务启动');
+      urlStatus.textContent = '链接已接收，等待分析任务启动。';
+    }
     urlStatus.dataset.state = 'info';
     await new Promise((resolve) => setTimeout(resolve, 1800));
   }
-  urlStatus.textContent = 'Analysis is taking longer than expected. Please check again later.';
+  urlProgress.set(90, '分析仍在进行');
+  urlStatus.textContent = '分析耗时较长，任务仍在处理中。';
   urlStatus.dataset.state = 'info';
 }
 
@@ -186,7 +228,8 @@ urlSubmit.addEventListener('click', async () => {
     return;
   }
   setPdsDisabled(urlSubmit, true);
-  urlStatus.textContent = 'Submitting product page securely…';
+  urlProgress.set(8, '正在提交商品链接');
+  urlStatus.textContent = '正在提交链接并创建分析任务。';
   urlStatus.dataset.state = 'info';
   try {
     const response = await fetch('/api/discover/url', {
@@ -195,10 +238,11 @@ urlSubmit.addEventListener('click', async () => {
       body: JSON.stringify({ url: source.toString() }),
     });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.message || data.error || 'Unable to submit this product page.');
+    if (!response.ok) throw new Error(intakeError(data, '无法提交商品链接。'));
     await pollUrlDiscoveryJob(data.jobId);
   } catch (error) {
-    urlStatus.textContent = error instanceof Error ? error.message : 'Unable to analyse this product page.';
+    urlProgress.set(0, '分析失败', 'error');
+    urlStatus.textContent = error instanceof Error ? error.message : '链接分析失败。';
     urlStatus.dataset.state = 'error';
   } finally {
     setPdsDisabled(urlSubmit, !urlInput.value.trim());
@@ -208,18 +252,21 @@ urlSubmit.addEventListener('click', async () => {
 imageSubmit.addEventListener('click', async () => {
   if (!selectedFile || imageSubmit.disabled) return;
   setPdsDisabled(imageSubmit, true);
-  setImageStatus('Uploading your reference image securely…', 'info');
+  imageProgress.set(8, '正在上传图片');
+  setImageStatus('正在上传图片并创建分析任务。', 'info');
   try {
     const form = new FormData();
     form.append('image', selectedFile, selectedFile.name);
     const response = await fetch('/api/discover/image', { method: 'POST', body: form, headers: { accept: 'application/json' } });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.message || data.error || 'Image upload failed.');
+    if (!response.ok) throw new Error(intakeError(data, '图片上传失败。'));
     activeJobId = data.jobId;
-    setImageStatus('Image received. Checking processing status…', 'info');
+    imageProgress.set(20, '图片已保存，等待分析');
+    setImageStatus('图片已接收，等待视觉分析。', 'info');
     await pollDiscoveryJob(data.jobId);
   } catch (error) {
-    setImageStatus(error instanceof Error ? error.message : 'Unable to process this reference image.', 'error');
+    imageProgress.set(0, '分析失败', 'error');
+    setImageStatus(error instanceof Error ? error.message : '图片分析失败。', 'error');
   } finally {
     setPdsDisabled(imageSubmit, !selectedFile);
   }
