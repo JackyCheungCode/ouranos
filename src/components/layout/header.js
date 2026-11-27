@@ -27,7 +27,7 @@ if (header) {
       const key = element.dataset.i18n;
       if (copy[key]) element.textContent = copy[key];
     });
-    [['#nav-button', copy.menu], ['#ouranos-ai-open', copy.ai], ['#ouranos-search', copy.search], ['#ouranos-account', copy.account]].forEach(([selector, label]) => {
+    [['#nav-button', copy.menu], ['#ouranos-ai-open', copy.ai], ['#ouranos-search', copy.search], ['#ouranos-search-mobile', copy.search], ['#ouranos-account', copy.account]].forEach(([selector, label]) => {
       const element = header.querySelector(selector);
       if (element) {
         element.textContent = label;
