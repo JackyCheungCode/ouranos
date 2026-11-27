@@ -29,9 +29,9 @@ test('forged wheels landing page is independent from the existing wheels catalog
     '/videos/mood-porsche-gts.mp4',
   );
   await expect(page.locator('#collection-title')).toBeVisible();
-  const sectionOrder = await page.locator('main.forged-page > section').evaluateAll((sections) =>
-    sections.map((section) => section.classList[0]),
-  );
+  const sectionOrder = await page
+    .locator('main.forged-page > section')
+    .evaluateAll((sections) => sections.map((section) => section.classList[0]));
   expect(sectionOrder).toEqual([
     'forged-hero',
     'forged-collection',
@@ -45,12 +45,14 @@ test('forged wheels landing page is independent from the existing wheels catalog
     'forged-final',
   ]);
   await expect(page.locator('.forged-intro')).toHaveCount(0);
-  await expect(page.locator('.forged-hero .forged-hero__content .forged-hero__actions p-link')).toHaveCount(2);
+  await expect(
+    page.locator('.forged-hero .forged-hero__content .forged-hero__actions p-link'),
+  ).toHaveCount(2);
   await expect(page.locator('.forged-final__content p-link')).toHaveCount(2);
   expect(
-    await page.locator('.forged-construction-tile').evaluateAll((tiles) =>
-      tiles.map((tile) => tile.getAttribute('aspect-ratio')),
-    ),
+    await page
+      .locator('.forged-construction-tile')
+      .evaluateAll((tiles) => tiles.map((tile) => tile.getAttribute('aspect-ratio'))),
   ).toEqual(['3/4', '3/4', '3/4']);
   await expect(page.locator('#engineering-title')).toBeVisible();
   await expect(page.locator('#customization-title')).toBeVisible();
