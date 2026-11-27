@@ -233,12 +233,12 @@ test('Manufacturer uses the native PDS select without oversized option logos', a
   const make = page.locator('#make');
   await expect(make).toBeVisible();
   await expect(make).toHaveJSProperty('tagName', 'P-SELECT');
-  await expect(make).toHaveJSProperty('disabled', true);
+  await expect(make).toHaveAttribute('disabled', '');
   await expect(make.locator('p-select-option > img')).toHaveCount(0);
   await chooseMarket(page);
   await expect(make.locator('p-select-option').filter({ hasText: 'Porsche' })).toHaveCount(1);
   await expect(make.locator('p-select-option > img')).toHaveCount(1);
-  await expect(make).toHaveJSProperty('disabled', false);
+  await expect(make).not.toHaveAttribute('disabled');
   await expect(make).toBeEnabled();
   await choose(page, '#make', 'porsche');
   await expect(page.locator('#model')).toBeEnabled();
@@ -274,10 +274,10 @@ test('Configurator defaults to the first wheel model and supports Back and the p
   await page.goto('/customize/');
   const firstModel = page.locator('#model-list .model-card').first();
   await expect(firstModel).toHaveAttribute('aria-selected', 'true');
-  await expect(page.locator('#back-button')).toBeDisabled();
+  await expect(page.locator('#back-button')).toHaveAttribute('disabled', '');
   await page.locator('#next-button').click();
   await expect(page.locator('[data-panel="1"]')).toBeVisible();
-  await expect(page.locator('#back-button')).toBeEnabled();
+  await expect(page.locator('#back-button')).not.toHaveAttribute('disabled');
   await page.locator('#back-button').click();
   await expect(page.locator('[data-panel="0"]')).toBeVisible();
   await page.locator('#next-button').click();
@@ -315,7 +315,7 @@ test('Missing rear axle API data is initialized from the front axle', async ({ p
   for (const field of ['diameter', 'width', 'offset', 'pcd', 'bore']) {
     await expect(page.locator('#rear-' + field)).toHaveJSProperty(
       'value',
-      await page.locator('#front-' + field).inputValue(),
+      await page.locator('#front-' + field).evaluate((element) => (element as HTMLElement & { value: string }).value),
     );
   }
 });
