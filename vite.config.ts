@@ -75,17 +75,9 @@ function sharedLayoutPartials() {
       const readPartial = (name: string) =>
         readFileSync(resolve(rootDir, 'src/components/layout', name), 'utf8');
       const sidebar = readPartial('sidebar.html');
-      const topbar = readPartial('topbar.html')
-        .replace('<!-- OURANOS:SIDEBAR -->', sidebar)
-        .replace(
-          'class="ouranos-header"',
-          `class="ouranos-header ${isOverlay ? 'scheme-dark' : 'scheme-light'}"`,
-        )
-        .replace(
-          'data-header-variant="auto"',
-          `data-header-variant="${isOverlay ? 'overlay' : 'stacked'}"`,
-        );
-      const header = readPartial('header.html').replace('<!-- OURANOS:TOPBAR -->', topbar);
+      const pattern = readPartial(isOverlay ? 'header-overlay.html' : 'header-stacked.html')
+        .replace('<!-- OURANOS:SIDEBAR -->', sidebar);
+      const header = readPartial('header.html').replace('<!-- OURANOS:TOPBAR -->', pattern);
 
       let transformed = html;
       if (transformed.includes('<!-- OURANOS:HEADER -->')) {

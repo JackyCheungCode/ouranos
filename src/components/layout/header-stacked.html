@@ -1,0 +1,40 @@
+<header class="ouranos-header grid-template gap-y-0" data-header-variant="stacked" aria-label="OURANOS site header">
+  <div class="scheme-dark col-full flex justify-center py-static-xs px-static-md bg-surface">
+    <p-text size="xs">OURANOS / PRECISION IN EVERY FORM</p-text>
+  </div>
+  <div class="col-wide grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-fluid-md items-center min-h-[80px]">
+    <div class="flex flex-wrap gap-static-md items-center justify-start" style="color: light-dark(#010205, #fff)">
+      <nav aria-label="Main">
+        <p-button-pure color="inherit" id="nav-button" class="p-static-xs -m-static-xs" type="button" icon="menu-lines" hide-label="{base: true, s: false}" aria="{'aria-haspopup': 'dialog'}">Menu</p-button-pure>
+        <p-button-pure color="inherit" id="ouranos-search-mobile" class="p-static-xs -m-static-xs sm:hidden" title="Search" type="button" icon="search" hide-label="true">Search</p-button-pure>
+        <!-- OURANOS:SIDEBAR -->
+      </nav>
+    </div>
+    <a class="font-semibold tracking-[0.2em] whitespace-nowrap" style="color: light-dark(#010205, #fff)" href="/" aria-label="Ouranos Home">OURANOS</a>
+    <div class="flex flex-wrap gap-static-md items-center justify-end" style="color: light-dark(#010205, #fff)">
+      <p-popover id="ouranos-language-popover" direction="bottom" compact="true">
+        <p-button-pure color="inherit" slot="button" id="ouranos-language-trigger" class="p-static-xs -m-static-xs" type="button" icon="globe" hide-label="true" title="Language: English" aria-label="Language: English">Language: English</p-button-pure>
+        <div class="ouranos-language-menu" role="group" aria-label="Select language">
+          <button class="ouranos-language-option" type="button" data-locale="en" aria-pressed="true">English</button>
+          <button class="ouranos-language-option" type="button" data-locale="zh-CN" aria-pressed="false">简体中文</button>
+          <button class="ouranos-language-option" type="button" data-locale="de" aria-pressed="false">Deutsch</button>
+          <button class="ouranos-language-option" type="button" data-locale="fr" aria-pressed="false">Français</button>
+          <button class="ouranos-language-option" type="button" data-locale="ja" aria-pressed="false">日本語</button>
+        </div>
+      </p-popover>
+      <p-button-pure color="inherit" id="ouranos-ai-open" class="p-static-xs -m-static-xs" type="button" icon="ai-chat" hide-label="true" title="OURANOS AI Assistant" aria-label="OURANOS AI Assistant">AI Assistant</p-button-pure>
+      <p-button-pure color="inherit" id="ouranos-search" class="p-static-xs -m-static-xs max-sm:hidden" title="Search" type="button" icon="search" hide-label="true">Search</p-button-pure>
+      <p-button-pure color="inherit" id="ouranos-account" class="p-static-xs -m-static-xs" title="Account" type="button" icon="user" hide-label="true">Account</p-button-pure>
+      <p-button-pure color="inherit" id="ouranos-theme-toggle" class="p-static-xs -m-static-xs" title="Switch to dark mode" type="button" icon="moon" hide-label="true" aria-pressed="false">Switch theme</p-button-pure>
+    </div>
+  </div>
+  <div class="col-full flex justify-center p-static-md border-t-thin border-contrast-low">
+    <p-tabs-bar id="ouranos-category-tabs" compact="true">
+      <a href="/wheels/" data-i18n="wheels">Wheels</a>
+      <p-divider class="mx-static-md" direction="vertical"></p-divider>
+      <a href="/wheels/#catalogue" data-i18n="fitment">Find your fit</a>
+      <a href="/discover/" data-i18n="discover">Discover</a>
+      <a href="/contact/" data-i18n="contact">Contact</a>
+    </p-tabs-bar>
+  </div>
+</header>
