@@ -67,7 +67,8 @@ function templatePartials() {
       const isCustomizer = context.filename.includes('/customize/');
       const isDiscover = context.filename.includes('/discover/');
       const isWheels = context.filename.includes('/wheels/');
-      if (!isHome && !isAdmin && !isCustomizer && !isDiscover && !isWheels) return html;
+      const isContact = context.filename.includes('/contact/');
+      if (!isHome && !isAdmin && !isCustomizer && !isDiscover && !isWheels && !isContact) return html;
       const validChunks = new Set([
         'accordion',
         'ai-tag',
@@ -155,7 +156,9 @@ function templatePartials() {
                 ? 'Ouranos | Discover Wheels'
                 : isWheels
                   ? 'Ouranos | Wheels'
-                  : 'Ouranos Admin Panel',
+                  : isContact
+                    ? 'Ouranos | Contact Us'
+                    : 'Ouranos Admin Panel',
         }),
       ].join('');
       return html
@@ -183,6 +186,7 @@ export default defineConfig({
         customize: resolve(rootDir, 'customize/index.html'),
         discover: resolve(rootDir, 'discover/index.html'),
         wheels: resolve(rootDir, 'wheels/index.html'),
+        contact: resolve(rootDir, 'contact/index.html'),
       },
     },
   },
