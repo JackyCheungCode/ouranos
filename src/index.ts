@@ -864,6 +864,43 @@ async function getDiscoveryJob(request: Request, env: Env): Promise<Response> {
   return json({ job, reference, matches: matches.results || [] });
 }
 
+
+interface ChatMessage { role: 'user' | 'assistant'; content: string }
+interface ChatRequestBody { messages?: ChatMessage[]; vehicle?: Record<string, string> }
+interface McpSourceConfig { name: string; endpoint?: string; token?: string }
+const CHAT_MODEL = '@cf/meta/llama-3.3-70b-instruct-fp8-fast';
+
+async function callRemoteMcp(source: McpSourceConfig, toolName: string, args: Record<string, string>) {
+  if (!source.endpoint) return { source: source.name, status: 'not_configured' };
+  const headers: Record<string, string> = { 'content-type': 'application/json', accept: 'application/json, text/event-stream' };
+  if (source.token) headers.authorization = `Bearer ${source.token}`;
+  try {
+    const init = await fetch(source.endpoint, { method: 'POST', headers, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2025-03-26', capabilities: {}, clientInfo: { name: 'ouranos-ai', version: '1.0.0' } }) });
+    if (!init.ok) return { source: source.name, status: 'unavailable' };
+    const result = await fetch(source.endpoint, { method: 'POST', headers, body: JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'tools/call', params: { name: toolName, arguments: args } }) });
+    if (!result.ok) return { source: source.name, status: 'unavailable' };
+    return { source: source.name, status: 'connected', data: (await result.text()).slice(0, 12000) };
+  } catch { return { source: source.name, status: 'unavailable' }; }
+}
+
+async function aiAssistantRequest(request: Request, env: Env): Promise<Response> {
+  if (request.method !== 'POST') return json({ error: 'METHOD_NOT_ALLOWED' }, 405);
+  let body: ChatRequestBody;
+  try { body = await request.json() as ChatRequestBody; } catch { return json({ error: 'INVALID_JSON' }, 400); }
+  const messages = Array.isArray(body.messages) ? body.messages.filter((m) => m && ['user','assistant'].includes(m.role) && typeof m.content === 'string').slice(-12) : [];
+  if (!messages.length || messages[messages.length - 1].role !== 'user' || messages.some((m) => m.content.length > 4000))
+    return json({ error: 'INVALID_MESSAGES' }, 400);
+  const system = `You are OURANOS AI Fitment Assistant, a professional automotive wheel consultant. Help with vehicle identification, wheel fitment, wheel recommendations, product discovery and technical questions. Ask for missing make, model, year, trim and region before asserting fitment. Explain PCD, centre bore, diameter, width, offset and load rating where relevant. Never claim compatibility without verified source data. Clearly distinguish verified OEM data, calculated guidance and unverified assumptions. Do not invent OURANOS products: the live catalogue may be empty. State when external sources are not connected. This is advisory information; recommend professional confirmation before purchase or installation. Respond in the user's language. Vehicle context: ${JSON.stringify(body.vehicle || {})}`;
+  try {
+    const result = await env.AI.run(CHAT_MODEL, { messages: [{ role: 'system', content: system }, ...messages], max_tokens: 900, temperature: 0.2 });
+    const response = (result as { response?: string }).response;
+    if (!response) return json({ error: 'AI_RESPONSE_EMPTY' }, 502);
+    return json({ message: response, model: CHAT_MODEL, sources: [{ name: 'Workers AI', status: 'used' }] });
+  } catch {
+    return json({ error: 'AI_SERVICE_UNAVAILABLE', message: 'The AI assistant is temporarily unavailable. Please try again.' }, 503);
+  }
+}
+
 const handler = {
   async queue(batch: DiscoveryQueueBatch, env: Env) {
     for (const message of batch.messages) {
@@ -910,6 +947,7 @@ const handler = {
   },
   async fetch(request: Request, env: Env) {
     const url = new URL(request.url);
+    if (url.pathname === '/api/ai/chat') return aiAssistantRequest(request, env);
     if (url.pathname === '/api/discover/image') return createImageDiscovery(request, env);
     if (url.pathname === '/api/discover/url') return createUrlDiscovery(request, env);
     if (url.pathname.startsWith('/api/discover/jobs/') && url.pathname.endsWith('/confirm'))
