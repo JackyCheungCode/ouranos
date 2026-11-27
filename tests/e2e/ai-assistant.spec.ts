@@ -17,7 +17,7 @@ test('OURANOS AI renders structured content and carries confirmed selections int
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) });
   });
 
-  await page.goto('/');
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.locator('#ouranos-ai-open').click();
   await page.locator('#ouranos-ai-input').fill('Show me wheel sizes.');
   await page.locator('#ouranos-ai-form button[type="submit"]').click();
