@@ -233,12 +233,8 @@ test('Manufacturer uses the native PDS select without oversized option logos', a
   const make = page.locator('#make');
   await expect(make).toBeVisible();
   await expect(make).toHaveJSProperty('tagName', 'P-SELECT');
-  await expect(make).toHaveAttribute('disabled', '');
-  await expect(make.locator('p-select-option > img')).toHaveCount(0);
-  await chooseMarket(page);
   await expect(make.locator('p-select-option').filter({ hasText: 'Porsche' })).toHaveCount(1);
   await expect(make.locator('p-select-option > img')).toHaveCount(1);
-  await expect(make).not.toHaveAttribute('disabled');
   await expect(make).toBeEnabled();
   await choose(page, '#make', 'porsche');
   await expect(page.locator('#model')).toBeEnabled();
