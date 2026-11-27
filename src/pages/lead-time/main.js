@@ -1,16 +1,141 @@
 import { demoProducts } from '../wheels/demo-products.js';
 import './style.css';
-import '../../components/ai-assistant.js';
-const $=(s,root=document)=>root.querySelector(s);
-const fmt=d=>new Intl.DateTimeFormat('en-US',{month:'short',day:'2-digit',year:'numeric'}).format(d);
-const iso=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
-const addDays=(date,n)=>{const d=new Date(date);d.setDate(d.getDate()+n);return d;};
-const isWorkday=d=>d.getDay()!==0&&d.getDay()!==6;
-const workday=(date,n)=>{let d=new Date(date),k=0;while(k<n){d=addDays(d,1);if(isWorkday(d))k++;}return d;};
-let busy=false;
-function init(){for(const p of demoProducts){const o=document.createElement('p-select-option');o.value=p.id;o.textContent=p.model+' · '+p.construction;$('#lead-product').append(o);}$('#lead-order-date').value=iso(new Date());}
-function wait(ms){return new Promise(resolve=>setTimeout(resolve,ms));}
-async function loadingSequence(){const panel=$('#lead-loading'),bar=$('#loading-progress'),percent=$('#loading-percent'),steps=[...document.querySelectorAll('#loading-steps li')];panel.hidden=false;$('#production-results').hidden=true;steps.forEach(x=>x.classList.remove('is-active','is-complete'));bar.style.width='0%';percent.textContent='0%';const sequence=[['Connecting to OURANOS MES system',1500],['Consolidating current PMC production schedule',2500],['Verifying active shop-floor jobs',1500],['Checking aluminium billet inventory',1500],['Complete',450]];let elapsed=0;for(let i=0;i<sequence.length;i++){steps[i].classList.add('is-active');await wait(sequence[i][1]);elapsed+=sequence[i][1];steps[i].classList.remove('is-active');steps[i].classList.add('is-complete');const pct=Math.min(100,Math.round(elapsed/7450*100));bar.style.width=pct+'%';percent.textContent=pct+'%';}await wait(250);panel.hidden=true;}
-async function submit(e){e.preventDefault();if(busy)return;const id=$('#lead-product').value;if(!id){$('#lead-form-status').textContent='Select a product to continue.';return;}const product=demoProducts.find(p=>p.id===id),quantity=Number($('#lead-quantity').value||4),orderDate=$('#lead-order-date').value||iso(new Date());busy=true;$('#lead-submit').disabled=true;$('#lead-form-status').textContent='Preparing production intelligence…';try{await loadingSequence();const process=String(product.construction||'forged').toLowerCase().includes('cast')?'casting':'forging';const response=await fetch('/api/lead-time/simulate',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({productId:id,process,quantity,orderDate})});if(!response.ok)throw Error('The production schedule service is temporarily unavailable.');const data=await response.json();const start=new Date(data.startDate+'T00:00:00'),finish=workday(start,data.targetWorkingDays-1);$('#result-product').textContent=product.model;$('#result-quantity').textContent=quantity+' WHEELS';$('#result-start').textContent=fmt(start);$('#result-finish').textContent=fmt(finish);$('#result-duration').textContent=data.targetWorkingDays+' WORKING DAYS';$('#production-results').hidden=false;$('#lead-form-status').textContent='Production estimate generated';$('#production-results').scrollIntoView({behavior:'smooth',block:'start'});}catch(err){$('#lead-form-status').textContent=err.message||'Unable to generate the production schedule.';}finally{busy=false;$('#lead-submit').disabled=false;}}
-const navDrilldown=$('#nav-drilldown'),navButton=$('#nav-button');if(navDrilldown&&navButton){navButton.addEventListener('click',()=>{navDrilldown.open=true;});navDrilldown.addEventListener('dismiss',e=>{e.target.open=false;});navDrilldown.addEventListener('update',e=>{e.target.activeIdentifier=e.detail.activeIdentifier;});}
-$('#lead-form').addEventListener('submit',submit);const pauseButton=$('#pause-button'),heroVideo=$('video');pauseButton?.addEventListener('click',()=>{if(!heroVideo)return;const paused=heroVideo.paused;heroVideo[paused?'play':'pause']();pauseButton.textContent=paused?'Pause Video':'Play Video';pauseButton.icon=paused?'pause':'play';});init();
+
+const $ = (selector, root = document) => root.querySelector(selector);
+const formatDate = (value) => new Intl.DateTimeFormat('en-US', { month: 'short', day: '2-digit', year: 'numeric', timeZone: 'UTC' }).format(new Date(value + 'T00:00:00Z'));
+const isoDate = (date) => [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-');
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+let isSubmitting = false;
+
+function populateProducts() {
+  const select = $('#lead-product');
+  for (const product of demoProducts) {
+    const option = document.createElement('p-select-option');
+    option.value = product.id;
+    option.textContent = product.model;
+    select.append(option);
+  }
+  $('#lead-order-date').value = isoDate(new Date());
+}
+
+function updateProductDetail() {
+  const product = demoProducts.find((item) => item.id === $('#lead-product').value);
+  $('#product-detail').textContent = product
+    ? [product.line, product.design, product.diameter ? product.diameter + ' in' : ''].filter(Boolean).join(' · ')
+    : 'Select a model to view its configuration.';
+}
+
+async function runCalculationFeedback() {
+  const panel = $('#lead-loading');
+  const steps = [...$('#loading-steps').children];
+  const progress = $('#loading-progress');
+  const percent = $('#loading-percent');
+  panel.hidden = false;
+  $('#production-results').hidden = true;
+  steps.forEach((step) => step.classList.remove('is-active', 'is-complete'));
+  progress.style.width = '0%';
+  percent.textContent = '0%';
+  const sequence = [
+    ['Reviewing wheel configuration', 650],
+    ['Applying the standard manufacturing route', 800],
+    ['Calculating the estimated completion date', 650],
+  ];
+  let elapsed = 0;
+  const total = sequence.reduce((sum, item) => sum + item[1], 0);
+  for (let index = 0; index < sequence.length; index += 1) {
+    steps[index].classList.add('is-active');
+    await wait(sequence[index][1]);
+    elapsed += sequence[index][1];
+    steps[index].classList.remove('is-active');
+    steps[index].classList.add('is-complete');
+    const value = Math.round((elapsed / total) * 100);
+    progress.style.width = value + '%';
+    percent.textContent = value + '%';
+  }
+  await wait(120);
+  panel.hidden = true;
+}
+
+function renderJourney(stages) {
+  const list = $('#production-journey');
+  list.replaceChildren();
+  for (const stage of stages) {
+    const item = document.createElement('li');
+    const title = document.createElement('strong');
+    const date = document.createElement('span');
+    const duration = document.createElement('small');
+    title.textContent = stage.name;
+    date.textContent = formatDate(stage.startDate) + (stage.endDate !== stage.startDate ? ' — ' + formatDate(stage.endDate) : '');
+    duration.textContent = stage.durationDays + (stage.durationDays === 1 ? ' WORKING DAY' : ' WORKING DAYS');
+    item.append(title, date, duration);
+    list.append(item);
+  }
+}
+
+async function submitEstimate(event) {
+  event.preventDefault();
+  if (isSubmitting) return;
+  const product = demoProducts.find((item) => item.id === $('#lead-product').value);
+  const quantity = Number($('#lead-quantity').value || 4);
+  const orderDate = $('#lead-order-date').value;
+  if (!product || !orderDate || !Number.isInteger(quantity) || quantity < 1 || quantity > 5000) {
+    $('#lead-form-status').textContent = 'Check the wheel model, quantity and order date.';
+    return;
+  }
+
+  isSubmitting = true;
+  $('#lead-submit').disabled = true;
+  $('#lead-form-status').textContent = 'Preparing your estimate…';
+  try {
+    await runCalculationFeedback();
+    const process = String(product.construction || '').toLowerCase().includes('cast') ? 'casting' : 'forging';
+    const response = await fetch('/api/lead-time/simulate', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', accept: 'application/json' },
+      body: JSON.stringify({ productId: product.id, process, quantity, orderDate }),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.message || 'We could not calculate your estimate. Please try again.');
+
+    $('#result-product').textContent = product.model;
+    $('#result-finish').textContent = formatDate(data.completionDate);
+    $('#result-duration').textContent = data.targetWorkingDays;
+    $('#result-quantity').textContent = quantity + (quantity === 1 ? ' WHEEL' : ' WHEELS');
+    $('#result-start').textContent = formatDate(data.startDate);
+    renderJourney(data.stages);
+    $('#production-results').hidden = false;
+    $('#lead-form-status').textContent = 'Your indicative estimate is ready.';
+    $('#production-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (error) {
+    $('#lead-form-status').textContent = error.message || 'Unable to calculate the estimate.';
+  } finally {
+    isSubmitting = false;
+    $('#lead-submit').disabled = false;
+  }
+}
+
+const navDrilldown = $('#nav-drilldown');
+const navButton = $('#nav-button');
+if (navDrilldown && navButton) {
+  navButton.addEventListener('click', () => { navDrilldown.open = true; });
+  navDrilldown.addEventListener('dismiss', (event) => { event.target.open = false; });
+  navDrilldown.addEventListener('update', (event) => { event.target.activeIdentifier = event.detail.activeIdentifier; });
+}
+
+$('#lead-product').addEventListener('change', updateProductDetail);
+$('#lead-form').addEventListener('submit', submitEstimate);
+$('#new-estimate').addEventListener('click', () => {
+  $('#production-results').hidden = true;
+  $('#lead-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+});
+const pauseButton = $('#pause-button');
+const heroVideo = $('video');
+pauseButton?.addEventListener('click', () => {
+  if (!heroVideo) return;
+  const paused = heroVideo.paused;
+  heroVideo[paused ? 'play' : 'pause']();
+  pauseButton.textContent = paused ? 'Pause Video' : 'Play Video';
+  pauseButton.icon = paused ? 'pause' : 'play';
+});
+
+populateProducts();
