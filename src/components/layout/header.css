@@ -1,5 +1,5 @@
-/* Shared topbar contrast contract: all header controls and branding stay white. */
-header[aria-label],
+/* PDS v4 derives Button Pure foreground and icon colors from color-scheme.
+   Keep the site light; isolate the shared topbar in its own dark scheme. */
 header {
   color: #fff !important;
   color-scheme: dark !important;
@@ -13,20 +13,7 @@ header .ouranos-wordmark {
   text-decoration-color: #fff;
 }
 header p-button-pure {
-  color: #fff !important;
   color-scheme: dark !important;
-  --p-button-pure-color: #fff;
-  --p-button-pure-color-hover: #fff;
-}
-header p-button-pure::part(button),
-header p-button-pure::part(icon),
-header p-button-pure::part(label) {
-  color: #fff !important;
-}
-header p-button-pure svg,
-header p-button-pure [part~="icon"] {
-  color: #fff !important;
-  fill: currentColor;
 }
 header .ouranos-wordmark {
   font-weight: 600;
