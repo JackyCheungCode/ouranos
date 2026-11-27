@@ -137,43 +137,18 @@ if (header) {
     });
   }
 
-  if (languagePopover && languageTrigger) {
-    let popoverReady = false;
-    let pendingOpen = false;
-
-    languageTrigger.addEventListener('click', () => {
-      if (!popoverReady) {
-        pendingOpen = !pendingOpen;
-        return;
-      }
-      languagePopover.open = !languagePopover.open;
-    });
-
-    languagePopover.addEventListener('dismiss', () => {
-      pendingOpen = false;
-      if (popoverReady) languagePopover.open = false;
-    });
-
-    customElements.whenDefined('p-popover').then(() => {
-      languagePopover.open = pendingOpen;
-      popoverReady = true;
-    });
-  }
-
   if (languagePopover) {
-    languagePopover.addEventListener(
-      'click',
-      (event) => {
-        const option = event.composedPath().find(
-          (node) => node instanceof HTMLElement && node.hasAttribute('data-locale'),
-        );
-        if (!(option instanceof HTMLElement)) return;
-        applyLocale(option.dataset.locale, true);
-        languagePopover.open = false;
-      },
-      true,
-    );
+    languagePopover.addEventListener('dismiss', () => {
+      languagePopover.open = false;
+    });
   }
+
+  languageOptions.forEach((option) => {
+    option.addEventListener('click', () => {
+      applyLocale(option.dataset.locale, true);
+      languagePopover.open = false;
+    });
+  });
 
   let savedLocale = 'en';
   try {
