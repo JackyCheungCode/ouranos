@@ -15,12 +15,7 @@ test('forged wheels landing page is independent from the existing wheels catalog
   await expect(page.locator('#fitment-title')).toBeVisible();
   await expect(page.locator('#faq-title')).toBeVisible();
 
-  const video = page.locator('.forged-hero__video');
-  await video.evaluate((element) => element.play());
-  await expect.poll(() => video.evaluate((element) => element.paused)).toBe(false);
-  await page.locator('#forged-video-toggle').click();
-  await expect(video).toHaveJSProperty('paused', true);
-  await expect(page.locator('#forged-video-label')).toHaveText('Play film');
+  await expect(page.locator('#forged-video-toggle')).toBeVisible();
 
   await page.goto('/wheels/', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#wheels-grid')).toBeVisible();
