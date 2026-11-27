@@ -45,7 +45,7 @@ test('forged wheels landing page follows the seven-section business brief', asyn
   await expect(page.locator('.forged-construction-panel[data-panel="0"]')).toBeHidden();
 
   await page.locator('#vehicle-filter').evaluate((element) => {
-    element.dispatchEvent(new CustomEvent('update', { detail: { value: 'porsche' } }));
+    element.dispatchEvent(new CustomEvent('change', { detail: { value: 'porsche' } }));
   });
   await expect(page.locator('.forged-fitment-card[data-vehicle="porsche"]')).toBeVisible();
   await expect(page.locator('.forged-fitment-card[data-vehicle="bmw"]')).toBeHidden();
