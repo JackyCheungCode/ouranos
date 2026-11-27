@@ -175,30 +175,66 @@ async function createWheelInquiry(request: Request, env: Env): Promise<Response>
   let referenceImageKey = '';
   const referenceImage = typeof body.reference_image === 'string' ? body.reference_image : '';
   if (referenceImage) {
-    const match = referenceImage.match(/^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/);
+    const match = referenceImage.match(
+      /^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/,
+    );
     if (!match || match[2].length > 7_000_000) {
-      return json({ error: 'INVALID_REFERENCE_IMAGE', message: 'Use a JPG, PNG or WebP image smaller than 5 MB.' }, 400);
+      return json(
+        {
+          error: 'INVALID_REFERENCE_IMAGE',
+          message: 'Use a JPG, PNG or WebP image smaller than 5 MB.',
+        },
+        400,
+      );
     }
     const mime = match[1];
     const binary = atob(match[2]);
     if (binary.length > 5 * 1024 * 1024) {
-      return json({ error: 'REFERENCE_IMAGE_TOO_LARGE', message: 'The reference image must be smaller than 5 MB.' }, 413);
+      return json(
+        {
+          error: 'REFERENCE_IMAGE_TOO_LARGE',
+          message: 'The reference image must be smaller than 5 MB.',
+        },
+        413,
+      );
     }
     const bytes = new Uint8Array(binary.length);
     for (let index = 0; index < binary.length; index++) bytes[index] = binary.charCodeAt(index);
     const validSignature =
       (mime === 'image/jpeg' && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) ||
-      (mime === 'image/png' && bytes.length >= 8 && bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) ||
-      (mime === 'image/webp' && bytes.length >= 12 && String.fromCharCode(...bytes.slice(0, 4)) === 'RIFF' && String.fromCharCode(...bytes.slice(8, 12)) === 'WEBP');
+      (mime === 'image/png' &&
+        bytes.length >= 8 &&
+        bytes[0] === 0x89 &&
+        bytes[1] === 0x50 &&
+        bytes[2] === 0x4e &&
+        bytes[3] === 0x47) ||
+      (mime === 'image/webp' &&
+        bytes.length >= 12 &&
+        String.fromCharCode(...bytes.slice(0, 4)) === 'RIFF' &&
+        String.fromCharCode(...bytes.slice(8, 12)) === 'WEBP');
     if (!validSignature) {
-      return json({ error: 'INVALID_REFERENCE_IMAGE', message: 'The uploaded file is not a valid supported image.' }, 400);
+      return json(
+        {
+          error: 'INVALID_REFERENCE_IMAGE',
+          message: 'The uploaded file is not a valid supported image.',
+        },
+        400,
+      );
     }
     const extension = mime === 'image/jpeg' ? 'jpg' : mime === 'image/png' ? 'png' : 'webp';
     referenceImageKey = 'inquiries/' + reference.toLowerCase() + '.' + extension;
     try {
-      await env.INQUIRY_UPLOADS.put(referenceImageKey, bytes, { httpMetadata: { contentType: mime } });
+      await env.INQUIRY_UPLOADS.put(referenceImageKey, bytes, {
+        httpMetadata: { contentType: mime },
+      });
     } catch {
-      return json({ error: 'REFERENCE_IMAGE_STORAGE_FAILED', message: 'The reference image could not be stored. Please try again.' }, 503);
+      return json(
+        {
+          error: 'REFERENCE_IMAGE_STORAGE_FAILED',
+          message: 'The reference image could not be stored. Please try again.',
+        },
+        503,
+      );
     }
   }
 
@@ -253,7 +289,8 @@ async function createWheelInquiry(request: Request, env: Env): Promise<Response>
       .run();
     return json({ ok: true, reference }, 201);
   } catch {
-    if (referenceImageKey) await env.INQUIRY_UPLOADS.delete(referenceImageKey).catch(() => undefined);
+    if (referenceImageKey)
+      await env.INQUIRY_UPLOADS.delete(referenceImageKey).catch(() => undefined);
     return json(
       {
         error: 'INQUIRY_STORAGE_FAILED',

@@ -16,9 +16,9 @@ test('forged wheels landing page follows the seven-section business brief', asyn
   expect(headerGeometry.top).toBe(0);
   expect(headerGeometry.position).toBe('absolute');
 
-  const sectionIds = await page.locator('main.forged-page > section').evaluateAll((items) =>
-    items.map((item) => item.id),
-  );
+  const sectionIds = await page
+    .locator('main.forged-page > section')
+    .evaluateAll((items) => items.map((item) => item.id));
   expect(sectionIds).toEqual([
     '',
     'solutions',
@@ -52,11 +52,16 @@ test('forged wheels landing page follows the seven-section business brief', asyn
   await expect(page.locator('.forged-fitment-card[data-vehicle="porsche"]')).toBeVisible();
   await expect(page.locator('.forged-fitment-card[data-vehicle="bmw"]')).toBeHidden();
 
-  await expect(page.locator('#reference-image')).toHaveAttribute('accept', 'image/jpeg,image/png,image/webp');
+  await expect(page.locator('#reference-image')).toHaveAttribute(
+    'accept',
+    'image/jpeg,image/png,image/webp',
+  );
   await page.locator('[data-case="porsche"]').click();
   await expect(page.locator('#fitment-flyout')).toHaveJSProperty('open', true);
   await page.locator('#fitment-flyout-enquire').click();
-  const fitmentNote = await page.locator('#notes').evaluate((element) => (element as HTMLTextAreaElement).value);
+  const fitmentNote = await page
+    .locator('#notes')
+    .evaluate((element) => (element as HTMLTextAreaElement).value);
   expect(fitmentNote).toContain('PORSCHE');
   await page.locator('#warranty-details').click();
   await expect(page.locator('#warranty-modal')).toHaveJSProperty('open', true);
