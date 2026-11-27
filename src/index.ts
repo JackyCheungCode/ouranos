@@ -895,10 +895,15 @@ async function aiAssistantRequest(request: Request, env: Env): Promise<Response>
     return json({ error: 'INVALID_MESSAGES' }, 400);
 
   const latest = messages[messages.length - 1].content;
-  const vehicleMatch = latest.match(/(19|20)\\d{2}/);
+  const vehicleMatch = latest.match(/\b(?:19|20)\d{2}\b/);
   const year = vehicleMatch?.[0] || '';
-  const makeModel = latest.match(/(?:for|fit(?:ment)?(?:\s+for)?|vehicle\s*:?)\s+([A-Za-z][A-Za-z0-9 -]{2,60})/i)?.[1]?.trim() || '';
-  const vehicleParts = makeModel.split(/\\s+/);
+  const afterYear = year ? latest.slice(latest.indexOf(year) + year.length) : '';
+  const vehicleText = afterYear
+    .replace(/^\s*(?:a|an|my|the|vehicle\s+is|car\s+is)\s+/i, '')
+    .split(/\b(?:fit(?:s|ment)?|will|can|does|with|for|wheel|wheels|rim|rims)\b/i)[0]
+    .replace(/[?!.,;:]+$/g, '')
+    .trim();
+  const vehicleParts = vehicleText.split(/\s+/).filter(Boolean);
   const make = vehicleParts[0] || '';
   const model = vehicleParts.slice(1).join(' ');
   const fitmentIntent = /fit|fitment|bolt pattern|pcd|offset|center bore|centre bore|wheel size|轮毂|适配|孔距|中心孔|偏距/i.test(latest);
@@ -914,12 +919,11 @@ async function aiAssistantRequest(request: Request, env: Env): Promise<Response>
 
     if (env.WHEEL_SIZE_API_KEY) {
       try {
-        const url = new URL('https://api.wheel-size.com/v2/search/by_model/');
+        const url = new URL('https://ouranos.internal/api/wheel-size/search/by_model');
         url.searchParams.set('make', make);
         url.searchParams.set('model', model);
         url.searchParams.set('year', year);
-        url.searchParams.set('user_key', env.WHEEL_SIZE_API_KEY);
-        const response = await fetch(url, { headers: { accept: 'application/json' }, signal: AbortSignal.timeout(10000) });
+        const response = await wheelSizeRequest(new Request(url), env);
         sourceResults.push({ source: 'Wheel-Size API', status: response.ok ? 'connected' : 'unavailable', ...(response.ok ? { result: (await response.text()).slice(0, 10000) } : {}) });
       } catch { sourceResults.push({ source: 'Wheel-Size API', status: 'unavailable' }); }
     } else {
