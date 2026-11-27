@@ -10,6 +10,13 @@ test('shared header switches between overlay and stacked patterns and preserves 
   await expect(header).toHaveAttribute('data-locale', 'en');
   await expect(header).toHaveAttribute('data-shared-header-ready', 'true');
   await expect(header).toHaveAttribute('data-language-controller-ready', 'true');
+  await expect(header).toHaveAttribute('data-theme-controller-ready', 'true');
+  await expect(page.locator('#ouranos-theme-toggle')).toBeVisible();
+  await expect(page.locator('html')).toHaveClass(/scheme-light/);
+  await page.locator('#ouranos-theme-toggle').click();
+  await expect(page.locator('html')).toHaveClass(/scheme-dark/);
+  await page.locator('#ouranos-theme-toggle').click();
+  await expect(page.locator('html')).toHaveClass(/scheme-light/);
   await expect(page.locator('#ouranos-ai-open')).toBeVisible();
 
   await page.locator('#ouranos-language-trigger').click();
@@ -30,6 +37,7 @@ test('shared header switches between overlay and stacked patterns and preserves 
   await expect(page.locator('.ouranos-header')).toHaveAttribute('data-header-variant', 'stacked');
   await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
   await expect(page.locator('#ouranos-ai-open')).toBeVisible();
+  await expect(page.locator('#ouranos-category-tabs')).toBeVisible();
 
   await page.locator('#ouranos-ai-open').click();
   await expect(page.locator('#ouranos-ai-panel')).toHaveClass(/is-open/);
