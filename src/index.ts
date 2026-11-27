@@ -907,30 +907,6 @@ function extractJsonObjects(source: string): unknown[] {
   return values;
 }
 const CHAT_MODEL = '@cf/meta/llama-3.3-70b-instruct-fp8-fast';
-function extractJsonObjects(source: string): unknown[] {
-  const cleaned = source.replace(/^\\s*`{3}(?:json)?\\s*/i, '').replace(/\\s*`{3}\\s*$/i, '').trim();
-  const values: unknown[] = [];
-  let start = -1, depth = 0, quoted = false, escaped = false;
-  for (let i = 0; i < cleaned.length; i++) {
-    const char = cleaned[i];
-    if (quoted) {
-      if (escaped) escaped = false;
-      else if (char === '\\\\') escaped = true;
-      else if (char === '"') quoted = false;
-      continue;
-    }
-    if (char === '"') { quoted = true; continue; }
-    if (char === '{') { if (depth === 0) start = i; depth++; }
-    else if (char === '}') {
-      depth--;
-      if (depth === 0 && start >= 0) {
-        try { values.push(JSON.parse(cleaned.slice(start, i + 1))); } catch { /* malformed fragment */ }
-        start = -1;
-      }
-    }
-  }
-  return values;
-}
 async function searchPublishedProducts(env: Env, query: string): Promise<Record<string, unknown>[]> {
   const terms = [...new Set(query.toLowerCase().match(/[a-z0-9-]{2,}|[\\u4e00-\\u9fff]{2,}/g) || [])]
     .filter((term) => !['wheel','wheels','rim','rims','轮毂','轮圈','推荐','商品','产品','please','show','find'].includes(term))
