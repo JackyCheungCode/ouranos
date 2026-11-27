@@ -1,13 +1,18 @@
 import { expect, test } from '@playwright/test';
 
-test('forged wheels landing page is independent from the existing wheels catalogue', async ({ page }) => {
+test('forged wheels landing page is independent from the existing wheels catalogue', async ({
+  page,
+}) => {
   await page.goto('/forged-wheels/', { waitUntil: 'domcontentloaded' });
 
   await expect(page).toHaveTitle(/OURANOS \| Forged Wheels/);
   await expect(page.locator('.ouranos-header')).toHaveAttribute('data-header-variant', 'stacked');
   await expect(page.locator('#ouranos-ai-open')).toBeVisible();
   await expect(page.locator('#forged-hero-title')).toContainText('FORGED.');
-  await expect(page.locator('.forged-hero__video source')).toHaveAttribute('src', '/videos/mood-porsche-gts.mp4');
+  await expect(page.locator('.forged-hero__video source')).toHaveAttribute(
+    'src',
+    '/videos/mood-porsche-gts.mp4',
+  );
   await expect(page.locator('#collection-title')).toBeVisible();
   await expect(page.locator('#engineering-title')).toBeVisible();
   await expect(page.locator('#customization-title')).toBeVisible();
@@ -22,7 +27,9 @@ test('forged wheels landing page is independent from the existing wheels catalog
   await expect(page.locator('#catalogue-title')).toBeVisible();
 });
 
-test('forged wheels page remains responsive and navigation exposes the new destination', async ({ page }) => {
+test('forged wheels page remains responsive and navigation exposes the new destination', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/forged-wheels/', { waitUntil: 'domcontentloaded' });
 
@@ -30,7 +37,11 @@ test('forged wheels page remains responsive and navigation exposes the new desti
   await expect(page.locator('#nav-button')).toBeVisible();
   await page.locator('#nav-button').click();
   await expect(page.locator('#nav-drilldown')).toHaveJSProperty('open', true);
-  await expect(page.locator('#nav-drilldown p-drilldown-item[identifier="ouranos-wheels"] a[href="/forged-wheels/"]')).toHaveCount(1);
+  await expect(
+    page.locator(
+      '#nav-drilldown p-drilldown-item[identifier="ouranos-wheels"] a[href="/forged-wheels/"]',
+    ),
+  ).toHaveCount(1);
 
   const pageWidth = await page.locator('body').evaluate((element) => element.scrollWidth);
   const viewportWidth = await page.evaluate(() => window.innerWidth);
