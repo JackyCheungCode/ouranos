@@ -1010,102 +1010,6 @@ async function aiAssistantRequest(request: Request, env: Env): Promise<Response>
   }
 }
 
-async function leadTimeSimulationRequest(request: Request): Promise<Response> {
-  if (request.method !== 'POST') return json({ error: 'METHOD_NOT_ALLOWED' }, 405);
-  let body: { process?: string; orderDate?: string; quantity?: number; productId?: string };
-  try {
-    body = (await request.json()) as typeof body;
-  } catch {
-    return json({ error: 'INVALID_JSON' }, 400);
-  }
-  const process = body.process;
-  const orderDate = body.orderDate || '';
-  const quantity = Number(body.quantity);
-  if (
-    !['casting', 'forging'].includes(process || '') ||
-    !/^\d{4}-\d{2}-\d{2}$/.test(orderDate) ||
-    !Number.isInteger(quantity) ||
-    quantity < 1 ||
-    quantity > 5000 ||
-    typeof body.productId !== 'string' ||
-    !/^[a-z0-9-]{1,80}$/i.test(body.productId)
-  ) {
-    return json({ error: 'INVALID_SCHEDULE_REQUEST' }, 400);
-  }
-  const parseDate = (value: string) => new Date(value + 'T00:00:00.000Z');
-  const isWeekend = (date: Date) => date.getUTCDay() === 0 || date.getUTCDay() === 6;
-  const addWorkdays = (date: Date, count: number) => {
-    const next = new Date(date);
-    let added = 0;
-    while (added < count) {
-      next.setUTCDate(next.getUTCDate() + 1);
-      if (!isWeekend(next)) added++;
-    }
-    return next;
-  };
-  const today = new Date();
-  const earliest = addWorkdays(
-    new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate())),
-    1,
-  );
-  let requested = parseDate(orderDate);
-  if (requested < earliest) requested = earliest;
-  while (isWeekend(requested)) requested.setUTCDate(requested.getUTCDate() + 1);
-  const start = requested;
-  const stages =
-    process === 'casting'
-      ? [
-          'MATERIAL PREP',
-          'MELTING',
-          'CASTING',
-          'COOLING',
-          'HEAT TREAT',
-          'CNC MACHINING',
-          'SURFACE & QC',
-        ]
-      : [
-          'BILLET PREP',
-          'BILLET HEATING',
-          'FORGING',
-          'HEAT TREAT',
-          'CNC MACHINING',
-          'SURFACE FINISH',
-          'FINAL QC',
-        ];
-  const duration = process === 'casting' ? 8 : 7;
-  const lines = Array.from({ length: 36 }, (_, index) => {
-    const startOffset = index === 0 ? 0 : Math.floor(Math.random() * 8);
-    const stageDurations = Array.from({ length: 7 }, () => 1);
-    if (duration === 8) stageDurations[5] = 2;
-    const segments = stages.map((name, stageIndex) => ({
-      name,
-      offset: stageDurations.slice(0, stageIndex).reduce((sum, value) => sum + value, 0),
-      duration: stageDurations[stageIndex],
-      category: stageIndex < 2 ? 'prep' : stageIndex < 5 ? 'process' : 'finish',
-    }));
-    return {
-      id: 'LINE-' + String(index + 1).padStart(2, '0'),
-      product: 'Production order ' + String(index + 1).padStart(3, '0'),
-      process,
-      phase: stages[0],
-      startOffset,
-      duration,
-      segments,
-    };
-  });
-  lines[0].product = body.productId.toUpperCase();
-  lines[0].phase = 'SELECTED ORDER ROUTE';
-  return json({
-    source: 'simulated',
-    process,
-    quantity,
-    productId: body.productId,
-    selectedLine: lines[0].id,
-    startDate: start.toISOString().slice(0, 10),
-    targetWorkingDays: duration,
-    lines,
-  });
-}
 
 const handler = {
   async queue(batch: DiscoveryQueueBatch, env: Env) {
@@ -1154,7 +1058,6 @@ const handler = {
   async fetch(request: Request, env: Env) {
     const url = new URL(request.url);
     if (url.pathname === '/api/ai/chat') return aiAssistantRequest(request, env);
-    if (url.pathname === '/api/lead-time/simulate') return leadTimeSimulationRequest(request);
     if (url.pathname === '/api/discover/image') return createImageDiscovery(request, env);
     if (url.pathname === '/api/discover/url') return createUrlDiscovery(request, env);
     if (url.pathname.startsWith('/api/discover/jobs/') && url.pathname.endsWith('/confirm'))
