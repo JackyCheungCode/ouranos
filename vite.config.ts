@@ -92,22 +92,25 @@ function sharedLayoutPartials() {
         transformed = transformed.replace('<!-- OURANOS:FOOTER -->', readPartial('footer.html'));
       }
 
-      const sharedScripts: HtmlTagDescriptor[] = [];
-      if (!transformed.includes('/src/components/layout/header.js')) {
-        sharedScripts.push({
-          tag: 'script',
-          attrs: { type: 'module', src: '/src/components/layout/header.js' },
-          injectTo: 'body',
-        });
+      // Inject shared modules into the HTML source so Vite's HTML pipeline
+      // resolves and bundles them for both dev Worker and production builds.
+      // Returning late-stage HtmlTagDescriptor entries left these modules
+      // absent from the Worker-served page in the Playwright smoke tests.
+      const sharedScripts = [
+        ...(!transformed.includes('/src/components/layout/header.js')
+          ? ['/src/components/layout/header.js']
+          : []),
+        ...(!transformed.includes('/src/components/ai-assistant.js')
+          ? ['/src/components/ai-assistant.js']
+          : []),
+      ];
+      if (sharedScripts.length) {
+        const scriptTags = sharedScripts
+          .map((src) => `<script type="module" src="${src}"></script>`)
+          .join('\\n');
+        transformed = transformed.replace('</body>', `\\n${scriptTags}\\n</body>`);
       }
-      if (!transformed.includes('/src/components/ai-assistant.js')) {
-        sharedScripts.push({
-          tag: 'script',
-          attrs: { type: 'module', src: '/src/components/ai-assistant.js' },
-          injectTo: 'body',
-        });
-      }
-      return { html: transformed, tags: sharedScripts };
+      return transformed;
     },
   };
 }
