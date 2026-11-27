@@ -164,7 +164,7 @@ test('Vehicle step can be skipped and manual wheel dimensions remain available',
   await expect(page.locator('#summary-front')).toContainText('20');
 });
 
-test('Manufacturer options include a compact logo and step navigation stays readable', async ({ page }) => {
+test('Manufacturer options use transparent logos and step navigation stays readable', async ({ page }) => {
   await mockWheelSize(page);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/customize/');
@@ -193,9 +193,9 @@ test('Manufacturer options include a compact logo and step navigation stays read
   });
   expect(stepperMetrics.stepperWidth).toBeCloseTo(stepperMetrics.panelContentWidth, 0);
   const logoFrame = await page.locator('.manufacturer-option-logo').first().evaluate((el) => ({ radius: getComputedStyle(el).borderRadius, width: el.getBoundingClientRect().width, height: el.getBoundingClientRect().height }));
-  expect(logoFrame.radius).toBe('50%');
-  expect(logoFrame.width).toBe(38);
-  expect(logoFrame.height).toBe(38);
+  expect(logoFrame.radius).toBe('0px');
+  expect(logoFrame.width).toBe(42);
+  expect(logoFrame.height).toBe(32);
   const zoomDirection = await page.locator('.zoom-controls').evaluate((el) => getComputedStyle(el).flexDirection);
   expect(zoomDirection).toBe('column');
 });
