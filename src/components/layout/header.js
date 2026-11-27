@@ -5,6 +5,7 @@ const header = document.querySelector('.ouranos-header');
 if (header) {
   const navDrilldown = header.querySelector('#nav-drilldown');
   const navButton = header.querySelector('#nav-button');
+  const languagePopover = header.querySelector('#ouranos-language-popover');
   const languageTrigger = header.querySelector('#ouranos-language-trigger');
   const languageOptions = [...header.querySelectorAll('[data-locale]')];
 
@@ -108,7 +109,7 @@ if (header) {
     }
 
     languageOptions.forEach((option) => {
-      option.setAttribute('aria-current', String(option.dataset.locale === selected));
+      option.setAttribute('aria-pressed', String(option.dataset.locale === selected));
     });
 
     if (persist) {
@@ -136,31 +137,31 @@ if (header) {
     });
   }
 
-  // Native links make locale selection independent of PDS Popover's
-  // internal event lifecycle. Preserve the current route and all query params.
-  const currentUrl = new URL(window.location.href);
-  languageOptions.forEach((option) => {
-    const targetUrl = new URL(currentUrl);
-    targetUrl.searchParams.set('lang', option.dataset.locale);
-    option.setAttribute('href', targetUrl.pathname + targetUrl.search + targetUrl.hash);
-  });
+  // PDS upgrades and projects the popover's slotted content during custom-element
+  // initialization. Bind only after that lifecycle completes so handlers are not
+  // attached to pre-upgrade nodes that PDS may replace.
+  const bindLocaleOptions = () => {
+    requestAnimationFrame(() => {
+      languageOptions.forEach((option) => {
+        option.addEventListener('click', () => {
+          applyLocale(option.dataset.locale, true);
+          if (languagePopover) languagePopover.open = false;
+        });
+      });
+    });
+  };
 
-  const requestedLocale = currentUrl.searchParams.get('lang');
+  if (customElements.get('p-popover')) {
+    bindLocaleOptions();
+  } else {
+    customElements.whenDefined('p-popover').then(bindLocaleOptions);
+  }
+
   let savedLocale = 'en';
   try {
-    savedLocale =
-      requestedLocale || localStorage.getItem('ouranos-locale') || document.documentElement.lang || 'en';
+    savedLocale = localStorage.getItem('ouranos-locale') || document.documentElement.lang || 'en';
   } catch {
-    savedLocale = requestedLocale || document.documentElement.lang || 'en';
+    savedLocale = document.documentElement.lang || 'en';
   }
-  applyLocale(savedLocale, Boolean(requestedLocale));
-
-  if (requestedLocale && translations[requestedLocale]) {
-    currentUrl.searchParams.delete('lang');
-    window.history.replaceState(
-      window.history.state,
-      '',
-      currentUrl.pathname + currentUrl.search + currentUrl.hash,
-    );
-  }
+  applyLocale(savedLocale);
 }
