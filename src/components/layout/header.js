@@ -50,7 +50,6 @@ if (header) {
 
   function setTheme(theme, persist = false) {
     const selected = theme === 'dark' ? 'dark' : 'light';
-    const scheme = selected === 'dark' ? 'only dark' : 'only light';
     const root = document.documentElement;
     root.classList.remove('scheme-light', 'scheme-dark', 'scheme-light-dark', 'scheme-only-light', 'scheme-only-dark');
     root.classList.add(selected === 'dark' ? 'scheme-dark' : 'scheme-light');
