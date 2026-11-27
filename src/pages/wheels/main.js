@@ -435,7 +435,7 @@ async function loadFitments() {
     setStatus(vehicleState.fitments.length ? 'Select a wheel specification to apply its dimensions.' : 'No wheel specifications were returned for this vehicle.', vehicleState.fitments.length ? 'success' : 'error');
   } catch (error) { setStatus('Fitment lookup failed: ' + error.message, 'error'); }
 }
-function initSpecOptions() {
+async function initSpecOptions() {
   const unique = (values) => [...new Set(values.filter(Boolean).map(String))].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
   const fields = [
     ['#filter-pcd', products.map((item) => item.specs?.pcd), 'All PCD'],
@@ -446,7 +446,7 @@ function initSpecOptions() {
     const element = $(selector);
     if (!element) continue;
     const options = unique(values).map((value) => ({ value, label: value }));
-    setOptions(selector, options, placeholder, (item) => item.value, (item) => item.label);
+    await setOptions(selector, options, placeholder, (item) => item.value, (item) => item.label);
   }
 }
 function restoreUrlFilters() {
@@ -495,7 +495,7 @@ async function init() {
   relocateFilterControls();
   setMode('vehicle');
   bindEvents();
-  initSpecOptions();
+  await initSpecOptions();
   restoreUrlFilters();
   const requestedSort = params.get('sort');
   if (['featured', 'newest', 'az'].includes(requestedSort || '')) setValue('#sort-products', requestedSort);
