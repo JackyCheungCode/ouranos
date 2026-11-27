@@ -85,10 +85,10 @@ async function pollDiscoveryJob(jobId) {
     }
     if (data.job.status === 'processing') {
       const elapsed = (Date.now() - started) / 1000;
-      imageProgress.set(Math.min(90, 35 + elapsed * 1.4), elapsed < 8 ? '正在识别轮毂图像' : elapsed < 24 ? '正在生成视觉特征' : '正在检索 OURANOS 商品库');
+      imageProgress.set(Math.min(90, 35 + elapsed * 1.4), elapsed < 8 ? 'Analyzing wheel image' : elapsed < 24 ? 'Generating visual features' : 'Searching OURANOS catalogue');
       setImageStatus('正在分析图片并查找相似轮毂。', 'info');
     } else {
-      imageProgress.set(15, '等待分析任务启动');
+      imageProgress.set(15, 'Waiting for analysis to start');
       setImageStatus('图片已接收，等待分析任务启动。', 'info');
     }
     await new Promise((resolve) => setTimeout(resolve, 1800));
@@ -238,14 +238,14 @@ async function pollUrlDiscoveryJob(jobId, waitForMatching = false) {
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.error || 'Unable to retrieve discovery status.');
     if (!waitForMatching && data.job.status === 'completed' && data.reference?.confirmation_status === 'pending') {
-      urlProgress.set(100, '商品信息提取完成', 'success');
+      urlProgress.set(100, 'Product details extracted', 'success');
       urlStatus.textContent = '商品信息已提取。请核对图片和参数，确认后再搜索 OURANOS 商品库。';
       urlStatus.dataset.state = 'success';
       renderExtractedProduct(data.reference);
       return;
     }
     if (waitForMatching && data.job.status === 'completed' && data.reference?.confirmation_status === 'confirmed') {
-      urlProgress.set(100, '商品库搜索完成', 'success');
+      urlProgress.set(100, 'Catalogue search complete', 'success');
       urlStatus.textContent = 'OURANOS 商品库搜索完成。';
       urlStatus.dataset.state = 'success';
       renderDiscoveryMatches(data.matches || [], urlPanel);
@@ -254,16 +254,16 @@ async function pollUrlDiscoveryJob(jobId, waitForMatching = false) {
     if (data.job.status === 'failed') throw new Error(data.job.error_message || 'Product page analysis failed.');
     const elapsed = (Date.now() - started) / 1000;
     if (data.job.status === 'processing') {
-      urlProgress.set(Math.min(90, 35 + elapsed * 1.4), waitForMatching ? '正在搜索 OURANOS 商品库' : '正在提取商品信息');
+      urlProgress.set(Math.min(90, 35 + elapsed * 1.4), waitForMatching ? 'Searching OURANOS catalogue' : 'Extracting product details');
       urlStatus.textContent = waitForMatching ? '正在根据已确认的信息搜索 OURANOS 商品库。' : '正在读取商品图片、型号和轮毂参数。';
     } else {
-      urlProgress.set(15, waitForMatching ? '等待商品库搜索启动' : '等待商品页面分析');
+      urlProgress.set(15, waitForMatching ? 'Waiting for catalogue search' : 'Waiting for page analysis');
       urlStatus.textContent = waitForMatching ? '确认已提交，等待商品库搜索。' : '链接已接收，等待提取商品信息。';
     }
     urlStatus.dataset.state = 'info';
     await new Promise((resolve) => setTimeout(resolve, 1800));
   }
-  urlProgress.set(90, '任务仍在进行');
+  urlProgress.set(90, 'Still processing');
   urlStatus.textContent = '任务耗时较长，仍在处理中。';
   urlStatus.dataset.state = 'info';
 }
@@ -292,7 +292,7 @@ urlSubmit.addEventListener('click', async () => {
   document.querySelector('#url-product-preview').hidden = true;
   const existingResults = document.querySelector('#discovery-results');
   if (existingResults) existingResults.remove();
-  urlProgress.set(8, '正在提交商品链接');
+  urlProgress.set(8, 'Submitting product URL');
   urlStatus.textContent = '正在提取商品信息，暂不会搜索 OURANOS 商品库。';
   urlStatus.dataset.state = 'info';
   try {
@@ -306,7 +306,7 @@ urlSubmit.addEventListener('click', async () => {
     window.__ouranosDiscoveryJobId = data.jobId;
     await pollUrlDiscoveryJob(data.jobId, false);
   } catch (error) {
-    urlProgress.set(0, '提取失败', 'error');
+    urlProgress.set(0, 'Extraction failed', 'error');
     urlStatus.textContent = error instanceof Error ? error.message : '链接分析失败。';
     urlStatus.dataset.state = 'error';
   } finally {
@@ -319,7 +319,7 @@ document.querySelector('#url-confirm-search').addEventListener('click', async ()
   const jobId = window.__ouranosDiscoveryJobId;
   if (!jobId || button.disabled) return;
   setPdsDisabled(button, true);
-  urlProgress.set(10, '正在提交确认');
+  urlProgress.set(10, 'Submitting confirmation');
   urlStatus.textContent = '已确认商品信息，正在启动 OURANOS 商品库搜索。';
   urlStatus.dataset.state = 'info';
   try {
@@ -332,7 +332,7 @@ document.querySelector('#url-confirm-search').addEventListener('click', async ()
     await pollUrlDiscoveryJob(jobId, true);
   } catch (error) {
     setPdsDisabled(button, false);
-    urlProgress.set(0, '搜索启动失败', 'error');
+    urlProgress.set(0, 'Search could not start', 'error');
     urlStatus.textContent = error instanceof Error ? error.message : '商品库搜索失败。';
     urlStatus.dataset.state = 'error';
   }
@@ -341,7 +341,7 @@ document.querySelector('#url-confirm-search').addEventListener('click', async ()
 imageSubmit.addEventListener('click', async () => {
   if (!selectedFile || imageSubmit.disabled) return;
   setPdsDisabled(imageSubmit, true);
-  imageProgress.set(8, '正在上传图片');
+  imageProgress.set(8, 'Uploading image');
   setImageStatus('正在上传图片并创建分析任务。', 'info');
   try {
     const form = new FormData();
@@ -350,7 +350,7 @@ imageSubmit.addEventListener('click', async () => {
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(intakeError(data, '图片上传失败。'));
     activeJobId = data.jobId;
-    imageProgress.set(20, '图片已保存，等待分析');
+    imageProgress.set(20, 'Image saved · waiting for analysis');
     setImageStatus('图片已接收，等待视觉分析。', 'info');
     await pollDiscoveryJob(data.jobId);
   } catch (error) {
