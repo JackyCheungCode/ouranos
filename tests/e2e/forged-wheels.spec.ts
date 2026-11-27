@@ -45,7 +45,7 @@ test('forged wheels landing page is independent from the existing wheels catalog
     'forged-final',
   ]);
   await expect(page.locator('.forged-intro')).toHaveCount(0);
-  await expect(page.locator('.forged-hero__actions p-link')).toHaveCount(2);
+  await expect(page.locator('.forged-hero .forged-hero__content .forged-hero__actions p-link')).toHaveCount(2);
   await expect(page.locator('.forged-final__content p-link')).toHaveCount(2);
   await expect(page.locator('.forged-construction-tile')).toHaveAttribute('aspect-ratio', '3/4');
   await expect(page.locator('#engineering-title')).toBeVisible();
