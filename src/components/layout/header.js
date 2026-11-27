@@ -6,7 +6,6 @@ if (header) {
   const categoryTabs = header.querySelector('#ouranos-category-tabs');
   const languagePopover = header.querySelector('#ouranos-language-popover');
   const languageTrigger = header.querySelector('#ouranos-language-trigger');
-  const themeButton = header.querySelector('#ouranos-theme-toggle');
   const getLanguageOptions = () => [...header.querySelectorAll('[data-locale]')];
 
   const localeNames = { en: 'English', 'zh-CN': '简体中文', de: 'Deutsch', fr: 'Français', ja: '日本語' };
@@ -48,25 +47,13 @@ if (header) {
     window.dispatchEvent(new CustomEvent('ouranos:locale-change', { detail: { locale: selected } }));
   }
 
-  function setTheme(theme, persist = false) {
-    const selected = theme === 'dark' ? 'dark' : 'light';
+  function enforceLightTheme() {
     const root = document.documentElement;
-    root.classList.remove('scheme-light', 'scheme-dark', 'scheme-light-dark', 'scheme-only-light', 'scheme-only-dark');
-    root.classList.add(selected === 'dark' ? 'scheme-dark' : 'scheme-light');
-    root.style.colorScheme = selected;
-    if (document.body) document.body.style.colorScheme = selected;
-    root.dataset.theme = selected;
-    if (themeButton) {
-      const nextTheme = selected === 'dark' ? 'light' : 'dark';
-      const label = nextTheme === 'dark' ? 'Switch to dark mode' : 'Switch to light mode';
-      themeButton.setAttribute('icon', nextTheme === 'dark' ? 'moon' : 'sun');
-      themeButton.setAttribute('aria-label', label);
-      themeButton.setAttribute('title', label);
-      themeButton.setAttribute('aria-pressed', String(selected === 'dark'));
-    }
-    if (persist) {
-      try { localStorage.setItem('ouranos-theme', selected); } catch { /* Theme remains active for this page. */ }
-    }
+    root.classList.remove('scheme-dark', 'scheme-light-dark', 'scheme-only-dark');
+    root.classList.add('scheme-light');
+    root.style.colorScheme = 'only light';
+    if (document.body) document.body.style.colorScheme = 'only light';
+    root.dataset.theme = 'light';
   }
 
   if (navDrilldown && navButton) {
@@ -109,22 +96,13 @@ if (header) {
   if (customElements.get('p-popover')) initializeLanguagePopover();
   else customElements.whenDefined('p-popover').then(initializeLanguagePopover);
 
-  if (themeButton) {
-    themeButton.addEventListener('click', () => {
-      const current = document.documentElement.dataset.theme || 'light';
-      setTheme(current === 'dark' ? 'light' : 'dark', true);
-    });
-  }
-
   let savedLocale = 'en';
-  let savedTheme = 'light';
   try {
     savedLocale = localStorage.getItem('ouranos-locale') || document.documentElement.lang || 'en';
-    savedTheme = localStorage.getItem('ouranos-theme') || 'light';
   } catch {
     savedLocale = document.documentElement.lang || 'en';
   }
-  setTheme(savedTheme);
+  enforceLightTheme();
   applyLocale(savedLocale);
   header.dataset.sharedHeaderReady = 'true';
   header.dataset.themeControllerReady = 'true';
