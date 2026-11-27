@@ -9,13 +9,18 @@ test('Wheels catalogue uses the PDS Vehicle Listing pattern with multi-parameter
   await expect(page.locator('[data-product]')).toHaveCount(10);
   await expect(page.locator('#product-count')).toContainText('10 products');
   await expect(page.locator('[data-product]').first()).toContainText('FORGED');
-  await expect(page.locator('[data-product]').first()).toContainText('Customization: Size, Fitment & Finish');
+  await expect(page.locator('[data-product]').first().locator('.wheel-card__customization')).toContainText('Wheel dimensions');
+  await expect(page.locator('[data-product]').first().locator('.wheel-card__customization')).toContainText('ET · PCD · CB');
+  await expect(page.locator('[data-product]').first().locator('.wheel-card__customization')).toContainText('Center Cap · Engraving');
+  await expect(page.locator('[data-product]').first().locator('.wheel-card__customization-group p-icon')).toHaveCount(4);
+  await expect(page.locator('[data-product]').first().locator('.wheel-card__customization-group p-icon').evaluateAll((icons) => icons.map((icon) => icon.getAttribute('name')))).resolves.toEqual(['adjust', 'car', 'color-picker', 'edit']);
   await expect(page.locator('[data-product]').first()).toContainText('Manufacturing lead time');
   await expect(page.locator('[data-product]').first()).toContainText('10–15 days');
   await expect(page.locator('[data-product]').first()).not.toContainText('Enquire about this wheel');
   await expect(page.locator('[data-product]').first()).toContainText('Discover');
   await expect(page.locator('[data-product]').first()).toContainText('Configure');
-  await expect(page.locator('[data-product]').first().locator('p-button[href^="/configure/"]')).toHaveCount(1);
+  await expect(page.locator('[data-product]').first().locator('a.wheel-card__action--primary')).toHaveAttribute('href', /\/wheels\/\?model=/);
+  await expect(page.locator('[data-product]').first().locator('a.wheel-card__action--secondary')).toHaveAttribute('href', /\/configure\//);
   await expect(page.locator('.wheels-demo-note')).toContainText('TEMPORARY APEX TEST DATA');
   await expect(page.locator('body')).not.toContainText('Add to cart');
 });
@@ -231,7 +236,7 @@ test('Vehicle filter uses Wheel Size and transfers the selected fitment into spe
 
 test('Configure opens a product-specific form and submits an enquiry to the Worker API', async ({ page }) => {
   await page.goto('/wheels/', { waitUntil: 'domcontentloaded' });
-  await page.locator('[data-product]').first().locator('p-button[href^="/configure/"]').click();
+  await page.locator('[data-product]').first().locator('a.wheel-card__action--secondary').click();
   await expect(page).toHaveURL(/\/configure\//);
   await expect(page.locator('#wheel-model')).toHaveText('VS-5RS');
   await expect(page.locator('#wheel-image')).toHaveAttribute('src', /cdn\.sanity\.io/);
