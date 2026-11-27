@@ -4,18 +4,27 @@
   aria-label="OURANOS site header"
 >
   <div class="col-wide grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-fluid-md items-center min-h-[80px]">
-    <div class="flex flex-wrap gap-static-md items-center justify-start" style="color: #010205">
+    <div class="flex flex-wrap gap-static-md items-center justify-start" style="color: #fff">
       <nav aria-label="Main">
-        <p-button-pure color="inherit" id="nav-button" class="p-static-xs -m-static-xs" style="color: #010205" type="button" icon="menu-lines" hide-label="{base: true, s: false}" aria="{'aria-haspopup': 'dialog'}">
+        <p-button-pure color="inherit" id="nav-button" class="p-static-xs -m-static-xs" style="color: #fff" type="button" icon="menu-lines" hide-label="{base: true, s: false}" aria="{'aria-haspopup': 'dialog'}">
           Menu
         </p-button-pure>
         <!-- OURANOS:SIDEBAR -->
       </nav>
     </div>
-    <a class="font-semibold tracking-[0.2em] whitespace-nowrap" style="color: #010205" href="/" aria-label="Ouranos Home">OURANOS</a>
-    <div class="flex flex-wrap gap-static-md items-center justify-end" style="color: #010205">
+    <a class="ouranos-header__brand" href="/" aria-label="Ouranos Home">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 210" width="560" height="210" overflow="visible" role="img" aria-labelledby="ouranos-brand-title">
+        <title id="ouranos-brand-title">Ouranos</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Mrs+Saint+Delafield&display=swap');
+          text { font-family: 'Mrs Saint Delafield', 'Brush Script MT', cursive; font-size: 150px; fill: #ffffff; }
+        </style>
+        <text x="280" y="140" text-anchor="middle">Ouranos</text>
+      </svg>
+    </a>
+    <div class="flex flex-wrap gap-static-md items-center justify-end" style="color: #fff">
       <p-popover id="ouranos-language-popover" direction="bottom" compact="true">
-        <p-button-pure color="inherit" slot="button" id="ouranos-language-trigger" class="p-static-xs -m-static-xs" type="button" icon="globe" hide-label="true" title="Language: English" aria-label="Language: English">Language: English</p-button-pure>
+        <p-button-pure color="inherit" slot="button" id="ouranos-language-trigger" class="p-static-xs -m-static-xs" style="color: #fff" type="button" icon="globe" hide-label="true" title="Language: English" aria-label="Language: English">Language: English</p-button-pure>
         <div class="ouranos-language-menu" role="group" aria-label="Select language">
           <button class="ouranos-language-option" type="button" data-locale="en" aria-pressed="true">English</button>
           <button class="ouranos-language-option" type="button" data-locale="zh-CN" aria-pressed="false">简体中文</button>
@@ -24,8 +33,8 @@
           <button class="ouranos-language-option" type="button" data-locale="ja" aria-pressed="false">日本語</button>
         </div>
       </p-popover>
-      <p-button-pure color="inherit" id="ouranos-ai-open" class="p-static-xs -m-static-xs" type="button" icon="ai-chat" hide-label="true" title="OURANOS AI Assistant" aria-label="OURANOS AI Assistant">AI Assistant</p-button-pure>
-      <p-button-pure color="inherit" id="ouranos-account" class="p-static-xs -m-static-xs" title="Account" type="button" icon="user" hide-label="true">Account</p-button-pure>
+      <p-button-pure color="inherit" id="ouranos-ai-open" class="p-static-xs -m-static-xs" style="color: #fff" type="button" icon="ai-chat" hide-label="true" title="OURANOS AI Assistant" aria-label="OURANOS AI Assistant">AI Assistant</p-button-pure>
+      <p-button-pure color="inherit" id="ouranos-account" class="p-static-xs -m-static-xs" style="color: #fff" title="Account" type="button" icon="user" hide-label="true">Account</p-button-pure>
     </div>
   </div>
 </header>

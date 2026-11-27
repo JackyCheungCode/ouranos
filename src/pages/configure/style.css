@@ -9,7 +9,7 @@
 .wheel-configure {
   width: min(100% - 40px, 1240px);
   margin: 0 auto;
-  padding: 40px 0 96px;
+  padding: 120px 0 96px;
   display: grid;
   gap: 32px;
 }

@@ -9,7 +9,7 @@ test('Home page is served at the root with shared Ouranos layout', async ({ page
   await expect(page.locator('p-heading#heading-section-1')).toContainText(
     'Precision in Every Form',
   );
-  await expect(page.locator('header a[aria-label="Ouranos Home"]').first()).toHaveText('OURANOS');
+  await expect(page.locator('header a[aria-label="Ouranos Home"] svg title').first()).toHaveText('Ouranos');
   await expect(page.locator('#nav-drilldown')).toHaveCount(1);
   await expect(page.locator('footer')).toContainText('Ouranos');
 
@@ -68,33 +68,24 @@ test('Home exposes the two primary entry tiles and five wheel collections', asyn
   await expect(page.locator('p-carousel p-link-tile')).toHaveCount(5);
 });
 
-test('Home header uses light branding while image tiles retain the light PDS scheme', async ({
+test('Home header uses the white OURANOS script brand over the light page theme', async ({
   page,
 }) => {
   await page.goto('/', { waitUntil: 'domcontentloaded' });
-  const header = page.locator('header');
+  const header = page.locator('.ouranos-header');
   await expect(page.locator('html')).toHaveClass(/scheme-light/);
-  await expect(header.locator('.scheme-dark')).toHaveCount(0);
-  await expect(header.locator('a[aria-label="Ouranos Home"]').first()).toHaveCSS(
-    'color',
-    'rgb(1, 2, 5)',
+  await expect(header).toHaveAttribute('data-header-variant', 'overlay');
+  await expect(header.locator('a[aria-label="Ouranos Home"] svg text')).toHaveCSS(
+    'fill',
+    'rgb(255, 255, 255)',
   );
+
   const headerButtons = header.locator(
-    'p-button-pure#nav-button, p-button-pure#ouranos-ai-open, p-button-pure[icon="user"]',
+    'p-button-pure#nav-button, p-button-pure#ouranos-language-trigger, p-button-pure#ouranos-ai-open, p-button-pure#ouranos-account',
   );
-  await expect(headerButtons).toHaveCount(3);
+  await expect(headerButtons).toHaveCount(4);
   for (let index = 0; index < (await headerButtons.count()); index += 1) {
-    const button = headerButtons.nth(index);
-    const scheme = await button.evaluate((element) => getComputedStyle(element).colorScheme);
-    expect(scheme).toContain('light');
-    const foreground = await button.evaluate((element) => {
-      const internalButton = element.shadowRoot?.querySelector('button');
-      return internalButton ? getComputedStyle(internalButton).color : null;
-    });
-    expect(
-      foreground,
-      `PDS header button ${index} must resolve to a dark foreground in light mode`,
-    ).toBe('rgb(1, 2, 5)');
+    await expect(headerButtons.nth(index)).toHaveCSS('color', 'rgb(255, 255, 255)');
   }
 
   for (const tile of [
