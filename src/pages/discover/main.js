@@ -172,6 +172,10 @@ document.querySelectorAll('[data-method]').forEach((button) => {
 });
 
 urlInput.addEventListener('input', () => {
+  document.querySelector('#url-product-preview').hidden = true;
+  const oldResults = document.querySelector('#discovery-results');
+  if (oldResults) oldResults.remove();
+  window.__ouranosDiscoveryJobId = null;
   setPdsDisabled(urlSubmit, !urlInput.value.trim());
   urlStatus.textContent = 'Paste a public product page URL. Page extraction runs in an isolated, hostname-restricted browser session after submission.';
   urlStatus.dataset.state = '';
