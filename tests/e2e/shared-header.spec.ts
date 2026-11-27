@@ -19,7 +19,7 @@ test('shared header switches between overlay and stacked patterns and preserves 
   await expect(page.locator('#ouranos-ai-open')).toBeVisible();
   await expect(page.locator('.ouranos-header .scheme-dark')).toHaveCount(0);
   await expect(page.locator('.ouranos-header [aria-label="Ouranos Home"]')).toHaveCSS('color', 'rgb(1, 2, 5)');
-  await expect(page.locator('.ouranos-header [style*="color: #010205"]')).toHaveCount(3);
+  await expect(page.locator('.ouranos-header [style*="color: #010205"]')).toHaveCount(4);
 
   await page.locator('#ouranos-language-trigger').click();
   const chineseOption = page.locator('.ouranos-language-option[data-locale="zh-CN"]');
