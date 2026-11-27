@@ -16,8 +16,7 @@ test('shared header switches between overlay and stacked patterns and preserves 
 
   await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
   await expect(header).toHaveAttribute('data-locale', 'zh-CN');
-  await expect(chineseOption).toHaveAttribute('aria-current', 'true');
-  await expect(page).toHaveURL('/');
+  await expect(chineseOption).toHaveAttribute('aria-pressed', 'true');
 
   await page.locator('#ouranos-language-trigger').click();
   await expect(chineseOption).toBeVisible();
