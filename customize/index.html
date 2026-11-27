@@ -83,17 +83,7 @@
               </div>
               <div class="vehicle-fields">
                 <div class="field-block make-field">
-                  <label for="make">MANUFACTURER</label>
-                  <div class="make-control">
-                    <div class="manufacturer-select" id="manufacturer-select">
-                      <button type="button" class="manufacturer-trigger" id="manufacturer-trigger" disabled aria-haspopup="listbox" aria-expanded="false" aria-controls="manufacturer-menu">
-                        <span class="manufacturer-current-logo"><img id="make-current-logo" alt="" hidden><span id="make-current-fallback">—</span></span>
-                        <span id="make-current-label">Select manufacturer</span><span class="manufacturer-chevron" aria-hidden="true">⌄</span>
-                      </button>
-                      <div class="manufacturer-menu" id="manufacturer-menu" role="listbox" aria-label="Manufacturer" hidden></div>
-                      <select id="make" name="make" aria-label="Manufacturer" tabindex="-1" aria-hidden="true"><option value="">Select manufacturer</option></select>
-                    </div>
-                  </div>
+                  <div class="field-block manufacturer-field"><p-select id="make" name="make" label="MANUFACTURER" value="" disabled><p-select-option value="">Select manufacturer</p-select-option></p-select></div>
                 </div>
                 <div class="field-block"><p-select id="model" name="model" label="MODEL" value="" disabled><p-select-option value="">Select model</p-select-option></p-select></div>
                 <div class="field-block"><p-select id="year" name="year" label="YEAR" value="" disabled><p-select-option value="">Select year</p-select-option></p-select></div>
