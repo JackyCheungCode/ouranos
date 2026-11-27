@@ -37,6 +37,7 @@ test('Lead time estimator presents a focused customer estimate and manufacturing
     });
   });
 
+  page.on('pageerror', (error) => console.log('PAGE_ERROR:', error.message));
   await page.goto('/lead-time/');
   await expect(page).toHaveTitle('OURANOS | Production Lead Time');
   await expect(page.locator('#lead-product p-select-option')).toHaveCount(11);
@@ -57,6 +58,7 @@ test('Lead time estimator presents a focused customer estimate and manufacturing
   await page.locator('#lead-submit').click();
   await expect(page.locator('#lead-loading')).toBeVisible();
   await expect(page.locator('#loading-steps li').first()).toHaveClass(/is-active/);
+  await expect(page.locator('#lead-form-status')).toHaveText('Your indicative estimate is ready.', { timeout: 10000 });
   await expect(page.locator('#production-results')).toBeVisible({ timeout: 10000 });
   await expect(page.locator('#result-duration')).toHaveText('7');
   await expect(page.locator('#result-quantity')).toHaveText('4 WHEELS');
