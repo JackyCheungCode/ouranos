@@ -906,11 +906,7 @@ function extractJsonObjects(source: string): unknown[] {
   }
   return values;
 }
-const CHAT_MODEL = '@cf/meta/llama-3.3-70b-instruct-fp8-fast';'), 'i'), ' ');
-  const model = remainder.replace(/\\b(?:year|model|车型|車型|适合|适配|轮毂|轮圈|wheels?|fitment|will|fit|for|my|the|a|an)\\b/gi, ' ')
-    .replace(/[，,。.!?？]/g, ' ').replace(/\\s+/g, ' ').trim();
-  return { year, make, model };
-}
+const CHAT_MODEL = '@cf/meta/llama-3.3-70b-instruct-fp8-fast';
 function extractJsonObjects(source: string): unknown[] {
   const cleaned = source.replace(/^\\s*`{3}(?:json)?\\s*/i, '').replace(/\\s*`{3}\\s*$/i, '').trim();
   const values: unknown[] = [];
