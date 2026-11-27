@@ -137,6 +137,18 @@ if (header) {
     });
   }
 
+  if (languagePopover && languageTrigger) {
+    customElements.whenDefined('p-popover').then(() => {
+      languagePopover.open = false;
+      languageTrigger.addEventListener('click', () => {
+        languagePopover.open = !languagePopover.open;
+      });
+      languagePopover.addEventListener('dismiss', () => {
+        languagePopover.open = false;
+      });
+    });
+  }
+
   languageOptions.forEach((option) => {
     option.addEventListener('click', () => {
       applyLocale(option.dataset.locale, true);
