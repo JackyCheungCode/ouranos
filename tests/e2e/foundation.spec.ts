@@ -57,14 +57,14 @@ test('Home exposes the two primary entry tiles and five wheel collections', asyn
   await expect(page.locator('p-carousel p-link-tile')).toHaveCount(5);
 });
 
-test('Home overlay navigation and image tiles use the dark PDS scheme', async ({ page }) => {
+test('Home overlay navigation and image tiles use the light PDS scheme', async ({ page }) => {
   await page.goto('/');
   const header = page.locator('header');
-  await expect(page.locator('html')).toHaveClass(/scheme-dark/);
-  await expect(header).toHaveCSS('color-scheme', 'dark');
+  await expect(page.locator('html')).toHaveClass(/scheme-light/);
+  await expect(header).toHaveCSS('color-scheme', 'light');
   await expect(header.locator('a[aria-label="Ouranos Home"]').first()).toHaveCSS(
     'color',
-    'rgb(255, 255, 255)',
+    'rgb(17, 24, 39)',
   );
   await expect(header.locator('p-button-pure').first()).toHaveAttribute('color', 'primary');
 
@@ -75,7 +75,7 @@ test('Home overlay navigation and image tiles use the dark PDS scheme', async ({
   ]) {
     await expect(tile).toHaveAttribute('gradient', 'true');
     const scheme = await tile.evaluate((element) => getComputedStyle(element).colorScheme);
-    expect(scheme).toContain('dark');
+    expect(scheme).toContain('light');
   }
 });
 
