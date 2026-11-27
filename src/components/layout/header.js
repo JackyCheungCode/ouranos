@@ -53,9 +53,9 @@ if (header) {
     const scheme = selected === 'dark' ? 'only dark' : 'only light';
     const root = document.documentElement;
     root.classList.remove('scheme-light', 'scheme-dark', 'scheme-light-dark', 'scheme-only-light', 'scheme-only-dark');
-    root.classList.add(selected === 'dark' ? 'scheme-only-dark' : 'scheme-only-light');
-    root.style.colorScheme = scheme;
-    if (document.body) document.body.style.colorScheme = scheme;
+    root.classList.add(selected === 'dark' ? 'scheme-dark' : 'scheme-light');
+    root.style.colorScheme = selected;
+    if (document.body) document.body.style.colorScheme = selected;
     root.dataset.theme = selected;
     if (themeButton) {
       const nextTheme = selected === 'dark' ? 'light' : 'dark';
