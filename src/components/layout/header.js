@@ -151,6 +151,7 @@ if (header) {
     };
 
     setLanguageOpen(false);
+    header.dataset.languageControllerReady = 'true';
 
     languageTrigger.addEventListener('click', () => {
       setLanguageOpen(!isLanguageOpen);
@@ -184,4 +185,5 @@ if (header) {
     savedLocale = document.documentElement.lang || 'en';
   }
   applyLocale(savedLocale);
+  header.dataset.sharedHeaderReady = 'true';
 }
