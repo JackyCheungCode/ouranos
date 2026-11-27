@@ -15,6 +15,9 @@ test('Lead time estimator runs MES loading and renders a 36-line Gantt schedule'
   await expect(page.locator('#lead-product p-select-option')).toHaveCount(11);
   await expect(page.locator('input[name="process"]')).toHaveCount(0);
   await expect(page.locator('#production-results')).toBeHidden();
+  await expect(page.locator('#ouranos-ai-panel')).toBeHidden();
+  await expect(page.locator('body > footer')).toBeVisible();
+  await expect(page.locator('#nav-drilldown')).toHaveCount(1);
   await page.locator('#lead-product').evaluate((el) => { el.value='vs-5rs'; el.dispatchEvent(new Event('change',{bubbles:true})); });
   await page.locator('#lead-submit').click();
   await expect(page.locator('#lead-loading')).toBeVisible();
