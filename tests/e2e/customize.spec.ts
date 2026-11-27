@@ -71,7 +71,7 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.stack || error.message));
   await mockWheelSize(page);
-  await page.goto('/customize/');
+  await page.goto('/customize/', { waitUntil: 'domcontentloaded' });
 
   await expect(page).toHaveTitle('Ouranos | Wheel Configurator');
   await expect(page.getByRole('heading', { name: /Choose your wheel model/i })).toBeVisible();
@@ -141,7 +141,7 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
 
 test('Selecting a manufacturer with the native PDS select loads its models', async ({ page }) => {
   await mockWheelSize(page);
-  await page.goto('/customize/');
+  await page.goto('/customize/', { waitUntil: 'domcontentloaded' });
   await page.locator('#model-list .model-card').click();
   await page.locator('#next-button').click();
   await chooseMarket(page);
@@ -156,7 +156,7 @@ test('Configurator hero is full bleed and model zoom controls remain available o
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await mockWheelSize(page);
-  await page.goto('/customize/');
+  await page.goto('/customize/', { waitUntil: 'domcontentloaded' });
   const hero = await page.locator('.customizer-hero').boundingBox();
   expect(hero).not.toBeNull();
   expect(hero?.x).toBe(0);
@@ -207,7 +207,7 @@ test('Vehicle step can be skipped and manual wheel dimensions remain available',
       }),
     });
   });
-  await page.goto('/customize/');
+  await page.goto('/customize/', { waitUntil: 'domcontentloaded' });
   await page.locator('#model-list .model-card').click();
   await page.locator('#next-button').click();
   await chooseMarket(page);
@@ -227,7 +227,7 @@ test('Vehicle step can be skipped and manual wheel dimensions remain available',
 
 test('Manufacturer uses the native PDS select without oversized option logos', async ({ page }) => {
   await mockWheelSize(page);
-  await page.goto('/customize/');
+  await page.goto('/customize/', { waitUntil: 'domcontentloaded' });
   await page.locator('#model-list .model-card').click();
   await page.locator('#next-button').click();
   const make = page.locator('#make');
@@ -266,7 +266,7 @@ test('Configurator defaults to the first wheel model and supports Back and the p
   page,
 }) => {
   await mockWheelSize(page);
-  await page.goto('/customize/');
+  await page.goto('/customize/', { waitUntil: 'domcontentloaded' });
   const firstModel = page.locator('#model-list .model-card').first();
   await expect(firstModel).toHaveAttribute('aria-selected', 'true');
   await expect(page.locator('#back-button')).toHaveAttribute('disabled', '');
@@ -302,7 +302,7 @@ test('Missing rear axle API data is initialized from the front axle', async ({ p
       }),
     });
   });
-  await page.goto('/customize/');
+  await page.goto('/customize/', { waitUntil: 'domcontentloaded' });
   await page.locator('#next-button').click();
   await chooseMarket(page);
   await choose(page, '#make', 'porsche');
@@ -326,7 +326,7 @@ test('Missing rear axle API data is initialized from the front axle', async ({ p
 
 test('Configurator prepares a downloadable engineering specification', async ({ page }) => {
   await mockWheelSize(page);
-  await page.goto('/customize/');
+  await page.goto('/customize/', { waitUntil: 'domcontentloaded' });
   await page.locator('#model-list .model-card').click();
   await page.locator('#next-button').click();
   await chooseMarket(page);
