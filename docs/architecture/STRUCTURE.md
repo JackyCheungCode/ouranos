@@ -14,7 +14,7 @@
 - `src/components/layout/header.css` owns shared Header styling.
 - `src/components/layout/sidebar.html` owns the PDS Drilldown navigation content.
 - Vite injects the shared Header and AI assistant into every public HTML page by default. The admin panel is excluded.
-- The home page receives the Overlay variant; all other public pages receive the Stacked variant.
+- The home page and full-bleed wheel configurator receive the Overlay variant; catalogue, discovery, contact and other content pages receive the Stacked variant.
 - A new public page only needs its own `index.html` and page-specific assets. Vite discovers it as a build entry and injects the shared Header, locale preference controller, navigation and AI assistant automatically.
 - The locale controller persists the selected locale in `localStorage`, updates the document language, localizes shared Header labels and emits `ouranos:locale-change`. Page-level content must subscribe to that event and provide its own translations before it can be described as fully localized.
 - To intentionally omit the shared Header on a special public page, add `<!-- OURANOS:NO-SHARED-HEADER -->` before the closing body tag.
