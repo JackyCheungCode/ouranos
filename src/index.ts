@@ -28,6 +28,14 @@ interface D1Database { prepare(query: string): D1Statement; }
 interface DiscoveryQueue { send(message: Record<string, unknown>): Promise<void>; }
 interface DiscoveryQueueMessage { body: { jobId?: string; type?: string }; ack(): void; retry(): void; }
 interface DiscoveryQueueBatch { messages: DiscoveryQueueMessage[]; }
+interface AiBinding {
+  run(model: string, input: Record<string, unknown>): Promise<{ data?: number[][] }>;
+}
+interface VectorizeMatch { id: string; score: number; metadata?: Record<string, string>; }
+interface VectorizeBinding {
+  query(vector: number[], options: { topK: number; returnMetadata: 'all' }): Promise<{ matches: VectorizeMatch[] }>;
+  upsert(vectors: Array<{ id: string; values: number[]; metadata: Record<string, string> }>): Promise<unknown>;
+}
 
 export interface Env {
   ASSETS: { fetch(request: Request): Promise<Response> };
@@ -36,6 +44,9 @@ export interface Env {
   /** Server-side Wheel Size API credential. Never expose this to browser code. */
   WHEEL_SIZE_API_KEY?: string;
   MODELS_BUCKET: ModelsBucket;
+  AI: AiBinding;
+  WHEEL_INDEX: VectorizeBinding;
+  DISCOVERY_ADMIN_TOKEN?: string;
 }
 
 const API_BASE = 'https://api.wheel-size.com/v2';
@@ -219,6 +230,110 @@ function imageSignature(bytes: Uint8Array, mime: string): boolean {
   return false;
 }
 
+function bytesToBase64(bytes: Uint8Array): string {
+  let binary = '';
+  const chunkSize = 0x8000;
+  for (let offset = 0; offset < bytes.length; offset += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(offset, offset + chunkSize));
+  }
+  return btoa(binary);
+}
+
+async function imageEmbedding(env: Env, bytes: Uint8Array, mime: string): Promise<number[]> {
+  const dataUri = `data:${mime};base64,${bytesToBase64(bytes)}`;
+  const result = await env.AI.run('@cf/google/embeddinggemma-2', {
+    messages: [[{
+      role: 'user',
+      content: [{ type: 'image_url', image_url: { url: dataUri } }],
+    }]],
+    dimensions: 768,
+  });
+  const vector = result.data?.[0];
+  if (!vector || vector.length !== 768 || vector.some((value) => !Number.isFinite(value))) {
+    throw new Error('INVALID_IMAGE_EMBEDDING');
+  }
+  return vector;
+}
+
+async function indexPublishedProducts(env: Env): Promise<{ indexed: number; skipped: number }> {
+  const rows = await env.DB.prepare(
+    "SELECT pm.id AS media_id, pm.product_id, pm.object_key, pm.alt_text, p.product_name FROM product_media pm JOIN products p ON p.id = pm.product_id WHERE pm.publication_status = 'published' AND p.publication_status = 'published' AND pm.media_role IN ('hero', 'gallery', 'detail') ORDER BY p.sort_order, pm.sort_order LIMIT 500"
+  ).all<{ media_id: string; product_id: string; object_key: string; alt_text: string; product_name: string }>();
+  let indexed = 0;
+  let skipped = 0;
+  for (const row of rows.results || []) {
+    try {
+      const object = await env.MODELS_BUCKET.get(row.object_key);
+      if (!object) { skipped++; continue; }
+      const mime = object.httpMetadata?.contentType || 'image/jpeg';
+      if (!ALLOWED_IMAGE_TYPES.has(mime)) { skipped++; continue; }
+      const bytes = new Uint8Array(await new Response(object.body).arrayBuffer());
+      if (!imageSignature(bytes, mime)) { skipped++; continue; }
+      const values = await imageEmbedding(env, bytes, mime);
+      await env.WHEEL_INDEX.upsert([{
+        id: row.media_id,
+        values,
+        metadata: { productId: row.product_id, mediaId: row.media_id, productName: row.product_name },
+      }]);
+      indexed++;
+    } catch {
+      skipped++;
+    }
+  }
+  return { indexed, skipped };
+}
+
+async function runImageMatching(env: Env, jobId: string): Promise<void> {
+  const job = await env.DB.prepare(
+    "SELECT reference_object_key, reference_mime_type FROM discovery_jobs WHERE id = ? AND status IN ('queued', 'processing')"
+  ).bind(jobId).first<{ reference_object_key: string; reference_mime_type: string }>();
+  if (!job?.reference_object_key || !job.reference_mime_type) throw new Error('REFERENCE_NOT_FOUND');
+  const object = await env.MODELS_BUCKET.get(job.reference_object_key);
+  if (!object) throw new Error('REFERENCE_NOT_FOUND');
+  const bytes = new Uint8Array(await new Response(object.body).arrayBuffer());
+  const vector = await imageEmbedding(env, bytes, job.reference_mime_type);
+  const result = await env.WHEEL_INDEX.query(vector, { topK: 30, returnMetadata: 'all' });
+  const productIds = [...new Set((result.matches || [])
+    .map((match) => match.metadata?.productId)
+    .filter((id): id is string => Boolean(id)))];
+  if (!productIds.length) {
+    await env.DB.prepare(
+      "UPDATE discovery_jobs SET status = 'completed', updated_at = CURRENT_TIMESTAMP, completed_at = CURRENT_TIMESTAMP WHERE id = ?"
+    ).bind(jobId).run();
+    return;
+  }
+  const placeholders = productIds.map(() => '?').join(',');
+  const products = await env.DB.prepare(
+    `SELECT id, slug, product_name FROM products WHERE publication_status = 'published' AND id IN (${placeholders})`
+  ).bind(...productIds).all<{ id: string; slug: string; product_name: string }>();
+  const productMap = new Map((products.results || []).map((product) => [product.id, product]));
+  const bestByProduct = new Map<string, number>();
+  for (const match of result.matches || []) {
+    const productId = match.metadata?.productId;
+    if (productId && productMap.has(productId)) {
+      bestByProduct.set(productId, Math.max(bestByProduct.get(productId) || 0, match.score));
+    }
+  }
+  for (const [productId, score] of bestByProduct) {
+    await env.DB.prepare(
+      "INSERT OR REPLACE INTO discovery_matches (id, job_id, product_id, match_type, similarity_score, explanation) VALUES (?, ?, ?, 'visual_similar', ?, ?)"
+    ).bind(crypto.randomUUID(), jobId, productId, score, 'Visual similarity based on the wheel reference image. This is not an exact-match confirmation.').run();
+  }
+  await env.DB.prepare(
+    "UPDATE discovery_jobs SET status = 'completed', updated_at = CURRENT_TIMESTAMP, completed_at = CURRENT_TIMESTAMP WHERE id = ?"
+  ).bind(jobId).run();
+}
+
+async function indexRequest(request: Request, env: Env): Promise<Response> {
+  if (request.method !== 'POST') return json({ error: 'METHOD_NOT_ALLOWED' }, 405);
+  if (!env.DISCOVERY_ADMIN_TOKEN) return json({ error: 'INDEXING_NOT_CONFIGURED' }, 503);
+  if (request.headers.get('authorization') !== `Bearer ${env.DISCOVERY_ADMIN_TOKEN}`) {
+    return json({ error: 'UNAUTHORIZED' }, 401);
+  }
+  const result = await indexPublishedProducts(env);
+  return json(result);
+}
+
 async function createImageDiscovery(request: Request, env: Env): Promise<Response> {
   if (request.method !== 'POST') return json({ error: 'METHOD_NOT_ALLOWED' }, 405);
   const contentType = request.headers.get('content-type') || '';
@@ -303,12 +418,9 @@ const handler = {
           continue;
         }
         await env.DB.prepare(
-          "UPDATE discovery_jobs SET status = 'failed', error_code = ?, error_message = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND status IN ('queued', 'processing')"
-        ).bind(
-          'MATCHING_NOT_CONFIGURED',
-          'Your reference was received, but visual matching is not available yet because the OURANOS product catalogue and image index are not ready.',
-          jobId,
-        ).run();
+          "UPDATE discovery_jobs SET status = 'processing', updated_at = CURRENT_TIMESTAMP WHERE id = ? AND status = 'queued'"
+        ).bind(jobId).run();
+        await runImageMatching(env, jobId);
         message.ack();
       } catch {
         message.retry();
@@ -318,6 +430,7 @@ const handler = {
   async fetch(request: Request, env: Env) {
     const url = new URL(request.url);
     if (url.pathname === '/api/discover/image') return createImageDiscovery(request, env);
+    if (url.pathname === '/api/discover/index') return indexRequest(request, env);
     if (url.pathname.startsWith('/api/discover/jobs/')) return getDiscoveryJob(request, env);
     if (url.pathname.startsWith('/api/wheel-size/')) return wheelSizeRequest(request, env);
     if (url.pathname.startsWith('/api/models')) return modelRequest(request, env);
