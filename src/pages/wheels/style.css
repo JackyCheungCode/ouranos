@@ -99,3 +99,50 @@ body.drawer-open { overflow: hidden; }
 }
 @media (max-width: 420px) { .wheels-grid { grid-template-columns: 1fr; } .wheel-card__image { aspect-ratio: 1.12; } .wheels-catalogue__intro { flex-direction: column; } }
 @media (prefers-reduced-motion: reduce) { *,*::before,*::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+
+
+/* Vehicle / specification filter modes */
+.wheels-toolbar { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; }
+.wheels-filter-controls { display: grid; gap: 16px; min-width: 0; }
+.wheels-filter-mode { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+.wheels-filter-mode > p-text { flex: 0 0 auto; }
+.filter-panel { display: grid; gap: 14px; min-width: 0; }
+.filter-panel[hidden] { display: none; }
+.filter-panel__heading { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.filter-panel__heading p-heading { margin: 0; }
+.filter-panel__heading p-text { margin-left: 4px; }
+.filter-field-grid { display: grid; gap: 12px; min-width: 0; }
+.filter-field-grid--vehicle { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.filter-field-grid--specs { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.filter-field { display: grid; grid-template-columns: 18px minmax(0, 1fr); align-items: center; gap: 7px; min-width: 0; }
+.filter-field p-icon { color: var(--pds-theme-light-state-primary, currentColor); }
+.filter-field p-select { min-width: 0; width: 100%; }
+#vehicle-filter-status { min-height: 1.2em; }
+.wheels-toolbar__actions { align-self: end; }
+.wheel-card__spec span, .wheel-detail__spec span { display: flex; align-items: center; gap: 6px; }
+.wheel-card__spec span p-icon, .wheel-detail__spec span p-icon { flex: 0 0 auto; }
+.wheel-card__actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding-top: 12px; border-top: 1px solid #e0e0de; }
+.wheel-card__actions .wheel-card__link { grid-column: 1 / -1; padding-top: 0; border-top: 0; }
+.wheel-card__actions p-button { min-width: 0; width: 100%; }
+.wheel-card__actions p-button::part(button) { width: 100%; }
+.wheel-detail__actions { display: flex; flex-wrap: wrap; gap: 10px; width: 100%; }
+.wheel-detail__actions p-button { flex: 1 1 180px; }
+.wheel-detail__actions p-button::part(button) { width: 100%; }
+.filter-drawer__fields { display: block; }
+#filter-controls-mobile { width: 100%; }
+@media (max-width: 1200px) {
+  .filter-field-grid--vehicle { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .filter-field-grid--specs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .wheels-toolbar { display: flex; align-items: center; }
+  .wheels-toolbar__actions { width: 100%; }
+  .filter-field-grid--vehicle, .filter-field-grid--specs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .wheels-filter-mode { align-items: stretch; }
+  .wheels-filter-mode p-segmented-control { width: 100%; }
+  .wheel-card__actions { grid-template-columns: 1fr; }
+  .wheel-card__actions .wheel-card__link { grid-column: auto; }
+}
+@media (max-width: 420px) {
+  .filter-field-grid--vehicle, .filter-field-grid--specs { grid-template-columns: 1fr; }
+}
