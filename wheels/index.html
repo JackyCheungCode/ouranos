@@ -30,46 +30,48 @@
         </div>
 
         <div class="wheels-toolbar">
-          <div class="wheels-filters" id="desktop-filters" aria-label="Filter wheels">
-            <p-select id="filter-construction" name="construction" label="Construction" compact="true">
-              <p-select-option value="">All constructions</p-select-option>
-              <p-select-option value="Forged">Forged</p-select-option>
-              <p-select-option value="Flow Formed">Flow Formed</p-select-option>
-            </p-select>
-            <p-select id="filter-design" name="design" label="Design" compact="true">
-              <p-select-option value="">All designs</p-select-option>
-              <p-select-option value="Split-Spoke">Split-Spoke</p-select-option>
-              <p-select-option value="Multi-Spoke">Multi-Spoke</p-select-option>
-              <p-select-option value="Mesh">Mesh</p-select-option>
-              <p-select-option value="Eight-Spoke">Eight-Spoke</p-select-option>
-            </p-select>
-            <p-select id="filter-diameter" name="diameter" label="Diameter" compact="true">
-              <p-select-option value="">All diameters</p-select-option>
-              <p-select-option value="17">17″</p-select-option>
-              <p-select-option value="18">18″</p-select-option>
-              <p-select-option value="19">19″</p-select-option>
-              <p-select-option value="20">20″</p-select-option>
-            </p-select>
-            <p-select id="filter-width" name="width" label="Width" compact="true">
-              <p-select-option value="">All widths</p-select-option>
-              <p-select-option value="8">8J</p-select-option>
-              <p-select-option value="9">9J</p-select-option>
-              <p-select-option value="10">10J</p-select-option>
-              <p-select-option value="11">11J</p-select-option>
-            </p-select>
-            <p-select id="filter-finish" name="finish" label="Finish" compact="true">
-              <p-select-option value="">All finishes</p-select-option>
-              <p-select-option value="Anthracite">Anthracite</p-select-option>
-              <p-select-option value="Machined Lip Anthracite">Machined Lip Anthracite</p-select-option>
-            </p-select>
-            <p-select id="filter-collection" name="collection" label="Collection" compact="true">
-              <p-select-option value="">All collections</p-select-option>
-              <p-select-option value="Performance">Performance</p-select-option>
-              <p-select-option value="Luxury">Luxury</p-select-option>
-              <p-select-option value="Street">Street</p-select-option>
-              <p-select-option value="Off-Road">Off-Road</p-select-option>
-              <p-select-option value="Heritage">Heritage</p-select-option>
-            </p-select>
+          <div class="wheels-filter-controls" id="filter-controls">
+            <div class="wheels-filter-mode">
+              <p-text size="xs" color="contrast-medium">FILTER BY</p-text>
+              <p-segmented-control id="filter-mode" value="vehicle" aria-label="Choose filter method">
+                <p-segmented-control-item value="vehicle">BY VEHICLE</p-segmented-control-item>
+                <p-segmented-control-item value="specification">BY SPECIFICATION</p-segmented-control-item>
+              </p-segmented-control>
+            </div>
+            <section id="vehicle-filter-panel" class="filter-panel" aria-label="Filter by vehicle">
+              <div class="filter-panel__heading">
+                <p-icon name="car" size="sm"></p-icon>
+                <p-heading tag="h3" size="sm">Select your vehicle</p-heading>
+                <p-text size="xs" color="contrast-medium">Wheel Size vehicle data</p-text>
+              </div>
+              <div class="filter-field-grid filter-field-grid--vehicle">
+                <label class="filter-field"><p-icon name="globe" size="sm"></p-icon><span class="sr-only">Vehicle market</span><p-select id="filter-region" label="Market" compact="true"><p-select-option value="">Select market</p-select-option></p-select></label>
+                <label class="filter-field"><p-icon name="car" size="sm"></p-icon><span class="sr-only">Manufacturer</span><p-select id="filter-make" label="Manufacturer" compact="true" disabled><p-select-option value="">Select manufacturer</p-select-option></p-select></label>
+                <label class="filter-field"><p-icon name="steering-wheel" size="sm"></p-icon><span class="sr-only">Vehicle model</span><p-select id="filter-model" label="Model" compact="true" disabled><p-select-option value="">Select model</p-select-option></p-select></label>
+                <label class="filter-field"><p-icon name="calendar" size="sm"></p-icon><span class="sr-only">Model year</span><p-select id="filter-year" label="Year" compact="true" disabled><p-select-option value="">Select year</p-select-option></p-select></label>
+                <label class="filter-field"><p-icon name="configurate" size="sm"></p-icon><span class="sr-only">Modification</span><p-select id="filter-modification" label="Modification" compact="true" disabled><p-select-option value="">All modifications</p-select></p-select></label>
+                <label class="filter-field"><p-icon name="tire" size="sm"></p-icon><span class="sr-only">Vehicle fitment</span><p-select id="filter-fitment" label="Wheel specification" compact="true" disabled><p-select-option value="">Select specification</p-select></p-select></label>
+              </div>
+              <p-text id="vehicle-filter-status" size="xs" color="contrast-medium" aria-live="polite">Choose a market to begin.</p-text>
+            </section>
+            <section id="specification-filter-panel" class="filter-panel" aria-label="Filter by wheel specification" hidden>
+              <div class="filter-panel__heading">
+                <p-icon name="tire" size="sm"></p-icon>
+                <p-heading tag="h3" size="sm">Choose wheel specifications</p-heading>
+                <p-text size="xs" color="contrast-medium">Combine any available attributes</p-text>
+              </div>
+              <div class="filter-field-grid filter-field-grid--specs">
+                <label class="filter-field"><p-icon name="tire" size="sm"></p-icon><span class="sr-only">Construction</span><p-select id="filter-construction" label="Construction" compact="true"><p-select-option value="">All constructions</p-select-option><p-select-option value="Forged">Forged</p-select-option><p-select-option value="Flow Formed">Flow Formed</p-select-option></p-select></label>
+                <label class="filter-field"><p-icon name="configurate" size="sm"></p-icon><span class="sr-only">Design</span><p-select id="filter-design" label="Design" compact="true"><p-select-option value="">All designs</p-select-option><p-select-option value="Split-Spoke">Split-Spoke</p-select-option><p-select-option value="Multi-Spoke">Multi-Spoke</p-select-option><p-select-option value="Mesh">Mesh</p-select-option><p-select-option value="Eight-Spoke">Eight-Spoke</p-select-option></p-select></label>
+                <label class="filter-field"><p-icon name="tire" size="sm"></p-icon><span class="sr-only">Diameter</span><p-select id="filter-diameter" label="Diameter" compact="true"><p-select-option value="">All diameters</p-select-option><p-select-option value="17">17″</p-select-option><p-select-option value="18">18″</p-select-option><p-select-option value="19">19″</p-select-option><p-select-option value="20">20″</p-select-option></p-select></label>
+                <label class="filter-field"><p-icon name="adjust" size="sm"></p-icon><span class="sr-only">Width</span><p-select id="filter-width" label="Width" compact="true"><p-select-option value="">All widths</p-select-option><p-select-option value="8">8J</p-select-option><p-select-option value="9">9J</p-select-option><p-select-option value="10">10J</p-select-option><p-select-option value="11">11J</p-select-option></p-select></label>
+                <label class="filter-field"><p-icon name="grip" size="sm"></p-icon><span class="sr-only">PCD</span><p-select id="filter-pcd" label="PCD" compact="true"><p-select-option value="">All PCD</p-select-option></p-select></label>
+                <label class="filter-field"><p-icon name="adjust" size="sm"></p-icon><span class="sr-only">Offset</span><p-select id="filter-offset" label="Offset" compact="true"><p-select-option value="">All offsets</p-select-option></p-select></label>
+                <label class="filter-field"><p-icon name="tire" size="sm"></p-icon><span class="sr-only">Centre bore</span><p-select id="filter-bore" label="Centre bore" compact="true"><p-select-option value="">All centre bores</p-select-option></p-select></label>
+                <label class="filter-field"><p-icon name="color-picker" size="sm"></p-icon><span class="sr-only">Finish</span><p-select id="filter-finish" label="Finish" compact="true"><p-select-option value="">All finishes</p-select-option><p-select-option value="Anthracite">Anthracite</p-select-option><p-select-option value="Machined Lip Anthracite">Machined Lip Anthracite</p-select-option></p-select></label>
+                <label class="filter-field"><p-icon name="grid" size="sm"></p-icon><span class="sr-only">Collection</span><p-select id="filter-collection" label="Collection" compact="true"><p-select-option value="">All collections</p-select-option><p-select-option value="Performance">Performance</p-select-option><p-select-option value="Luxury">Luxury</p-select-option><p-select-option value="Street">Street</p-select-option><p-select-option value="Off-Road">Off-Road</p-select-option><p-select-option value="Heritage">Heritage</p-select></label>
+              </div>
+            </section>
           </div>
           <div class="wheels-toolbar__actions">
             <p-button id="mobile-filter-open" variant="secondary" icon="filter" compact="true">Filter</p-button>
@@ -124,14 +126,7 @@
           <p-heading id="drawer-title" tag="h2" size="lg">Filter wheels</p-heading>
           <p-button-pure type="button" icon="close" hide-label="true" data-close-drawer>Close</p-button-pure>
         </header>
-        <div class="filter-drawer__fields">
-          <p-select id="mobile-construction" label="Construction"><p-select-option value="">All constructions</p-select-option><p-select-option value="Forged">Forged</p-select-option><p-select-option value="Flow Formed">Flow Formed</p-select-option></p-select>
-          <p-select id="mobile-design" label="Design"><p-select-option value="">All designs</p-select-option><p-select-option value="Split-Spoke">Split-Spoke</p-select-option><p-select-option value="Multi-Spoke">Multi-Spoke</p-select-option><p-select-option value="Mesh">Mesh</p-select-option><p-select-option value="Eight-Spoke">Eight-Spoke</p-select-option></p-select>
-          <p-select id="mobile-diameter" label="Diameter"><p-select-option value="">All diameters</p-select-option><p-select-option value="17">17″</p-select-option><p-select-option value="18">18″</p-select-option><p-select-option value="19">19″</p-select-option><p-select-option value="20">20″</p-select-option></p-select>
-          <p-select id="mobile-width" label="Width"><p-select-option value="">All widths</p-select-option><p-select-option value="8">8J</p-select-option><p-select-option value="9">9J</p-select-option><p-select-option value="10">10J</p-select-option><p-select-option value="11">11J</p-select-option></p-select>
-          <p-select id="mobile-finish" label="Finish"><p-select-option value="">All finishes</p-select-option><p-select-option value="Anthracite">Anthracite</p-select-option><p-select-option value="Machined Lip Anthracite">Machined Lip Anthracite</p-select-option></p-select>
-          <p-select id="mobile-collection" label="Collection"><p-select-option value="">All collections</p-select-option><p-select-option value="Performance">Performance</p-select-option><p-select-option value="Luxury">Luxury</p-select-option><p-select-option value="Street">Street</p-select-option><p-select-option value="Off-Road">Off-Road</p-select-option><p-select-option value="Heritage">Heritage</p-select-option></p-select>
-        </div>
+        <div class="filter-drawer__fields"><div id="filter-controls-mobile"></div></div>
         <div class="filter-drawer__footer">
           <p-button id="mobile-filter-clear" variant="secondary">Clear all</p-button>
           <p-button id="mobile-filter-apply">Show results</p-button>
@@ -155,6 +150,7 @@
             <div><p-heading tag="h2" size="lg">3D wheel viewer</p-heading><p-text color="contrast-medium">No GLB model is supplied with this temporary source record. The product image remains available.</p-text></div>
             <p-text size="xs" color="contrast-medium">3D MODEL NOT AVAILABLE</p-text>
           </section>
+          <div class="wheel-detail__actions" id="detail-actions"></div>
           <p-button href="/fitment" variant="primary">Check vehicle fitment</p-button>
           <p-text size="xs" color="contrast-medium">Temporary reference data. This product is not part of the OURANOS collection.</p-text>
         </div>
