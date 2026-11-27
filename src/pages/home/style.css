@@ -2,9 +2,21 @@
 @import 'tailwindcss';
 @import '@porsche-design-system/components-js/tailwindcss';
 
-:root { color-scheme: light; }
-:not(:defined) { visibility: hidden; }
-header { color-scheme: light; }
-header a { color: inherit; }
-header p-button-pure { color-scheme: light; }
-p-link-tile { color-scheme: light; }
+:root {
+  color-scheme: light;
+}
+:not(:defined) {
+  visibility: hidden;
+}
+header {
+  color-scheme: light;
+}
+header a {
+  color: inherit;
+}
+header p-button-pure {
+  color-scheme: light;
+}
+p-link-tile {
+  color-scheme: light;
+}

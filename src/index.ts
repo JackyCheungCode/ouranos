@@ -24,7 +24,14 @@ export interface Env {
 }
 
 const API_BASE = 'https://api.wheel-size.com/v2';
-const CATALOG_ENDPOINTS = new Set(['regions', 'makes', 'models', 'years', 'generations', 'modifications']);
+const CATALOG_ENDPOINTS = new Set([
+  'regions',
+  'makes',
+  'models',
+  'years',
+  'generations',
+  'modifications',
+]);
 const ALLOWED_PARAMS = new Set([
   'region',
   'make',
@@ -133,22 +140,49 @@ async function modelRequest(request: Request, env: Env): Promise<Response> {
     const objects: ModelsBucketObject[] = [];
     let cursor: string | undefined;
     do {
-      const listed = await env.MODELS_BUCKET.list({ prefix: 'models/', limit: 1000, ...(cursor ? { cursor } : {}) });
+      const listed = await env.MODELS_BUCKET.list({
+        prefix: 'models/',
+        limit: 1000,
+        ...(cursor ? { cursor } : {}),
+      });
       objects.push(...listed.objects);
       cursor = listed.truncated ? listed.cursor : undefined;
     } while (cursor);
-    const models = objects.filter((object) => object.key.toLowerCase().endsWith('.glb') && object.size > 0).map((object) => ({
-      key: object.key, name: object.key.slice(7).replace(/\.glb$/i, '').replace(/[_-]+/g, ' '),
-      size: object.size, uploaded: object.uploaded.toISOString(), url: '/api/models/file?key=' + encodeURIComponent(object.key),
-    }));
-    return json({ models, truncated: false }, 200, { 'cache-control': 'public, max-age=60, s-maxage=300' });
+    const models = objects
+      .filter((object) => object.key.toLowerCase().endsWith('.glb') && object.size > 0)
+      .map((object) => ({
+        key: object.key,
+        name: object.key
+          .slice(7)
+          .replace(/\.glb$/i, '')
+          .replace(/[_-]+/g, ' '),
+        size: object.size,
+        uploaded: object.uploaded.toISOString(),
+        url: '/api/models/file?key=' + encodeURIComponent(object.key),
+      }));
+    return json({ models, truncated: false }, 200, {
+      'cache-control': 'public, max-age=60, s-maxage=300',
+    });
   }
   if (url.pathname === '/api/models/file') {
     const key = url.searchParams.get('key') || '';
-    if (!key.startsWith('models/') || !key.toLowerCase().endsWith('.glb') || key.includes('..') || key.includes('\\\\')) return json({ error: 'INVALID_MODEL_KEY' }, 400);
+    if (
+      !key.startsWith('models/') ||
+      !key.toLowerCase().endsWith('.glb') ||
+      key.includes('..') ||
+      key.includes('\\\\')
+    )
+      return json({ error: 'INVALID_MODEL_KEY' }, 400);
     const object = await env.MODELS_BUCKET.get(key);
     if (!object) return json({ error: 'MODEL_NOT_FOUND' }, 404);
-    return new Response(object.body, { headers: { 'content-type': 'model/gltf-binary', 'content-length': String(object.size), 'cache-control': 'public, max-age=3600', etag: object.httpEtag } });
+    return new Response(object.body, {
+      headers: {
+        'content-type': 'model/gltf-binary',
+        'content-length': String(object.size),
+        'cache-control': 'public, max-age=3600',
+        etag: object.httpEtag,
+      },
+    });
   }
   return json({ error: 'NOT_FOUND' }, 404);
 }

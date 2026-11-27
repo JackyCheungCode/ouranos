@@ -6,7 +6,9 @@ test('Home page is served at the root with shared Ouranos layout', async ({ page
 
   await page.goto('/');
   await expect(page).toHaveTitle('Ouranos | Precision in Every Form');
-  await expect(page.locator('p-heading#heading-section-1')).toContainText('Precision in Every Form');
+  await expect(page.locator('p-heading#heading-section-1')).toContainText(
+    'Precision in Every Form',
+  );
   await expect(page.locator('header a[aria-label="Ouranos Home"]').first()).toHaveText('OURANOS');
   await expect(page.locator('#nav-drilldown')).toHaveCount(1);
   await expect(page.locator('footer')).toContainText('Ouranos');

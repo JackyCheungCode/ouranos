@@ -6,7 +6,14 @@ async function mockWheelSize(page: Page) {
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({
-        models: [{ key: 'models/test-wheel.glb', name: 'Test Wheel', size: 1024, url: '/api/models/file?key=models%2Ftest-wheel.glb' }],
+        models: [
+          {
+            key: 'models/test-wheel.glb',
+            name: 'Test Wheel',
+            size: 1024,
+            url: '/api/models/file?key=models%2Ftest-wheel.glb',
+          },
+        ],
       }),
     });
   });
@@ -14,22 +21,34 @@ async function mockWheelSize(page: Page) {
     const url = new URL(route.request().url());
     const path = url.pathname;
     let data: unknown[] = [];
-    if (path.endsWith('/regions')) data = [{ name: 'USA+', slug: 'usdm' }, { name: 'Canada', slug: 'cdm' }];
+    if (path.endsWith('/regions'))
+      data = [
+        { name: 'USA+', slug: 'usdm' },
+        { name: 'Canada', slug: 'cdm' },
+      ];
     else if (path.endsWith('/makes')) data = [{ name: 'Porsche', slug: 'porsche' }];
     else if (path.endsWith('/models')) data = [{ name: '911', slug: '911' }];
     else if (path.endsWith('/years')) data = [{ name: '2024', slug: '2024' }];
     else if (path.endsWith('/modifications')) data = [{ name: 'Carrera GTS', slug: 'carrera-gts' }];
     else if (path.endsWith('/search/by_model')) {
-      data = [{
-        type: 'oe',
-        technical: { bolt_pattern: '5x130', centre_bore: 71.6 },
-        wheels: [{
-          front: { rim: { diameter: 20, width: 8.5, offset: 50 } },
-          rear: { rim: { diameter: 21, width: 11.5, offset: 45 } },
-        }],
-      }];
+      data = [
+        {
+          type: 'oe',
+          technical: { bolt_pattern: '5x130', centre_bore: 71.6 },
+          wheels: [
+            {
+              front: { rim: { diameter: 20, width: 8.5, offset: 50 } },
+              rear: { rim: { diameter: 21, width: 11.5, offset: 45 } },
+            },
+          ],
+        },
+      ];
     }
-    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ data }) });
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ data }),
+    });
   });
 }
 
@@ -46,7 +65,9 @@ async function chooseMarket(page: Page) {
   await choose(page, '#market', 'usdm');
 }
 
-test('Configurator retrieves USDM fitment and maps staggered front/rear specifications', async ({ page }) => {
+test('Configurator retrieves USDM fitment and maps staggered front/rear specifications', async ({
+  page,
+}) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.stack || error.message));
   await mockWheelSize(page);
@@ -87,11 +108,19 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
 
   await page.locator('#next-button').click();
   await expect(page.locator('[data-panel="2"]')).toBeVisible();
-  await expect(page.locator('[data-panel="2"]')).not.toContainText(/Wheel Size|API key|API source/i);
+  await expect(page.locator('[data-panel="2"]')).not.toContainText(
+    /Wheel Size|API key|API source/i,
+  );
   await expect(page.locator('.axle-spec').first()).toHaveCSS('color-scheme', 'light');
-  await expect(page.locator('.axle-spec').nth(0)).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  await expect(page.locator('.axle-spec').nth(0)).toHaveCSS(
+    'background-color',
+    'rgb(255, 255, 255)',
+  );
   await expect(page.locator('.axle-spec').nth(1)).toHaveCSS('color-scheme', 'light');
-  await expect(page.locator('.axle-spec').nth(1)).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  await expect(page.locator('.axle-spec').nth(1)).toHaveCSS(
+    'background-color',
+    'rgb(255, 255, 255)',
+  );
   await expect(page.locator('#front-diameter')).toHaveJSProperty('value', '20');
   await expect(page.locator('#front-width')).toHaveJSProperty('value', '8.5');
   await expect(page.locator('#front-offset')).toHaveJSProperty('value', '50');
@@ -122,7 +151,9 @@ test('Selecting a manufacturer with the native PDS select loads its models', asy
   await expect(page.locator('#model')).toContainText('911');
 });
 
-test('Configurator hero is full bleed and model zoom controls remain available on mobile', async ({ page }) => {
+test('Configurator hero is full bleed and model zoom controls remain available on mobile', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await mockWheelSize(page);
   await page.goto('/customize/');
@@ -138,18 +169,43 @@ test('Configurator hero is full bleed and model zoom controls remain available o
   expect(documentWidth).toBeLessThanOrEqual(390);
 });
 
-test('Vehicle step can be skipped and manual wheel dimensions remain available', async ({ page }) => {
-  await page.route('**/api/models**', async (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ models: [{ key: 'models/test-wheel.glb', name: 'Test Wheel', size: 1024, url: '/api/models/file?key=models%2Ftest-wheel.glb' }] }) }));
+test('Vehicle step can be skipped and manual wheel dimensions remain available', async ({
+  page,
+}) => {
+  await page.route('**/api/models**', async (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        models: [
+          {
+            key: 'models/test-wheel.glb',
+            name: 'Test Wheel',
+            size: 1024,
+            url: '/api/models/file?key=models%2Ftest-wheel.glb',
+          },
+        ],
+      }),
+    }),
+  );
   await page.route('**/api/wheel-size/**', async (route) => {
     const url = new URL(route.request().url());
     if (url.pathname.endsWith('/regions')) {
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ data: [{ name: 'USA+', slug: 'usdm' }] }) });
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ data: [{ name: 'USA+', slug: 'usdm' }] }),
+      });
       return;
     }
-    await route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({
-      error: 'WHEEL_SIZE_NOT_CONFIGURED',
-      message: 'Wheel Size API credentials are not configured on this Worker.',
-    }) });
+    await route.fulfill({
+      status: 503,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        error: 'WHEEL_SIZE_NOT_CONFIGURED',
+        message: 'Wheel Size API credentials are not configured on this Worker.',
+      }),
+    });
   });
   await page.goto('/customize/');
   await page.locator('#model-list .model-card').click();
@@ -190,9 +246,15 @@ test('Manufacturer uses the native PDS select without oversized option logos', a
   await expect(stepper).toBeVisible();
   await expect(stepper).toHaveAttribute('size', 'medium');
   await expect(stepper.locator('p-stepper-horizontal-item')).toHaveCount(5);
-  const stepLabels = await stepper.locator('p-stepper-horizontal-item').evaluateAll((items) => items.map((item) => (item.textContent || '').replace(/current:/gi, '').trim()));
+  const stepLabels = await stepper
+    .locator('p-stepper-horizontal-item')
+    .evaluateAll((items) =>
+      items.map((item) => (item.textContent || '').replace(/current:/gi, '').trim()),
+    );
   expect(stepLabels).toEqual(['Model', 'Vehicle', 'Dimensions', 'Finish', 'Review']);
-  const zoomDirection = await page.locator('.zoom-controls').evaluate((el) => getComputedStyle(el).flexDirection);
+  const zoomDirection = await page
+    .locator('.zoom-controls')
+    .evaluate((el) => getComputedStyle(el).flexDirection);
   expect(zoomDirection).toBe('column');
 });
 
