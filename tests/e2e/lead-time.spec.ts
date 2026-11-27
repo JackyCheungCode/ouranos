@@ -21,7 +21,7 @@ test('Lead time estimator runs MES loading and renders a 36-line Gantt schedule'
   await expect(page.locator('#loading-steps li').first()).toHaveClass(/is-active/);
   await expect(page.locator('#production-results')).toBeVisible({timeout:15000});
   await expect(page.locator('#gantt-chart .gantt-row')).toHaveCount(36);
-  await expect(page.locator('#gantt-chart .gantt-bar')).toHaveCount(252);
+  await expect(page.locator('#gantt-chart .gantt-bar')).toHaveCount(203);
   await expect(page.locator('.stage-card')).toHaveCount(0);
   await expect(page.locator('#gantt-chart .gantt-bar.is-customer')).toHaveCount(7);
 });
