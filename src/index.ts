@@ -1058,8 +1058,20 @@ async function aiAssistantRequest(request: Request, env: Env): Promise<Response>
     catch { sourceResults.push({ source: 'OURANOS D1 Product Catalogue', status: 'unavailable' }); }
     if (!catalogProducts.length && !sourceResults.some((item) => item.source === 'OURANOS D1 Product Catalogue'))
       sourceResults.push({ source: 'OURANOS D1 Product Catalogue', status: 'connected_empty' });
-    else if (catalogProducts.length)
+    else if (catalogProducts.length) {
+      catalogProducts = catalogProducts.map((item) => {
+        let specifications: unknown[] = [];
+        try { specifications = JSON.parse(String(item.specifications_json || '[]')); } catch { /* invalid stored JSON */ }
+        return {
+          id: item.id, slug: item.slug, title: item.product_name,
+          description: item.summary || item.description || '',
+          image: item.image_key ? '/api/products/media?key=' + encodeURIComponent(String(item.image_key)) : '',
+          url: '/wheels/?product=' + encodeURIComponent(String(item.slug)),
+          specifications,
+        };
+      });
       sourceResults.push({ source: 'OURANOS D1 Product Catalogue', status: 'connected', result: catalogProducts });
+    }
   }
   if (fitmentIntent && make && model && year) {
     try {
