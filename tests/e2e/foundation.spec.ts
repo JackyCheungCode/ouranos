@@ -68,7 +68,9 @@ test('Home exposes the two primary entry tiles and five wheel collections', asyn
   await expect(page.locator('p-carousel p-link-tile')).toHaveCount(5);
 });
 
-test('Home header uses white branding while image tiles retain the light PDS scheme', async ({ page }) => {
+test('Home header uses white branding while image tiles retain the light PDS scheme', async ({
+  page,
+}) => {
   await page.goto('/');
   const header = page.locator('header');
   await expect(page.locator('html')).toHaveClass(/scheme-light/);
