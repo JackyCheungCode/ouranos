@@ -23,6 +23,11 @@ $('#wheel-customization').textContent = 'Customization: Size, Fitment & Finish';
 const prefill = {front_diameter:params.get('diameter'),front_width:params.get('width'),front_pcd:params.get('pcd'),front_offset:(params.get('offset')||'').replace(/^ET/i,''),front_cb:(params.get('bore')||'').replace(/\s*mm$/i,'')};
 for (const [key,value] of Object.entries(prefill)) if (value) { const field = document.querySelector('[name="'+key+'"]'); if(field) field.value = value; }
 const form = $('#wheel-config-form');
+const submitButton = $('#submit-wheel-enquiry');
+submitButton.addEventListener('click', (event) => {
+  event.preventDefault();
+  form.requestSubmit();
+});
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
   const button = $('#submit-wheel-enquiry');
