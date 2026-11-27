@@ -63,7 +63,8 @@ test('forged wheels enquiry supports a one-set private owner enquiry and respons
   await page.locator('#customer-type').evaluate((element) => {
     element.dispatchEvent(new CustomEvent('change', { detail: { value: 'trade' } }));
   });
-  await expect(page.locator('.forged-trade-field')).toBeVisible();
+  await expect(page.locator('.forged-trade-field').first()).toBeVisible();
+  await expect(page.locator('.forged-quantity-field')).toBeVisible();
 
   const dimensions = await page.evaluate(() => ({
     body: document.body.scrollWidth,
