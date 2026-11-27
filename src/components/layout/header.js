@@ -125,6 +125,9 @@ if (header) {
 
   if (navDrilldown && navButton) {
     navButton.addEventListener('click', () => {
+      // The AI drawer and navigation drilldown are mutually exclusive overlays.
+      // Close AI first so it cannot obscure the menu or intercept its controls.
+      window.dispatchEvent(new CustomEvent('ouranos:ai-close'));
       navDrilldown.open = true;
     });
 
