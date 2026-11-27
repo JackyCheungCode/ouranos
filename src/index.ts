@@ -1055,7 +1055,7 @@ async function leadTimeSimulationRequest(request: Request): Promise<Response> {
   const today = new Date();
   const todayUtc = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
   const earliestStart = addWorkdays(todayUtc, 1);
-  let start = requestedDate > todayUtc ? requestedDate : earliestStart;
+  const start = requestedDate > todayUtc ? requestedDate : earliestStart;
   while (!isWorkday(start)) start.setUTCDate(start.getUTCDate() + 1);
 
   const baseWorkingDays = process === 'casting' ? 8 : 7;
@@ -1078,7 +1078,7 @@ async function leadTimeSimulationRequest(request: Request): Promise<Response> {
       ];
   stages[1].durationDays += quantityAdjustmentDays;
   const addWorkdaysFromStart = (offset: number) => {
-    let result = new Date(start);
+    const result = new Date(start);
     let added = 0;
     while (added < offset) {
       result.setUTCDate(result.getUTCDate() + 1);
