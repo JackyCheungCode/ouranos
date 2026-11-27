@@ -92,27 +92,25 @@ function sharedLayoutPartials() {
         transformed = transformed.replace('<!-- OURANOS:FOOTER -->', readPartial('footer.html'));
       }
 
-      // Inject shared modules into the HTML source so Vite's HTML pipeline
-      // resolves and bundles them for both dev Worker and production builds.
-      // Returning late-stage HtmlTagDescriptor entries left these modules
-      // absent from the Worker-served page in the Playwright smoke tests.
-      const sharedScripts = [
-        ...(!transformed.includes('/src/components/layout/header.js')
-          ? ['/src/components/layout/header.js']
-          : []),
-        ...(!transformed.includes('/src/components/ai-assistant.js')
-          ? ['/src/components/ai-assistant.js']
-          : []),
-      ];
-      if (sharedScripts.length) {
-        const scriptTags = sharedScripts
-          .map((src) =>
-            src === '/src/components/layout/header.js'
-              ? '<script type="module">import "/src/components/layout/header.js";</script>'
-              : `<script type="module" src="${src}"></script>`,
-          )
-          .join('\\n');
-        transformed = transformed.replace('</body>', `\\n${scriptTags}\\n</body>`);
+      // The Worker asset dev server does not reliably resolve a module script
+      // injected late by an HTML transform. Inline the small shared controller
+      // after stripping its CSS import, and add the stylesheet as a normal link.
+      if (!transformed.includes('ouranos-header-controller-inline')) {
+        const controller = readPartial('header.js').replace(/^import ['"]\.\/header\.css['"];?\\s*/m, '');
+        transformed = transformed.replace(
+          '</head>',
+          '<link rel="stylesheet" href="/src/components/layout/header.css">\\n</head>',
+        );
+        transformed = transformed.replace(
+          '</body>',
+          `<script id="ouranos-header-controller-inline">\\n${controller}\\n</script>\\n</body>`,
+        );
+      }
+      if (!transformed.includes('/src/components/ai-assistant.js')) {
+        transformed = transformed.replace(
+          '</body>',
+          '<script type="module" src="/src/components/ai-assistant.js"></script>\\n</body>',
+        );
       }
       return transformed;
     },
