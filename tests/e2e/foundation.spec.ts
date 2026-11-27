@@ -77,7 +77,7 @@ test('Home header uses white branding while image tiles retain the light PDS sch
     'color',
     'rgb(255, 255, 255)',
   );
-  await expect(header.locator('p-button-pure').first()).toHaveAttribute('color', 'primary');
+  await expect(header.locator('p-button-pure').first()).toHaveAttribute('color', 'inherit');
   const headerButtons = header.locator(
     'p-button-pure#nav-button, p-button-pure#ouranos-ai-open, p-button-pure[title="Search"], p-button-pure[icon="user"]',
   );
