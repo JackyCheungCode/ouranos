@@ -55,5 +55,7 @@ test('shared header keeps language, AI and menu controls available on mobile', a
   await expect(page.locator('#ouranos-language-trigger')).toBeVisible();
   await expect(page.locator('#ouranos-ai-open')).toBeVisible();
   await expect(page.locator('#nav-button')).toBeVisible();
+  await expect(page.locator('#ouranos-search-mobile')).toBeVisible();
+  await expect(page.locator('#ouranos-search')).toBeHidden();
   await expect(page.locator('.ouranos-header__primary-nav')).toBeHidden();
 });
