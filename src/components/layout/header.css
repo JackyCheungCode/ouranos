@@ -101,10 +101,10 @@
 .ouranos-language-option:focus-visible {
   background: #f2f2f2;
 }
-.ouranos-language-option[aria-pressed="true"] {
+.ouranos-language-option[aria-pressed='true'] {
   font-weight: 700;
 }
-.ouranos-header[data-header-variant="overlay"] {
+.ouranos-header[data-header-variant='overlay'] {
   position: absolute;
   inset-block-start: 0;
   inset-inline: 0;
@@ -113,25 +113,25 @@
   background: transparent;
   border-bottom: 0;
 }
-.ouranos-header[data-header-variant="overlay"] .ouranos-header__utility {
+.ouranos-header[data-header-variant='overlay'] .ouranos-header__utility {
   display: contents;
 }
-.ouranos-header[data-header-variant="overlay"] .ouranos-header__utility-inner {
+.ouranos-header[data-header-variant='overlay'] .ouranos-header__utility-inner {
   display: contents;
 }
-.ouranos-header[data-header-variant="overlay"] .ouranos-header__eyebrow {
+.ouranos-header[data-header-variant='overlay'] .ouranos-header__eyebrow {
   display: none;
 }
-.ouranos-header[data-header-variant="overlay"] .ouranos-header__actions {
+.ouranos-header[data-header-variant='overlay'] .ouranos-header__actions {
   position: absolute;
   inset-block-start: 0;
   inset-inline-end: max(32px, calc((100% - 1600px) / 2));
   min-height: 80px;
 }
-.ouranos-header[data-header-variant="overlay"] .ouranos-header__main-inner {
+.ouranos-header[data-header-variant='overlay'] .ouranos-header__main-inner {
   min-height: 80px;
 }
-.ouranos-header[data-header-variant="overlay"] p-button-pure {
+.ouranos-header[data-header-variant='overlay'] p-button-pure {
   color: #fff !important;
   color-scheme: dark !important;
   --pds-theme-light-primary: #fff;
@@ -171,14 +171,14 @@
   .ouranos-header__actions {
     gap: 8px;
   }
-  .ouranos-header[data-header-variant="overlay"] .ouranos-header__utility-inner {
+  .ouranos-header[data-header-variant='overlay'] .ouranos-header__utility-inner {
     width: auto;
   }
-  .ouranos-header[data-header-variant="overlay"] .ouranos-header__actions {
+  .ouranos-header[data-header-variant='overlay'] .ouranos-header__actions {
     inset-inline-end: 16px;
     min-height: 64px;
   }
-  .ouranos-header[data-header-variant="overlay"] .ouranos-header__main-inner {
+  .ouranos-header[data-header-variant='overlay'] .ouranos-header__main-inner {
     min-height: 64px;
     padding-inline-end: 150px;
   }
@@ -191,4 +191,3 @@
     transition-duration: 0.01ms;
   }
 }
-

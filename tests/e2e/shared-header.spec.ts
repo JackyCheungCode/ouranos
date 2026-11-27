@@ -27,10 +27,7 @@ test('shared header switches between overlay and stacked patterns and preserves 
   await expect(chineseOption).toBeHidden();
 
   await page.goto('/wheels/', { waitUntil: 'domcontentloaded' });
-  await expect(page.locator('.ouranos-header')).toHaveAttribute(
-    'data-header-variant',
-    'stacked',
-  );
+  await expect(page.locator('.ouranos-header')).toHaveAttribute('data-header-variant', 'stacked');
   await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
   await expect(page.locator('#ouranos-ai-open')).toBeVisible();
 
@@ -46,10 +43,7 @@ test('shared header keeps language, AI and menu controls available on mobile', a
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/contact/', { waitUntil: 'domcontentloaded' });
 
-  await expect(page.locator('.ouranos-header')).toHaveAttribute(
-    'data-header-variant',
-    'stacked',
-  );
+  await expect(page.locator('.ouranos-header')).toHaveAttribute('data-header-variant', 'stacked');
   await expect(page.locator('#ouranos-language-trigger')).toBeVisible();
   await expect(page.locator('#ouranos-ai-open')).toBeVisible();
   await expect(page.locator('#nav-button')).toBeVisible();

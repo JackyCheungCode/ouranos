@@ -77,15 +77,24 @@ function sharedLayoutPartials() {
       const sidebar = readPartial('sidebar.html');
       const topbar = readPartial('topbar.html')
         .replace('<!-- OURANOS:SIDEBAR -->', sidebar)
-        .replace('class="ouranos-header"', `class="ouranos-header ${isOverlay ? 'scheme-dark' : 'scheme-light'}"`)
-        .replace('data-header-variant="auto"', `data-header-variant="${isOverlay ? 'overlay' : 'stacked'}"`);
+        .replace(
+          'class="ouranos-header"',
+          `class="ouranos-header ${isOverlay ? 'scheme-dark' : 'scheme-light'}"`,
+        )
+        .replace(
+          'data-header-variant="auto"',
+          `data-header-variant="${isOverlay ? 'overlay' : 'stacked'}"`,
+        );
       const header = readPartial('header.html').replace('<!-- OURANOS:TOPBAR -->', topbar);
 
       let transformed = html;
       if (transformed.includes('<!-- OURANOS:HEADER -->')) {
         transformed = transformed.replace('<!-- OURANOS:HEADER -->', header);
       } else if (!transformed.includes('class="ouranos-header"')) {
-        transformed = transformed.replace(/<body\b[^>]*>/i, (openingTag) => `${openingTag}\n${header}`);
+        transformed = transformed.replace(
+          /<body\b[^>]*>/i,
+          (openingTag) => `${openingTag}\n${header}`,
+        );
       }
 
       if (transformed.includes('<!-- OURANOS:FOOTER -->')) {
@@ -96,7 +105,10 @@ function sharedLayoutPartials() {
       // injected late by an HTML transform. Inline the small shared controller
       // after stripping its CSS import, and add the stylesheet as a normal link.
       if (!transformed.includes('ouranos-header-controller-inline')) {
-        const controller = readPartial('header.js').replace(/^import ['"]\.\/header\.css['"];?\s*/m, '');
+        const controller = readPartial('header.js').replace(
+          /^import ['"]\.\/header\.css['"];?\s*/m,
+          '',
+        );
         transformed = transformed.replace(
           '</head>',
           '<link rel="stylesheet" href="/src/components/layout/header.css">\n</head>',
