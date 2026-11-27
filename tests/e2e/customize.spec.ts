@@ -81,6 +81,8 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
   await choose(page, '#variant', 'carrera-gts');
   await expect(page.locator('#api-status')).toHaveText('FITMENT DATA LOADED');
   await expect(page.locator('#fitment-table-wrap')).toBeVisible();
+  await page.locator('.fitment-select-button').first().click();
+  await expect(page.locator('#fitment-selection')).toBeVisible();
 
   await page.locator('#next-button').click();
   await expect(page.locator('[data-panel="2"]')).toBeVisible();
