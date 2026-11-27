@@ -248,9 +248,12 @@ test('Configure opens a product-specific form and submits an enquiry to the Work
   await page.locator('[name="customer_name"]').fill('Test Customer');
   await page.locator('[name="customer_email"]').fill('test@example.com');
   await page.locator('[name="quantity"]').fill('4');
+  let inquiryRequests = 0;
   await page.route('**/api/wheel-inquiries', async (route) => {
+    inquiryRequests += 1;
     await route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify({ ok: true, reference: 'WR-TEST1234' }) });
   });
   await page.locator('#submit-wheel-enquiry').click();
   await expect(page.locator('#configure-status')).toContainText('WR-TEST1234');
+  await expect.poll(() => inquiryRequests).toBe(1);
 });
