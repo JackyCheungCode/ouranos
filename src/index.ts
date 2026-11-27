@@ -1010,7 +1010,6 @@ async function aiAssistantRequest(request: Request, env: Env): Promise<Response>
   }
 }
 
-
 const handler = {
   async queue(batch: DiscoveryQueueBatch, env: Env) {
     for (const message of batch.messages) {
