@@ -3,9 +3,7 @@
   "name": "ouranos",
   "main": "src/index.ts",
   "compatibility_date": "2026-11-26",
-  "compatibility_flags": [
-    "nodejs_compat"
-  ],
+  "compatibility_flags": ["nodejs_compat"],
   "workers_dev": true,
   "assets": {
     "directory": "./dist",
@@ -14,13 +12,27 @@
   },
   "observability": {
     "enabled": true,
-    "logs": {
-      "enabled": true,
-      "invocation_logs": true
-    }
+    "logs": { "enabled": true, "invocation_logs": true }
   },
   "r2_buckets": [
     { "binding": "MODELS_BUCKET", "bucket_name": "ouranos-media" }
   ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "uranus-cortex-dev",
+      "database_id": "76b73d1c-76db-4d29-8e2d-2c0f92cb1070",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "queues": {
+    "producers": [
+      { "binding": "DISCOVERY_QUEUE", "queue": "ouranos-discovery-jobs" }
+    ]
+  },
+  "vectorize": [
+    { "binding": "WHEEL_INDEX", "index_name": "ouranos-wheel-visual-v1" }
+  ],
+  "ai": { "binding": "AI" },
   "account_id": "ea4e98dce9c478d7dd5c07f10e5c722d"
 }
