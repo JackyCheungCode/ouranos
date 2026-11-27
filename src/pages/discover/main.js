@@ -355,7 +355,7 @@ imageSubmit.addEventListener('click', async () => {
     await pollDiscoveryJob(data.jobId);
   } catch (error) {
     imageProgress.set(0, 'Analysis failed', 'error');
-    setImageStatus(error instanceof Error ? error.message : '图片Analysis failed。', 'error');
+    setImageStatus(error instanceof Error ? error.message : 'Image analysis failed.', 'error');
   } finally {
     setPdsDisabled(imageSubmit, !selectedFile);
   }
