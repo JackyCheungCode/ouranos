@@ -49,3 +49,6 @@ CREATE TABLE IF NOT EXISTS discovery_matches (
 
 CREATE INDEX IF NOT EXISTS idx_discovery_matches_job_score
   ON discovery_matches(job_id, match_type, similarity_score DESC);
+
+-- Keep the application's migration ledger in sync with Wrangler's D1 migration history.
+INSERT OR IGNORE INTO schema_migrations (version) VALUES ('0003_discover_wheels');
