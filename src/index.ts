@@ -260,8 +260,8 @@ async function createImageDiscovery(request: Request, env: Env): Promise<Respons
       await env.DB.prepare(
         "UPDATE discovery_jobs SET status = 'failed', error_code = ?, error_message = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND status = 'queued'"
       ).bind(
-        'DISCOVERY_INTAKE_FAILED',
-        'The reference was stored, but the processing queue could not accept the job. Please retry.',
+        'DISCOVERY_INTAKE_INCOMPLETE',
+        'The reference was stored, but intake could not be completed. Please retry.',
         id,
       ).run().catch(() => undefined);
     } else if (objectStored) {
