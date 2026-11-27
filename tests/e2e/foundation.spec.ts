@@ -91,9 +91,10 @@ test('Home header uses light branding while image tiles retain the light PDS sch
       const internalButton = element.shadowRoot?.querySelector('button');
       return internalButton ? getComputedStyle(internalButton).color : null;
     });
-    expect(foreground, `PDS header button ${index} must resolve to a dark foreground in light mode`).toBe(
-      'rgb(1, 2, 5)',
-    );
+    expect(
+      foreground,
+      `PDS header button ${index} must resolve to a dark foreground in light mode`,
+    ).toBe('rgb(1, 2, 5)');
   }
 
   for (const tile of [
