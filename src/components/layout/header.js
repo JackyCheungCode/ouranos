@@ -143,31 +143,39 @@ if (header) {
   const initializeLanguagePopover = () => {
     if (!languagePopover || !languageTrigger) return;
 
-    let isLanguageOpen = false;
+    const isLanguageOpen = () => languagePopover.hasAttribute('open');
+
     const setLanguageOpen = (open) => {
-      isLanguageOpen = open;
+      // Keep the boolean property and reflected attribute in sync. The
+      // attribute is also the observable state used by the PDS web component.
       languagePopover.open = open;
+      languagePopover.toggleAttribute('open', open);
       languageTrigger.setAttribute('aria-expanded', String(open));
     };
 
     setLanguageOpen(false);
     header.dataset.languageControllerReady = 'true';
 
-    languageTrigger.addEventListener('click', () => {
-      setLanguageOpen(!isLanguageOpen);
-    });
-
-    languagePopover.addEventListener('dismiss', () => {
-      setLanguageOpen(false);
-    });
-
+    // Listen on the popover host so clicks from the slotted PDS button are
+    // handled consistently across browsers and shadow-DOM retargeting.
     languagePopover.addEventListener('click', (event) => {
-      const option = event
-        .composedPath()
-        .find((node) => node instanceof HTMLElement && node.matches('[data-locale]'));
+      const path = event.composedPath();
+
+      if (path.includes(languageTrigger)) {
+        setLanguageOpen(!isLanguageOpen());
+        return;
+      }
+
+      const option = path.find(
+        (node) => node instanceof HTMLElement && node.matches('[data-locale]'),
+      );
       if (!(option instanceof HTMLElement)) return;
 
       applyLocale(option.dataset.locale, true);
+      setLanguageOpen(false);
+    });
+
+    languagePopover.addEventListener('dismiss', () => {
       setLanguageOpen(false);
     });
   };
