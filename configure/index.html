@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en" class="scheme-light bg-canvas">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Configure your OURANOS wheel specification and submit an enquiry.">
+  <title>OURANOS | Configure Your Wheel</title>
+</head>
+<body class="scheme-light wheel-configure-page">
+  <!-- OURANOS:HEADER -->
+  <main class="wheel-configure">
+    <a class="configure-back" href="/wheels/">← Back to wheels</a>
+    <header class="configure-heading">
+      <p-text size="xs" color="contrast-medium">OURANOS / BESPOKE PROGRAMME</p-text>
+      <p-heading tag="h1" size="2xl">Configure your wheel.</p-heading>
+      <p-text color="contrast-medium">Define your required specifications. Our team will review the request before confirming production feasibility.</p-text>
+    </header>
+    <section class="configure-product" aria-label="Selected wheel">
+      <div class="configure-product__image"><img id="wheel-image" alt=""></div>
+      <div class="configure-product__identity">
+        <p-text id="wheel-construction" size="xs" color="contrast-medium"></p-text>
+        <p-heading id="wheel-model" tag="h2" size="xl"></p-heading>
+        <p-text id="wheel-design" color="contrast-medium"></p-text>
+        <p-text id="wheel-customization" size="sm"></p-text>
+      </div>
+    </section>
+    <form id="wheel-config-form">
+      <section class="configure-section">
+        <p-heading tag="h2" size="lg">01 / Wheel specifications</p-heading>
+        <div class="configure-fields">
+          <label><span>Front diameter (inch)</span><input name="front_diameter" type="number" min="12" max="30" step="0.5" required></label>
+          <label><span>Front width (J)</span><input name="front_width" type="number" min="4" max="16" step="0.5" required></label>
+          <label><span>Front offset (ET)</span><input name="front_offset" type="number" step="1" required></label>
+          <label><span>Front PCD</span><input name="front_pcd" type="text" placeholder="e.g. 5×112" required></label>
+          <label><span>Front centre bore (mm)</span><input name="front_cb" type="number" min="30" max="130" step="0.1" required></label>
+          <label><span>Rear diameter (inch)</span><input name="rear_diameter" type="number" min="12" max="30" step="0.5"></label>
+          <label><span>Rear width (J)</span><input name="rear_width" type="number" min="4" max="16" step="0.5"></label>
+          <label><span>Rear offset (ET)</span><input name="rear_offset" type="number" step="1"></label>
+          <label><span>Rear PCD</span><input name="rear_pcd" type="text" placeholder="If different from front"></label>
+          <label><span>Rear centre bore (mm)</span><input name="rear_cb" type="number" min="30" max="130" step="0.1"></label>
+        </div>
+      </section>
+      <section class="configure-section">
+        <p-heading tag="h2" size="lg">02 / Finish & colour</p-heading>
+        <div class="configure-fields">
+          <label><span>Surface finish</span><select name="finish"><option value="">Select finish</option><option>Gloss</option><option>Satin</option><option>Matte</option><option>Brushed</option><option>Machined</option><option>Custom</option></select></label>
+          <label><span>Colour</span><input name="colour" type="text" placeholder="e.g. Satin Black"></label>
+        </div>
+        <label class="configure-wide"><span>Finish details</span><textarea name="finish_details" rows="3" placeholder="Colour reference, machining or coating requirements"></textarea></label>
+      </section>
+      <section class="configure-section">
+        <p-heading tag="h2" size="lg">03 / Vehicle & contact</p-heading>
+        <div class="configure-fields">
+          <label><span>Vehicle make</span><input name="vehicle_make" type="text"></label>
+          <label><span>Vehicle model</span><input name="vehicle_model" type="text"></label>
+          <label><span>Model year</span><input name="vehicle_year" type="number" min="1950" max="2100"></label>
+          <label><span>Your name</span><input name="customer_name" type="text" autocomplete="name" required></label>
+          <label><span>Email address</span><input name="customer_email" type="email" autocomplete="email" required></label>
+          <label><span>Required quantity (PCS)</span><input name="quantity" type="number" min="4" value="4" required></label>
+        </div>
+        <label class="configure-wide"><span>Additional requirements</span><textarea name="notes" rows="4" placeholder="Vehicle modifications, brake clearance, special requirements..."></textarea></label>
+      </section>
+      <div class="configure-submit">
+        <p-text size="xs" color="contrast-medium">This is an enquiry request, not a purchase or payment. Specifications are subject to engineering review.</p-text>
+        <p-button type="submit" id="submit-wheel-enquiry" variant="primary">Submit enquiry</p-button>
+      </div>
+      <div id="configure-status" role="status" aria-live="polite" hidden></div>
+    </form>
+  </main>
+  <!-- OURANOS:FOOTER -->
+  <script type="module" src="/src/pages/configure/main.js"></script>
+</body>
+</html>
