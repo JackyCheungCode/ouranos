@@ -109,7 +109,7 @@ if (header) {
     }
 
     languageOptions.forEach((option) => {
-      option.setAttribute('aria-pressed', String(option.dataset.locale === selected));
+      option.setAttribute('aria-current', String(option.dataset.locale === selected));
     });
 
     if (persist) {
