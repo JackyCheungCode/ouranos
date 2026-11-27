@@ -16,7 +16,7 @@ import {
 import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { defineConfig, type HtmlTagDescriptor } from 'vite';
+import { defineConfig } from 'vite';
 
 const rootDir = dirname(fileURLToPath(import.meta.url));
 const excludedDirectories = new Set(['.git', '.wrangler', 'coverage', 'dist', 'node_modules']);
