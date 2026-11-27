@@ -10,9 +10,7 @@ body.contact-page {
   color-scheme: light;
   background: var(--pds-theme-light-background-base, #fff);
 }
-.contact-page header,
-.contact-page p-button,
-.contact-page p-button-pure {
+.contact-page p-button {
   color-scheme: light;
 }
 .contact-shell {
