@@ -865,6 +865,8 @@ async function getDiscoveryJob(request: Request, env: Env): Promise<Response> {
 }
 
 
+const CHAT_MODEL = '@cf/meta/llama-3.3-70b-instruct-fp8-fast';
+
 interface ChatMessage { role: 'user' | 'assistant'; content: string }
 interface ChatRequestBody { messages?: ChatMessage[]; vehicle?: Record<string, string> }
 async function remoteMcpCall(endpoint: string, name: string, args: Record<string, string>) {
