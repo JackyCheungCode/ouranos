@@ -28,10 +28,10 @@ interface D1Statement {
 }
 interface D1Database { prepare(query: string): D1Statement; }
 interface DiscoveryQueue { send(message: Record<string, unknown>): Promise<void>; }
-interface DiscoveryQueueMessage { body: { jobId?: string; type?: string }; ack(): void; retry(): void; }
+interface DiscoveryQueueMessage { body: { jobId?: string; type?: string }; attempts?: number; ack(): void; retry(): void; }
 interface DiscoveryQueueBatch { messages: DiscoveryQueueMessage[]; }
 interface AiBinding {
-  run(model: string, input: Record<string, unknown>): Promise<{ data?: number[][] }>;
+  run(model: string, input: Record<string, unknown>): Promise<{ data?: Array<{ embedding?: number[] }> }>;
 }
 interface VectorizeMatch { id: string; score: number; metadata?: Record<string, string>; }
 interface VectorizeBinding {
@@ -250,7 +250,7 @@ async function imageEmbedding(env: Env, bytes: Uint8Array, mime: string): Promis
     }]],
     dimensions: 768,
   });
-  const vector = result.data?.[0];
+  const vector = result.data?.[0]?.embedding;
   if (!vector || vector.length !== 768 || vector.some((value) => !Number.isFinite(value))) {
     throw new Error('INVALID_IMAGE_EMBEDDING');
   }
@@ -425,7 +425,18 @@ const handler = {
         await runImageMatching(env, jobId);
         message.ack();
       } catch {
-        message.retry();
+        if ((message.attempts || 1) >= 3) {
+          await env.DB.prepare(
+            "UPDATE discovery_jobs SET status = 'failed', error_code = ?, error_message = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND status IN ('queued', 'processing')"
+          ).bind(
+            'MATCHING_FAILED',
+            'We could not complete visual matching for this reference. Please try again later.',
+            jobId,
+          ).run().catch(() => undefined);
+          message.ack();
+        } else {
+          message.retry();
+        }
       }
     }
   },
