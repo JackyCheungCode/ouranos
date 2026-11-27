@@ -390,29 +390,33 @@ async function extractWheelReference(env: Env, sourceUrl: URL): Promise<Extracte
     const raw = await page.evaluate(() => JSON.stringify((() => {
       const meta = (name: string) =>
         document.querySelector(`meta[property="${name}"], meta[name="${name}"]`)?.getAttribute('content') || '';
-      const scripts = [...document.querySelectorAll('script[type="application/ld+json"]')];
-      const nodes: any[] = [];
-      for (const script of scripts) {
-        try {
-          const parsed = JSON.parse(script.textContent || 'null');
-          const visit = (value: any) => {
-            if (!value || typeof value !== 'object') return;
-            if (Array.isArray(value)) return value.forEach(visit);
-            if (value['@type'] === 'Product' || (Array.isArray(value['@type']) && value['@type'].includes('Product'))) nodes.push(value);
-            if (value['@graph']) visit(value['@graph']);
-            if (value['itemListElement']) visit(value['itemListElement']);
-          };
-          visit(parsed);
-        } catch { /* Ignore invalid structured data. */ }
+      const nodes: Array<Record<string, unknown>> = [];
+      const visit = (value: unknown): void => {
+        if (!value || typeof value !== 'object') return;
+        if (Array.isArray(value)) { value.forEach(visit); return; }
+        const record = value as Record<string, unknown>;
+        const type = record['@type'];
+        if (type === 'Product' || (Array.isArray(type) && type.includes('Product'))) nodes.push(record);
+        if (record['@graph']) visit(record['@graph']);
+        if (record['itemListElement']) visit(record['itemListElement']);
+      };
+      for (const script of document.querySelectorAll('script[type="application/ld+json"]')) {
+        try { visit(JSON.parse(script.textContent || 'null')); }
+        catch { /* Ignore invalid structured data. */ }
       }
       const product = nodes[0] || {};
-      const brand = typeof product.brand === 'string' ? product.brand : product.brand?.name || '';
+      const brandValue = product.brand;
+      const brand = typeof brandValue === 'string'
+        ? brandValue
+        : brandValue && typeof brandValue === 'object'
+          ? String((brandValue as Record<string, unknown>).name || '')
+          : '';
       const text = (document.body?.innerText || '').slice(0, 12000);
       return {
-        title: product.name || meta('og:title') || document.title || '',
-        brand: brand || meta('product:brand') || '',
-        model: product.model || product.mpn || '',
-        sku: product.sku || product.productID || '',
+        title: String(product.name || meta('og:title') || document.title || ''),
+        brand: brand || meta('product:brand'),
+        model: String(product.model || product.mpn || ''),
+        sku: String(product.sku || product.productID || ''),
         text,
       };
     })()));
