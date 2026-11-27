@@ -6,13 +6,13 @@ test('Wheels catalogue loads ten temporary product records with six technical fi
   await page.goto('/wheels/', { waitUntil: 'domcontentloaded' });
   await expect(page).toHaveTitle('OURANOS | Wheels');
   await expect(page.locator('#wheels-hero-title')).toContainText('ENGINEERED TO DEFINE');
-  await expect(page.locator('.wheel-card')).toHaveCount(10);
+  await expect(page.locator('[data-product]')).toHaveCount(10);
   await expect(page.locator('#product-count')).toContainText('10 products');
-  await expect(page.locator('.wheel-card').first().locator('.wheel-card__spec')).toHaveCount(6);
-  await expect(page.locator('.wheel-card').first().locator('p-icon')).toHaveCount(6);
-  await expect(page.locator('.wheel-card').first().locator('p-button')).toHaveCount(2);
-  await expect(page.locator('.wheel-card').first()).toContainText('INQUIRE');
-  await expect(page.locator('.wheel-card').first()).toContainText('CUSTOMIZE THIS WHEEL');
+  await expect(page.locator('[data-product]').first().locator('[data-product]__spec')).toHaveCount(7);
+  await expect(page.locator('[data-product]').first().locator('p-tag')).toHaveCount(5);
+  await expect(page.locator('[data-product]').first().locator('p-link')).toHaveCount(2);
+  await expect(page.locator('[data-product]').first()).toContainText('Enquire about this wheel');
+  await expect(page.locator('[data-product]').first()).toContainText('Configure');
   await expect(page.locator('.wheels-demo-note')).toContainText('TEMPORARY APEX TEST DATA');
   await expect(page.locator('body')).not.toContainText('Add to cart');
 });
@@ -23,21 +23,21 @@ test('Wheels catalogue filters, clears and sorts demo products', async ({ page }
     (element as HTMLSelectElement).value = 'Forged';
     element.dispatchEvent(new Event('change', { bubbles: true }));
   });
-  await expect(page.locator('.wheel-card')).toHaveCount(10);
+  await expect(page.locator('[data-product]')).toHaveCount(10);
   await page.locator('#filter-design').evaluate((element) => {
     (element as HTMLSelectElement).value = 'Eight-Spoke';
     element.dispatchEvent(new Event('change', { bubbles: true }));
   });
-  await expect(page.locator('.wheel-card')).toHaveCount(1);
-  await expect(page.locator('.wheel-card__title')).toHaveText('SM-8RS');
+  await expect(page.locator('[data-product]')).toHaveCount(1);
+  await expect(page.locator('[data-product]__title')).toHaveText('SM-8RS');
   await expect(page).toHaveURL(/construction=forged/);
   await page.locator('#clear-filters').click();
-  await expect(page.locator('.wheel-card')).toHaveCount(10);
+  await expect(page.locator('[data-product]')).toHaveCount(10);
   await page.locator('#sort-products').evaluate((element) => {
     (element as HTMLSelectElement).value = 'az';
     element.dispatchEvent(new Event('change', { bubbles: true }));
   });
-  await expect(page.locator('.wheel-card__title').first()).toHaveText('ARC-8RT');
+  await expect(page.locator('[data-product]__title').first()).toHaveText('ARC-8RT');
 });
 
 test('Wheels mobile filter drawer applies filters and can be dismissed', async ({ page }) => {
@@ -56,7 +56,7 @@ test('Wheels mobile filter drawer applies filters and can be dismissed', async (
   });
   await page.locator('#mobile-filter-apply').click();
   await expect(page.locator('#filter-drawer')).not.toHaveClass(/is-open/);
-  await expect(page.locator('.wheel-card')).toHaveCount(3);
+  await expect(page.locator('[data-product]')).toHaveCount(3);
 });
 
 test('Wheels detail view shows technical specifications and does not invent a GLB', async ({
