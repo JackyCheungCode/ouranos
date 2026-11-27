@@ -15,6 +15,54 @@ const imagePanel = document.querySelector('#image-panel');
 const urlPanel = document.querySelector('#url-panel');
 let selectedFile = null;
 let previewUrl = null;
+let activeJobId = null;
+let pollHandle = null;
+
+function renderDiscoveryMatches(matches) {
+  const old = document.querySelector('#discovery-results');
+  if (old) old.remove();
+  const section = document.createElement('section');
+  section.id = 'discovery-results';
+  section.className = 'discover-results';
+  const heading = document.createElement('h2');
+  heading.textContent = 'Discovery results';
+  section.append(heading);
+  if (!matches.length) {
+    const empty = document.createElement('p');
+    empty.textContent = 'No indexed OURANOS products matched this reference yet.';
+    section.append(empty);
+  }
+  for (const match of matches) {
+    const item = document.createElement('article');
+    const title = document.createElement('h3');
+    title.textContent = match.product_name || match.slug || 'OURANOS wheel';
+    const detail = document.createElement('p');
+    detail.textContent = `${match.match_type.replaceAll('_', ' ')}${Number.isFinite(match.similarity_score) ? ` · ${(match.similarity_score * 100).toFixed(1)}%` : ''}`;
+    item.append(title, detail);
+    section.append(item);
+  }
+  imagePanel.append(section);
+}
+
+async function pollDiscoveryJob(jobId) {
+  const started = Date.now();
+  while (Date.now() - started < 120000 && activeJobId === jobId) {
+    const response = await fetch(`/api/discover/jobs/${encodeURIComponent(jobId)}`, { headers: { accept: 'application/json' } });
+    if (!response.ok) throw new Error('Unable to retrieve discovery status.');
+    const data = await response.json();
+    if (data.job.status === 'completed') {
+      setImageStatus('Discovery processing finished.', 'success');
+      renderDiscoveryMatches(data.matches || []);
+      return;
+    }
+    if (data.job.status === 'failed') {
+      throw new Error(data.job.error_message || 'Discovery processing failed.');
+    }
+    setImageStatus(data.job.status === 'processing' ? 'Analysing your reference…' : 'Your reference is queued…', 'info');
+    await new Promise((resolve) => setTimeout(resolve, 1800));
+  }
+  if (activeJobId === jobId) setImageStatus('Processing is taking longer than expected. You can retry checking this job later.', 'info');
+}
 
 function setPdsDisabled(element, disabled) {
   element.disabled = disabled;
@@ -57,7 +105,7 @@ function acceptImage(file) {
   preview.hidden = false;
   dropzone.hidden = true;
   setPdsDisabled(imageSubmit, false);
-  setImageStatus('Reference image ready. Catalogue matching will be enabled when product indexing is connected.');
+  setImageStatus('Reference image ready. Select Find matching wheels to submit it securely.');
 }
 
 imageInput.addEventListener('change', () => acceptImage(imageInput.files?.[0]));
