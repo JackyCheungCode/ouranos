@@ -5,7 +5,11 @@ test('shared navigation opens the OURANOS AI panel and sends a chat message', as
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({ message: 'Please provide your vehicle year, make and model.', model: 'test-model', sources: [] }),
+      body: JSON.stringify({
+        message: 'Please provide your vehicle year, make and model.',
+        model: 'test-model',
+        sources: [],
+      }),
     });
   });
 
