@@ -27,7 +27,10 @@ test('OURANOS forged wheels page presents its brand-led specification story', as
   await expect(page.locator('#ouranos-ai-panel')).toHaveCSS('visibility', 'hidden');
 
   await expect(page.locator('#forged-hero-title')).toContainText('ENGINEERED');
-  await expect(page.locator('.forged-hero__video source')).toHaveAttribute('src', '/videos/mood-porsche-gts.mp4');
+  await expect(page.locator('.forged-hero__video source')).toHaveAttribute(
+    'src',
+    '/videos/mood-porsche-gts.mp4',
+  );
   await expect(page.locator('#approach-title')).toContainText('Not simply made to fit.');
   await expect(page.locator('#architecture-title')).toBeVisible();
   await expect(page.locator('#specification-title')).toBeVisible();
@@ -53,7 +56,9 @@ test('OURANOS forged wheels page presents its brand-led specification story', as
 
   await expect(page.locator('.forged-specification__matrix > div')).toHaveCount(6);
   await expect(page.locator('.forged-detail')).toHaveCount(4);
-  await expect(page.locator('.forged-hero .forged-hero__content .forged-hero__actions p-link')).toHaveCount(2);
+  await expect(
+    page.locator('.forged-hero .forged-hero__content .forged-hero__actions p-link'),
+  ).toHaveCount(2);
   await expect(page.locator('.forged-final__content p-link')).toHaveCount(2);
   await expect(page.locator('.forged-image-note').first()).toContainText('visual references');
   await expect(page.locator('#forged-video-toggle')).toBeVisible();
@@ -63,7 +68,9 @@ test('OURANOS forged wheels page presents its brand-led specification story', as
   await expect(page.locator('#catalogue-title')).toBeVisible();
 });
 
-test('forged wheels page remains responsive and navigation exposes the destination', async ({ page }) => {
+test('forged wheels page remains responsive and navigation exposes the destination', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/forged-wheels/', { waitUntil: 'domcontentloaded' });
 
@@ -72,7 +79,9 @@ test('forged wheels page remains responsive and navigation exposes the destinati
   await page.locator('#nav-button').click();
   await expect(page.locator('#nav-drilldown')).toHaveJSProperty('open', true);
   await expect(
-    page.locator('#nav-drilldown p-drilldown-item[identifier="ouranos-wheels"] a[href="/forged-wheels/"]'),
+    page.locator(
+      '#nav-drilldown p-drilldown-item[identifier="ouranos-wheels"] a[href="/forged-wheels/"]',
+    ),
   ).toHaveCount(1);
 
   await expect(page.locator('.forged-detail-grid')).toBeVisible();
