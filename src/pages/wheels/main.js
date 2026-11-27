@@ -141,73 +141,45 @@ const icons = {
   Weight: 'weight',
   'Face profile': 'configurate',
 };
-function inquiryUrl(product) {
-  const subject = 'OURANOS wheel enquiry — ' + product.model;
-  const body = [
-    'Hello OURANOS,',
-    '',
-    'I would like to enquire about this wheel:',
-    'Model: ' + product.model,
-    'Collection: ' + product.collection,
-    'Construction: ' + product.construction,
-    'Design: ' + product.design,
-    'Diameter: ' + product.diameter + ' in',
-    'Width: ' + product.width + 'J',
-    'PCD: ' + (product.specs?.pcd || 'Not specified'),
-    'Offset: ' + (product.specs?.offset || 'Not specified'),
-    'Centre bore: ' + (product.specs?.bore || 'Not specified'),
-    '',
-    'Please contact me with further information.',
-  ].join('\n');
-  return 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-}
-function customizeUrl(product) {
+function configureUrl(product) {
   const query = new URLSearchParams({
-    source: 'wheels-catalogue',
     wheel: product.id,
-    wheelName: product.model,
+    model: product.model,
+    construction: product.construction,
+    design: product.design,
+    image: product.image,
+    finish: product.finish || '',
     diameter: String(product.diameter || ''),
     width: String(product.width || ''),
     pcd: String(product.specs?.pcd || ''),
     offset: String(product.specs?.offset || ''),
     bore: String(product.specs?.bore || ''),
   });
-  return '/customize/?' + query.toString();
+  return '/configure/?' + query.toString();
 }
 function card(product) {
   const detailUrl = '/wheels/?model=' + encodeURIComponent(product.id);
-  const properties = [product.construction, product.design, product.finish, product.collection].filter(Boolean);
-  const figures = [
-    { term: 'Width', value: product.width ? product.width + 'J' : '' },
-    { term: 'PCD', value: product.specs?.pcd || '' },
-    { term: 'Offset', value: product.specs?.offset || '' },
-    { term: 'Centre bore', value: product.specs?.bore || '' },
-    { term: 'Load rating', value: product.specs?.load || '' },
-    { term: 'Weight', value: product.specs?.weight || '' },
-    { term: 'Face profile', value: product.specs?.profile || '' },
-  ].filter((figure) => figure.value);
-  const figureMarkup = figures.map(({ term, value }) =>
-    '<div class="flex flex-col-reverse justify-end gap-static-xs"><dt><p-text tag="span" size="xs" color="contrast-medium">' + escapeHtml(term) + '</p-text></dt><dd><p-text tag="span" size="md" weight="semibold">' + escapeHtml(value) + '</p-text></dd></div>'
-  ).join('');
-  const propertyMarkup = properties.map((property) =>
-    '<li><p-tag>' + escapeHtml(property) + '</p-tag></li>'
-  ).join('');
-  return '<div data-product="' + escapeHtml(product.id) + '" class="wheels-product-card w-full grid gap-fluid-md rounded-3xl bg-canvas p-fluid-md">'
-    + '<img class="justify-self-center w-4/5" src="' + escapeHtml(product.image) + '" alt="" width="900" height="900" loading="lazy" decoding="async">'
-    + '<div class="grid gap-fluid-sm"><div class="grid gap-static-xs">'
-    + '<p-heading tag="h3" size="lg">' + escapeHtml(product.model) + '</p-heading>'
-    + '<p-text color="contrast-medium">' + escapeHtml(product.construction + ' construction · ' + product.line)
-    + '&nbsp;<p-popover aria="{ \'aria-label\': \'More information about wheel construction\' }">' + escapeHtml(product.description || 'Wheel construction and design information.') + '</p-popover></p-text>'
-    + '</div><ul class="flex flex-wrap gap-static-xs"><li><p-tag variant="primary">' + escapeHtml(product.diameter + '″') + '</p-tag></li>'
-    + propertyMarkup + '</ul></div>'
-    + '<dl class="grid grid-cols-2 gap-fluid-md">' + figureMarkup + '</dl>'
-    + '<div class="grid gap-static-md">'
-    + '<p-link-pure class="justify-self-center" icon="none" underline="true"><a href="' + inquiryUrl(product) + '" aria-label="Enquire about the ' + escapeHtml(product.model) + '">Enquire about this wheel</a></p-link-pure>'
-    + '<p-link variant="primary"><a href="' + detailUrl + '" aria-label="Discover the ' + escapeHtml(product.model) + '">Discover</a></p-link>'
-    + '<p-link variant="secondary"><a href="' + customizeUrl(product) + '" aria-label="Configure the ' + escapeHtml(product.model) + '">Configure</a></p-link>'
+  const customization = product.customizationSummary || 'Size, Fitment & Finish';
+  const minimumOrder = product.construction === 'Forged' ? '4 PCS' : '100 PCS';
+  const leadTime = product.manufacturingLeadTime || '10–15 days';
+  const iconRow = (icon, label, value) =>
+    '<div class="wheel-card-meta"><p-icon name="' + icon + '" size="xs" color="contrast-medium"></p-icon><div><span>' + label + '</span><strong>' + escapeHtml(value) + '</strong></div></div>';
+  return '<article data-product="' + escapeHtml(product.id) + '" class="wheels-product-card wheel-card">'
+    + '<div class="wheel-card__image"><span class="wheel-card__tag">' + escapeHtml(product.construction.toUpperCase()) + '</span>'
+    + '<img src="' + escapeHtml(product.image) + '" alt="' + escapeHtml(product.model + ' wheel design') + '" width="900" height="900" loading="lazy" decoding="async"></div>'
+    + '<div class="wheel-card__body"><div><p class="wheel-card__eyebrow">' + escapeHtml(product.line) + '</p>'
+    + '<h3 class="wheel-card__title">' + escapeHtml(product.model) + '</h3>'
+    + '<p class="wheel-card__design">' + escapeHtml(product.design) + '</p></div>'
+    + '<p class="wheel-card__customization">Customization: ' + escapeHtml(customization) + '</p>'
+    + '<div class="wheel-card__meta">'
+    + iconRow('factory', 'Manufacturing', product.construction === 'Forged' ? 'Forged Aluminium' : product.construction)
+    + iconRow('configurate', 'Customization', customization)
+    + iconRow('package', 'Minimum order', minimumOrder)
+    + iconRow('calendar', 'Manufacturing lead time', leadTime)
     + '</div>'
-    + '<p-text size="2xs" color="contrast-medium" align="center">Fitment must be confirmed against the exact vehicle specification.</p-text>'
-    + '</div>';
+    + '<div class="wheel-card__actions"><p-link><a href="' + detailUrl + '" aria-label="Discover ' + escapeHtml(product.model) + '">Discover</a></p-link>'
+    + '<p-button variant="primary" href="' + configureUrl(product) + '" aria-label="Configure ' + escapeHtml(product.model) + '">Configure</p-button></div>'
+    + '</div></article>';
 }
 function updateUrl(state, sort) {
   const next = new URLSearchParams();
