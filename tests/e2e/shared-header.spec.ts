@@ -38,6 +38,7 @@ test('shared header switches between overlay and stacked patterns and preserves 
   await expect(page.locator('#ouranos-ai-panel')).toHaveClass(/is-open/);
 
   await page.locator('#nav-button').click();
+  await expect(page.locator('#ouranos-ai-panel')).not.toHaveClass(/is-open/);
   await expect(page.locator('#nav-drilldown')).toHaveJSProperty('open', true);
 });
 
