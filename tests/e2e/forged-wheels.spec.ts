@@ -10,6 +10,20 @@ test('forged wheels landing page is independent from the existing wheels catalog
   await expect(page.locator('#ouranos-ai-open')).toBeVisible();
   await expect(page.locator('#ouranos-language-trigger')).toBeVisible();
   await expect(page.locator('#ouranos-theme-toggle')).toBeVisible();
+  await expect(page.locator('#ouranos-ai-panel')).toHaveAttribute('aria-hidden', 'true');
+  await expect(page.locator('#ouranos-ai-panel')).toHaveCSS('position', 'fixed');
+  await expect(page.locator('#ouranos-ai-panel')).toHaveCSS('visibility', 'hidden');
+  const firstPaintGeometry = await page.evaluate(() => ({
+    headerTop: document.querySelector('.ouranos-header')?.getBoundingClientRect().top,
+    heroTop: document.querySelector('.forged-hero')?.getBoundingClientRect().top,
+  }));
+  expect(firstPaintGeometry.headerTop).toBe(0);
+  expect(firstPaintGeometry.heroTop).toBe(0);
+  await page.locator('#ouranos-ai-open').click();
+  await expect(page.locator('#ouranos-ai-panel')).toHaveAttribute('aria-hidden', 'false');
+  await expect(page.locator('#ouranos-ai-panel')).toHaveCSS('visibility', 'visible');
+  await page.locator('#ouranos-ai-close').click();
+  await expect(page.locator('#ouranos-ai-panel')).toHaveAttribute('aria-hidden', 'true');
   await expect(page.locator('#forged-hero-title')).toContainText('FORGED.');
   await expect(page.locator('.forged-hero__video source')).toHaveAttribute(
     'src',
