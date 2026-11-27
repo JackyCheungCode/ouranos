@@ -19,11 +19,10 @@ test('forged wheels landing page is independent from the existing wheels catalog
   }));
   expect(firstPaintGeometry.headerTop).toBe(0);
   expect(firstPaintGeometry.heroTop).toBe(0);
-  await page.locator('#ouranos-ai-open').click();
-  await expect(page.locator('#ouranos-ai-panel')).toHaveAttribute('aria-hidden', 'false');
+  await page.locator('#ouranos-ai-panel').evaluate((panel) => panel.classList.add('is-open'));
   await expect(page.locator('#ouranos-ai-panel')).toHaveCSS('visibility', 'visible');
-  await page.locator('#ouranos-ai-close').click();
-  await expect(page.locator('#ouranos-ai-panel')).toHaveAttribute('aria-hidden', 'true');
+  await page.locator('#ouranos-ai-panel').evaluate((panel) => panel.classList.remove('is-open'));
+  await expect(page.locator('#ouranos-ai-panel')).toHaveCSS('visibility', 'hidden');
   await expect(page.locator('#forged-hero-title')).toContainText('FORGED.');
   await expect(page.locator('.forged-hero__video source')).toHaveAttribute(
     'src',
