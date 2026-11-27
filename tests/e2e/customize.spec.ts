@@ -66,7 +66,7 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
   await expect(page.locator('#market')).toContainText('USA+');
   await expect(page.locator('#market')).toContainText('Canada');
   await expect(page.locator('#market')).not.toContainText('Europe');
-  await expect(page.locator('#make option[value="porsche"]')).toHaveCount(1);
+  await expect(page.locator('#make p-select-option[value="porsche"]')).toHaveCount(1);
   await expect(page.locator('#make')).toBeVisible();
 
   await choose(page, '#make', 'porsche');
