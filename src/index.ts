@@ -1042,7 +1042,7 @@ async function leadTimeSimulationRequest(request: Request): Promise<Response> {
     : ['BILLET PREP', 'BILLET HEATING', 'FORGING', 'HEAT TREAT', 'CNC MACHINING', 'SURFACE FINISH', 'FINAL QC'];
   const duration = process === 'casting' ? 8 : 7;
   const lines = Array.from({ length: 36 }, (_, index) => {
-    const startOffset = index === 0 ? 0 : Math.floor(Math.random() * 9);
+    const startOffset = index === 0 ? 0 : Math.floor(Math.random() * 8);
     const stageDurations = Array.from({ length: 7 }, () => 1);
     if (duration === 8) stageDurations[5] = 2;
     const segments = stages.map((name, stageIndex) => ({
