@@ -50,3 +50,44 @@
   visibility: visible;
   pointer-events: auto;
 }
+
+
+/* Brand header: one Home-identical overlay pattern on every public page. */
+.ouranos-header {
+  color: #fff;
+}
+.ouranos-header::before {
+  content: '';
+  height: 132px;
+  background: linear-gradient(180deg, rgb(0 0 0 / 48%) 0%, rgb(0 0 0 / 24%) 52%, transparent 100%);
+}
+.ouranos-header__brand {
+  display: block;
+  width: clamp(124px, 12vw, 168px);
+  line-height: 0;
+  color: #fff;
+}
+.ouranos-header__brand svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.ouranos-header p-button-pure {
+  color: #fff;
+}
+.ouranos-header p-button-pure::part(button) {
+  color: #fff;
+}
+.ouranos-header p-popover {
+  color: #fff;
+}
+.ouranos-header :is(p-button-pure, p-popover):focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+@media (max-width: 600px) {
+  .ouranos-header__brand {
+    width: clamp(108px, 30vw, 132px);
+  }
+}
