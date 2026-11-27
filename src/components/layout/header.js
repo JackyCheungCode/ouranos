@@ -138,7 +138,7 @@ if (header) {
   }
 
   // Capture the composed click before PDS Popover handles dismissal/retargeting.
-  header.addEventListener(
+  document.addEventListener(
     'click',
     (event) => {
       const option = event
