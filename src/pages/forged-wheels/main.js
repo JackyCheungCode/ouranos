@@ -84,7 +84,7 @@ function renderFinishes(category) {
     button.dataset.finish = name;
     button.setAttribute('aria-pressed', index === 0 ? 'true' : 'false');
     const swatch = document.createElement('span');
-    swatch.className = 'swatch swatch--' + ['titanium', 'silver', 'dark', 'bronze'][index];
+    swatch.className = 'swatch swatch--' + ['titanium', 'silver', 'dark', 'bronze', 'black'][index];
     const label = document.createElement('span');
     label.textContent = name;
     button.append(swatch, label);
