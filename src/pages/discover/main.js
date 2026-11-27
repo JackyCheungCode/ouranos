@@ -1,0 +1,129 @@
+import './style.css';
+
+const imageInput = document.querySelector('#wheel-image');
+const dropzone = document.querySelector('#image-dropzone');
+const preview = document.querySelector('#image-preview');
+const previewImage = document.querySelector('#preview-image');
+const previewName = document.querySelector('#preview-name');
+const previewSize = document.querySelector('#preview-size');
+const imageStatus = document.querySelector('#image-status');
+const imageSubmit = document.querySelector('#image-submit');
+const urlInput = document.querySelector('#product-url');
+const urlSubmit = document.querySelector('#url-submit');
+const urlStatus = document.querySelector('#url-status');
+const imagePanel = document.querySelector('#image-panel');
+const urlPanel = document.querySelector('#url-panel');
+let selectedFile = null;
+let previewUrl = null;
+
+function setImageStatus(message, state = '') {
+  imageStatus.textContent = message;
+  imageStatus.dataset.state = state;
+}
+
+function clearImage() {
+  selectedFile = null;
+  imageInput.value = '';
+  imageSubmit.disabled = true;
+  preview.hidden = true;
+  dropzone.hidden = false;
+  if (previewUrl) URL.revokeObjectURL(previewUrl);
+  previewUrl = null;
+  previewImage.removeAttribute('src');
+  setImageStatus('Your image stays in this browser until you choose to continue.');
+}
+
+function acceptImage(file) {
+  if (!file) return;
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+    setImageStatus('Unsupported file. Choose a JPG, PNG or WEBP image.', 'error');
+    return;
+  }
+  if (file.size > 10 * 1024 * 1024) {
+    setImageStatus('This image is larger than 10 MB. Choose a smaller file.', 'error');
+    return;
+  }
+  clearImage();
+  selectedFile = file;
+  previewUrl = URL.createObjectURL(file);
+  previewImage.src = previewUrl;
+  previewName.textContent = file.name;
+  previewSize.textContent = (file.size / 1024 / 1024).toFixed(2) + ' MB';
+  preview.hidden = false;
+  dropzone.hidden = true;
+  imageSubmit.disabled = false;
+  setImageStatus('Reference image ready. Catalogue matching will be enabled when product indexing is connected.');
+}
+
+imageInput.addEventListener('change', () => acceptImage(imageInput.files?.[0]));
+document.querySelector('#remove-image').addEventListener('click', clearImage);
+dropzone.addEventListener('dragover', (event) => {
+  event.preventDefault();
+  dropzone.classList.add('is-dragging');
+});
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('is-dragging'));
+dropzone.addEventListener('drop', (event) => {
+  event.preventDefault();
+  dropzone.classList.remove('is-dragging');
+  acceptImage(event.dataTransfer?.files?.[0]);
+});
+document.addEventListener('paste', (event) => {
+  const file = [...(event.clipboardData?.items || [])]
+    .find((item) => item.type.startsWith('image/'))?.getAsFile();
+  if (file && !imagePanel.hidden) acceptImage(file);
+});
+
+document.querySelectorAll('[data-method]').forEach((button) => {
+  button.addEventListener('click', () => {
+    const isImage = button.dataset.method === 'image';
+    document.querySelectorAll('[data-method]').forEach((item) => {
+      const active = item === button;
+      item.classList.toggle('is-active', active);
+      item.setAttribute('aria-pressed', String(active));
+    });
+    imagePanel.hidden = !isImage;
+    urlPanel.hidden = isImage;
+  });
+});
+
+urlInput.addEventListener('input', () => {
+  urlSubmit.disabled = !urlInput.value.trim();
+  urlStatus.textContent = 'Check the URL before continuing. No page content is fetched at this stage.';
+  urlStatus.dataset.state = '';
+});
+
+urlSubmit.addEventListener('click', () => {
+  let url;
+  try {
+    url = new URL(urlInput.value.trim());
+  } catch {
+    urlStatus.textContent = 'Enter a valid product page URL.';
+    urlStatus.dataset.state = 'error';
+    return;
+  }
+  const hostname = url.hostname.toLowerCase();
+  if (!['https:', 'http:'].includes(url.protocol) || !hostname.includes('.') ||
+      hostname === 'localhost' || hostname.endsWith('.local') ||
+      /^\d{1,3}(\.\d{1,3}){3}$/.test(hostname) || url.username || url.password) {
+    urlStatus.textContent = 'Enter a public product page URL using HTTP or HTTPS.';
+    urlStatus.dataset.state = 'error';
+    return;
+  }
+  urlStatus.textContent = 'Link format accepted. Automatic page extraction and catalogue matching will be enabled in the next integration phase.';
+  urlStatus.dataset.state = 'success';
+});
+
+imageSubmit.addEventListener('click', () => {
+  if (!selectedFile) return;
+  setImageStatus('Reference captured locally. Product matching is not yet connected to a populated OURANOS catalogue.', 'info');
+});
+
+const navDrilldown = document.getElementById('nav-drilldown');
+const navButton = document.getElementById('nav-button');
+if (navDrilldown && navButton) {
+  navButton.addEventListener('click', () => { navDrilldown.open = true; });
+  navDrilldown.addEventListener('dismiss', (event) => { event.target.open = false; });
+  navDrilldown.addEventListener('update', (event) => {
+    event.target.activeIdentifier = event.detail.activeIdentifier;
+  });
+}
