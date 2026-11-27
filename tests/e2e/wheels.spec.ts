@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 
-test('Wheels catalogue loads ten temporary product records with six technical fields', async ({ page }) => {
+test('Wheels catalogue loads ten temporary product records with six technical fields', async ({
+  page,
+}) => {
   await page.goto('/wheels/', { waitUntil: 'domcontentloaded' });
   await expect(page).toHaveTitle('OURANOS | Wheels');
   await expect(page.locator('#wheels-hero-title')).toContainText('ENGINEERED TO DEFINE');
@@ -57,7 +59,9 @@ test('Wheels mobile filter drawer applies filters and can be dismissed', async (
   await expect(page.locator('.wheel-card')).toHaveCount(3);
 });
 
-test('Wheels detail view shows technical specifications and does not invent a GLB', async ({ page }) => {
+test('Wheels detail view shows technical specifications and does not invent a GLB', async ({
+  page,
+}) => {
   await page.goto('/wheels/?model=vs-5rs', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#wheel-detail')).toBeVisible();
   await expect(page.locator('#detail-title')).toHaveText('VS-5RS');
@@ -66,15 +70,18 @@ test('Wheels detail view shows technical specifications and does not invent a GL
   await expect(page.locator('.wheel-detail__viewer')).not.toContainText('canvas');
 });
 
-test('Homepage wheel entry points resolve to the Wheels catalogue and its collection filters', async ({ page }) => {
+test('Homepage wheel entry points resolve to the Wheels catalogue and its collection filters', async ({
+  page,
+}) => {
   await page.goto('/');
   await expect(page.locator('p-button[href="/wheels/"]').first()).toHaveCount(1);
   await expect(page.locator('p-link-tile[href="/wheels/?collection=performance"]')).toHaveCount(1);
   await expect(page.locator('p-link-tile[href="/wheels/?collection=heritage"]')).toHaveCount(1);
 });
 
-
-test('Vehicle filter uses Wheel Size and transfers the selected fitment into specification filters', async ({ page }) => {
+test('Vehicle filter uses Wheel Size and transfers the selected fitment into specification filters', async ({
+  page,
+}) => {
   await page.route('**/api/wheel-size/**', async (route) => {
     const url = new URL(route.request().url());
     const path = url.pathname.split('/').filter(Boolean).at(-1);
@@ -84,16 +91,38 @@ test('Vehicle filter uses Wheel Size and transfers the selected fitment into spe
       models: [{ slug: '3-series', name: '3 Series' }],
       years: [{ slug: '2024', name: '2024' }],
       modifications: [{ slug: '330i', name: '330i' }],
-      'by_model': {
-        data: [{
-          is_oe: true,
-          front: { rim: { diameter: 19, width: 8.5, offset: 25, bolt_pattern: '5x112', center_bore: 66.6 } },
-          rear: { rim: { diameter: 19, width: 8.5, offset: 25, bolt_pattern: '5x112', center_bore: 66.6 } },
-        }],
+      by_model: {
+        data: [
+          {
+            is_oe: true,
+            front: {
+              rim: {
+                diameter: 19,
+                width: 8.5,
+                offset: 25,
+                bolt_pattern: '5x112',
+                center_bore: 66.6,
+              },
+            },
+            rear: {
+              rim: {
+                diameter: 19,
+                width: 8.5,
+                offset: 25,
+                bolt_pattern: '5x112',
+                center_bore: 66.6,
+              },
+            },
+          },
+        ],
       },
     };
     const key = path === 'by_model' ? 'by_model' : path;
-    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(payloads[key] ?? { data: [] }) });
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(payloads[key] ?? { data: [] }),
+    });
   });
   await page.goto('/wheels/', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#filter-region')).toBeEnabled();

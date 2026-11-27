@@ -349,10 +349,13 @@ test('Configurator prepares a downloadable engineering specification', async ({ 
   await expect(page.locator('#submission-message')).toContainText('DOWNLOAD CONFIGURATION');
 });
 
-
-test('Configurator preloads wheel dimensions and source wheel from the catalogue URL', async ({ page }) => {
+test('Configurator preloads wheel dimensions and source wheel from the catalogue URL', async ({
+  page,
+}) => {
   await mockWheelSize(page);
-  await page.goto('/customize/?source=wheels-catalogue&wheel=vs-5rs&wheelName=VS-5RS&diameter=20&width=9.5&pcd=5x120&offset=ET25&bore=72.6');
+  await page.goto(
+    '/customize/?source=wheels-catalogue&wheel=vs-5rs&wheelName=VS-5RS&diameter=20&width=9.5&pcd=5x120&offset=ET25&bore=72.6',
+  );
   await expect(page.locator('#summary-wheel')).toHaveText('VS-5RS');
   await expect(page.locator('#front-diameter')).toHaveJSProperty('value', '20');
   await expect(page.locator('#front-width')).toHaveJSProperty('value', '9.5');
