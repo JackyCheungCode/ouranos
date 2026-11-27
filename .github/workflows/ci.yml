@@ -40,6 +40,24 @@ jobs:
         run: |
           rm -f package-lock.json
           npm install --package-lock-only --legacy-peer-deps --ignore-scripts --no-audit --no-fund
+          cp package-lock.json /tmp/ouranos-package-lock.json
+
+      - name: Commit generated lockfile to same-repository PR branch
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          PR_BRANCH: ${{ github.head_ref }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin "${PR_BRANCH}"
+          git checkout -B lockfile-target "origin/${PR_BRANCH}"
+          cp /tmp/ouranos-package-lock.json package-lock.json
+          git add package-lock.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: sync npm dependency lockfile"
+            git push origin HEAD:"${PR_BRANCH}"
+          fi
+          git checkout -
 
       - name: Install locked dependencies
         run: npm ci --legacy-peer-deps
