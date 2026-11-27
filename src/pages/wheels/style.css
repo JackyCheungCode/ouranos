@@ -61,9 +61,15 @@ body.drawer-open {
   max-width: 520px;
 }
 .wheels-catalogue {
-  width: min(100% - 48px, 1440px);
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
+  padding: clamp(40px, 5vw, 72px) max(20px, calc((100% - 1440px) / 2));
+  background: #f0f0f2;
   scroll-margin-top: 32px;
+}
+#wheels-grid > [data-product] {
+  min-width: 0;
+  background-color: #fff;
 }
 .wheels-catalogue__intro {
   display: flex;
