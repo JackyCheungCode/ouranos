@@ -194,7 +194,7 @@ test('Manufacturer options use transparent logos and step navigation stays reada
   expect(stepperMetrics.stepperWidth).toBeCloseTo(stepperMetrics.panelContentWidth, 0);
   const logoFrame = await page.locator('.manufacturer-option-logo').first().evaluate((el) => ({ radius: getComputedStyle(el).borderRadius, width: el.getBoundingClientRect().width, height: el.getBoundingClientRect().height }));
   expect(logoFrame.radius).toBe('0px');
-  expect(logoFrame.width).toBe(42);
+  expect(logoFrame.width).toBe(44);
   expect(logoFrame.height).toBe(32);
   const zoomDirection = await page.locator('.zoom-controls').evaluate((el) => getComputedStyle(el).flexDirection);
   expect(zoomDirection).toBe('column');
