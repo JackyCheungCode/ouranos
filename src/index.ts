@@ -867,22 +867,6 @@ async function getDiscoveryJob(request: Request, env: Env): Promise<Response> {
 
 interface ChatMessage { role: 'user' | 'assistant'; content: string }
 interface ChatRequestBody { messages?: ChatMessage[]; vehicle?: Record<string, string> }
-interface McpSourceConfig { name: string; endpoint?: string; token?: string }
-const CHAT_MODEL = '@cf/meta/llama-3.3-70b-instruct-fp8-fast';
-
-async function callRemoteMcp(source: McpSourceConfig, toolName: string, args: Record<string, string>) {
-  if (!source.endpoint) return { source: source.name, status: 'not_configured' };
-  const headers: Record<string, string> = { 'content-type': 'application/json', accept: 'application/json, text/event-stream' };
-  if (source.token) headers.authorization = `Bearer ${source.token}`;
-  try {
-    const init = await fetch(source.endpoint, { method: 'POST', headers, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2025-03-26', capabilities: {}, clientInfo: { name: 'ouranos-ai', version: '1.0.0' } }) });
-    if (!init.ok) return { source: source.name, status: 'unavailable' };
-    const result = await fetch(source.endpoint, { method: 'POST', headers, body: JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'tools/call', params: { name: toolName, arguments: args } }) });
-    if (!result.ok) return { source: source.name, status: 'unavailable' };
-    return { source: source.name, status: 'connected', data: (await result.text()).slice(0, 12000) };
-  } catch { return { source: source.name, status: 'unavailable' }; }
-}
-
 async function aiAssistantRequest(request: Request, env: Env): Promise<Response> {
   if (request.method !== 'POST') return json({ error: 'METHOD_NOT_ALLOWED' }, 405);
   let body: ChatRequestBody;
