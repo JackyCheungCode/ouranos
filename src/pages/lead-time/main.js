@@ -124,6 +124,7 @@ if (navDrilldown && navButton) {
 
 $('#lead-product').addEventListener('change', updateProductDetail);
 $('#lead-form').addEventListener('submit', submitEstimate);
+$('#lead-submit').addEventListener('click', () => $('#lead-form').requestSubmit());
 $('#new-estimate').addEventListener('click', () => {
   $('#production-results').hidden = true;
   $('#lead-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
