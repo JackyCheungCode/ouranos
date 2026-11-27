@@ -96,18 +96,22 @@ test('Vehicle filter uses Wheel Size and transfers the selected fitment into spe
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(payloads[key] ?? { data: [] }) });
   });
   await page.goto('/wheels/', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#filter-region')).toBeEnabled();
   await page.locator('#filter-region').evaluate((element) => {
     (element as HTMLSelectElement).value = 'usdm';
     element.dispatchEvent(new Event('change', { bubbles: true }));
   });
+  await expect(page.locator('#filter-make')).toBeEnabled();
   await page.locator('#filter-make').evaluate((element) => {
     (element as HTMLSelectElement).value = 'bmw';
     element.dispatchEvent(new Event('change', { bubbles: true }));
   });
+  await expect(page.locator('#filter-model')).toBeEnabled();
   await page.locator('#filter-model').evaluate((element) => {
     (element as HTMLSelectElement).value = '3-series';
     element.dispatchEvent(new Event('change', { bubbles: true }));
   });
+  await expect(page.locator('#filter-year')).toBeEnabled();
   await page.locator('#filter-year').evaluate((element) => {
     (element as HTMLSelectElement).value = '2024';
     element.dispatchEvent(new Event('change', { bubbles: true }));
