@@ -5,8 +5,8 @@ test('Home page is served at the root with shared Ouranos layout', async ({ page
   page.on('pageerror', (error) => pageErrors.push(error.message));
 
   await page.goto('/');
-  await expect(page).toHaveTitle('Ouranos | Home');
-  await expect(page.locator('p-heading#heading-section-1')).toContainText('Home');
+  await expect(page).toHaveTitle('Ouranos | Precision in Every Form');
+  await expect(page.locator('p-heading#heading-section-1')).toContainText('Precision in Every Form');
   await expect(page.locator('header a[aria-label="Ouranos Home"]').first()).toHaveText('OURANOS');
   await expect(page.locator('#nav-drilldown')).toHaveCount(1);
   await expect(page.locator('footer')).toContainText('Ouranos');
@@ -16,7 +16,7 @@ test('Home page is served at the root with shared Ouranos layout', async ({ page
   await expect(page.locator('p-wordmark, p-crest')).toHaveCount(0);
 
   const stylesheet = page.locator('link[rel="stylesheet"]').first();
-  await expect(stylesheet).toHaveAttribute('href', /\\.css(?:\\?|$)/);
+  await expect(stylesheet).toHaveAttribute('href', /\.css(?:\?|$)/);
   const stylesheetUrl = await stylesheet.getAttribute('href');
   expect(stylesheetUrl).not.toBeNull();
 
@@ -57,16 +57,16 @@ test('Home exposes the two primary entry tiles and five wheel collections', asyn
   await expect(page.locator('p-carousel p-link-tile')).toHaveCount(5);
 });
 
-test('Home overlay navigation and image tiles use the dark PDS scheme', async ({ page }) => {
+test('Home overlay navigation and image tiles use the light PDS scheme', async ({ page }) => {
   await page.goto('/');
   const header = page.locator('header');
-  await expect(page.locator('html')).toHaveClass(/scheme-dark/);
-  await expect(header).toHaveCSS('color-scheme', 'dark');
+  await expect(page.locator('html')).toHaveClass(/scheme-light/);
+  await expect(header).toHaveCSS('color-scheme', 'light');
   await expect(header.locator('a[aria-label="Ouranos Home"]').first()).toHaveCSS(
     'color',
-    'rgb(255, 255, 255)',
+    'rgb(0, 0, 0)',
   );
-  await expect(header.locator('p-button-pure')).toHaveAttribute('color', 'primary');
+  await expect(header.locator('p-button-pure').first()).toHaveAttribute('color', 'primary');
 
   for (const tile of [
     page.locator('p-link-tile[label="Find Wheels for Your Vehicle"]'),
@@ -75,7 +75,7 @@ test('Home overlay navigation and image tiles use the dark PDS scheme', async ({
   ]) {
     await expect(tile).toHaveAttribute('gradient', 'true');
     const scheme = await tile.evaluate((element) => getComputedStyle(element).colorScheme);
-    expect(scheme).toContain('dark');
+    expect(scheme).toContain('light');
   }
 });
 
@@ -87,5 +87,5 @@ test('PDS font preload links are emitted into the Home document head', async ({ 
 test('Worker applies SPA fallback to the Home page for unknown paths', async ({ request }) => {
   const response = await request.get('/__ouranos_infrastructure_smoke_test__');
   expect(response.ok()).toBeTruthy();
-  expect(await response.text()).toContain('<title>Ouranos | Home</title>');
+  expect(await response.text()).toContain('<title>Ouranos | Precision in Every Form</title>');
 });

@@ -2,24 +2,9 @@
 @import 'tailwindcss';
 @import '@porsche-design-system/components-js/tailwindcss';
 
-:not(:defined) {
-  visibility: hidden;
-}
-
-/* Force the overlay navigation to use PDS dark-mode tokens. */
-header {
-  color-scheme: dark;
-}
-
-header a {
-  color: #fff;
-}
-
-header p-button-pure {
-  color-scheme: dark;
-}
-
-/* Link Tile owns its dark media scheme; gradient preserves readable contrast. */
-p-link-tile {
-  color-scheme: dark;
-}
+:root { color-scheme: light; }
+:not(:defined) { visibility: hidden; }
+header { color-scheme: light; }
+header a { color: inherit; }
+header p-button-pure { color-scheme: light; }
+p-link-tile { color-scheme: light; }

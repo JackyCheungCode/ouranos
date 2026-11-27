@@ -1,261 +1,79 @@
 import './style.css';
-
-const state = { step: 0, model: 'sport_alloy_wheel_rim', diameter: '20', width: '9.0', offset: '', pcd: '', bore: '', load: '', color: 'black', surface: 'satin' };
-const $ = (selector) => document.querySelector(selector);
-const $$ = (selector) => [...document.querySelectorAll(selector)];
-const colorNames = { black: 'Black', silver: 'Silver', bronze: 'Bronze' };
-const colorValues = { black: 0x34383b, silver: 0xd5d7d6, bronze: 0x9b704d };
-const surfaceNames = { satin: 'Satin', gloss: 'Gloss', brushed: 'Brushed' };
-const surfaceRoughness = { satin: 0.34, gloss: 0.16, brushed: 0.48 };
+const $=s=>document.querySelector(s);
+const S={step:0,model:null,market:'',regions:[],makes:[],models:[],years:[],trims:[],fitments:[],selected:null,vehicle:null,color:'black',surface:'satin'};
+const COLORS={black:0x34383b,silver:0xd5d7d6,bronze:0x9b704d}, ROUGH={satin:.34,gloss:.16,brushed:.48};
+const NAMES={black:'Black',silver:'Silver',bronze:'Bronze'}, SURF={satin:'Satin',gloss:'Gloss',brushed:'Brushed'};
 let wheelScene;
-const DRAFT_KEY = 'ouranos-bespoke-config-v1';
-const draftFields = ['diameter', 'width', 'offset', 'pcd', 'bore', 'load', 'wheel-color', 'wheel-surface', 'finish-notes', 'make', 'model', 'year', 'variant', 'vehicle-mods', 'special-requests'];
-
-function saveDraft() {
-  const draft = {
-    model: state.model,
-    color: state.color,
-    surface: state.surface,
-    fields: Object.fromEntries(draftFields.map((id) => [id, document.getElementById(id)?.value ?? ''])),
-  };
-  try { localStorage.setItem(DRAFT_KEY, JSON.stringify(draft)); } catch { /* Private browsing may block storage. */ }
-}
-
-function restoreDraft() {
-  try {
-    const draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null');
-    if (!draft || typeof draft !== 'object') return;
-    if (typeof draft.color === 'string' && colorNames[draft.color]) state.color = draft.color;
-    if (typeof draft.surface === 'string' && surfaceNames[draft.surface]) state.surface = draft.surface;
-    for (const [id, value] of Object.entries(draft.fields || {})) {
-      const field = document.getElementById(id);
-      if (field && typeof value === 'string') {
-        field.value = value;
-        if (Object.hasOwn(state, id)) state[id] = value;
-      }
-    }
-  } catch { /* Ignore malformed or unavailable local drafts. */ }
-}
-
-function setStep(step) {
-  state.step = Math.max(0, Math.min(2, step));
-  $$('.config-step').forEach((panel, index) => panel.classList.toggle('active', index === state.step));
-  const stepper = $('#config-stepper');
-  if (stepper) {
-    stepper.querySelectorAll('p-stepper-horizontal-item').forEach((item, index) => {
-      item.state = index === state.step ? 'current' : index < state.step ? 'complete' : undefined;
-    });
-  }
-  $('#step-counter').textContent = `0${state.step + 1} / 03`;
-  $('#back-button').disabled = state.step === 0;
-  $('#next-button').hidden = state.step === 2;
-  $('#submit-button').hidden = state.step !== 2;
-}
-
-function syncSummary() {
-  $('#preview-design').textContent = 'SPORT ALLOY WHEEL RIM';
-  $('#summary-design').textContent = 'Sport Alloy Wheel Rim';
-  $('#summary-dimension').textContent = `${state.diameter} × ${state.width} in`;
-  $('#summary-finish').textContent = `${colorNames[state.color]} · ${surfaceNames[state.surface]}`;
-  saveDraft();
-}
-
-function setMaterial(color, surface) {
-  if (colorNames[color]) state.color = color;
-  if (surfaceNames[surface]) state.surface = surface;
-  $('#wheel-color').value = state.color;
-  $('#wheel-surface').value = state.surface;
-  if (wheelScene) wheelScene.setMaterial(colorValues[state.color], surfaceRoughness[state.surface]);
-  syncSummary();
-}
-
-$('#config-stepper').addEventListener('update', (event) => setStep(event.detail.activeStepIndex));
-$('#back-button').addEventListener('click', () => setStep(state.step - 1));
-$('#next-button').addEventListener('click', () => setStep(state.step + 1));
-$('#wheel-color').addEventListener('change', (event) => setMaterial(event.target.value, state.surface));
-$('#wheel-surface').addEventListener('change', (event) => setMaterial(state.color, event.target.value));
-['diameter', 'width', 'offset', 'pcd', 'bore', 'load'].forEach((id) => {
-  const el = document.getElementById(id);
-  el?.addEventListener('input', () => { state[id] = el.value; syncSummary(); saveDraft(); });
-  el?.addEventListener('change', () => { state[id] = el.value; syncSummary(); saveDraft(); });
-});
-
-$$('#config-form input, #config-form textarea, #config-form select, #config-form p-input-number, #config-form p-input-text, #config-form p-input-email, #config-form p-select, #config-form p-textarea').forEach((field) => { field.addEventListener('input', saveDraft); field.addEventListener('change', saveDraft); });
-
-$('#config-form').addEventListener('submit', (event) => {
-  event.preventDefault();
-  const payload = {
-    model: 'sport_alloy_wheel_rim.glb', asset_type: 'GLB test asset', diameter_in: $('#diameter').value,
-    width_in: $('#width').value, offset_et_mm: $('#offset').value || null,
-    pcd: $('#pcd').value || null, centre_bore_mm: $('#bore').value || null,
-    load_requirement_kg: $('#load').value || null, color: colorNames[state.color], surface_treatment: surfaceNames[state.surface],
-    finish_request: $('#finish-notes').value,
-    vehicle: { make: $('#make').value, model: $('#model').value, year: $('#year').value, variant: $('#variant').value, modifications: $('#vehicle-mods').value },
-    bespoke_requirements: $('#special-requests').value,
-    customer: { name: $('#customer-name').value, email: $('#customer-email').value },
-    fitment_status: 'Pending engineering review',
-  };
-  const message = $('#submission-message');
-  message.hidden = false;
-  message.replaceChildren();
-  const title = document.createElement('strong');
-  title.textContent = 'Your configuration is ready for review.';
-  const note = document.createElement('p');
-  note.textContent = 'Your configuration has not been transmitted. Download or copy this specification and send it to your Ouranos representative for engineering review.';
-  const actions = document.createElement('div');
-  actions.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;margin:16px 0';
-  const copy = document.createElement('p-button');
-  copy.type = 'button';
-  copy.variant = 'primary';
-  copy.className = 'next-button';
-  copy.textContent = 'COPY CONFIGURATION';
-  copy.addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
-      copy.textContent = 'COPIED';
-    } catch {
-      copy.textContent = 'COPY UNAVAILABLE';
-    }
+let activeModelUrl='/api/models/file?key=models%2Fsport_alloy_wheel_rim.glb';
+let activeModelName='';
+let modelLibrary=[];
+let modelPage=0;
+const MODELS_PER_PAGE=5;
+const ids=['front-diameter','front-width','front-offset','front-pcd','front-bore','front-load','rear-diameter','rear-width','rear-offset','rear-pcd','rear-bore','rear-load','wheel-color','wheel-surface','finish-notes','vehicle-mods','special-requests','customer-name','customer-email'];
+const val=id=>$('#'+id)?.value||'', put=(id,v)=>{const el=$('#'+id);if(!el)return;const value=v==null?'':String(v);if(el.localName.startsWith('p-'))el.setAttribute('value',value);el.value=value;};
+const list=x=>Array.isArray(x)?x:Array.isArray(x?.data)?x.data:Array.isArray(x?.results)?x.results:[];
+const name=x=>typeof x==='string'?x:x?.name||x?.title||x?.label||x?.slug||x?.code||'';
+const slug=x=>typeof x==='string'?x.toLowerCase().replace(/\s+/g,'-'):x?.slug||x?.id||x?.code||name(x).toLowerCase().replace(/\s+/g,'-');
+const first=(...x)=>x.find(v=>v!==undefined&&v!==null&&v!=='')??'';
+const num=(...x)=>{for(const v of x)if(v!==undefined&&v!==null&&v!==''){const n=Number(v);if(Number.isFinite(n))return n;}return '';};
+function status(t,k=''){ $('#api-status').textContent=t;$('#api-status').dataset.state=k; }
+async function api(path,p={}){const q=new URLSearchParams({... (S.market?{region:S.market}:{}),...p});const r=await fetch('/api/wheel-size/'+path+'?'+q);const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d?.details?.detail||d?.details?.message||d?.message||d?.error||'API error '+r.status);return d;}
+async function setOptions(el,items,placeholder){const native=el instanceof HTMLSelectElement,tag=native?'option':'p-select-option',fragment=document.createDocumentFragment(),o=document.createElement(tag);if(!native){await Promise.all([...el.querySelectorAll('p-select-option')].map(option=>typeof option.componentOnReady==='function'?option.componentOnReady():Promise.resolve()));}o.value='';o.textContent=placeholder;fragment.append(o);items.forEach(x=>{const a=document.createElement(tag);a.value=String(slug(x));a.textContent=name(x);fragment.append(a);});el.replaceChildren(fragment);if(!native){await Promise.all([...el.querySelectorAll('p-select-option')].map(option=>typeof option.componentOnReady==='function'?option.componentOnReady():Promise.resolve()));}el.value='';}
+async function reset(id,label){await setOptions($('#'+id),[],label);$('#'+id).disabled=true;}
+function syncStepper(){const el=$('#config-stepper');if(!el)return;Promise.all(['p-stepper-horizontal','p-stepper-horizontal-item'].map(tag=>customElements.whenDefined(tag))).then(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))).then(()=>{el.querySelectorAll('p-stepper-horizontal-item').forEach((item,i)=>{const state=i===S.step?'current':i<S.step?'complete':null;if(state)item.setAttribute('state',state);else item.removeAttribute('state');});}).catch(error=>console.error('Stepper synchronization failed',error));}
+function applySelectedFitment(){if(!S.selectedData)return;const f=S.selectedData;requestAnimationFrame(()=>requestAnimationFrame(()=>{['diameter','width','offset','pcd','bore','load'].forEach(k=>{[['front',f.front],['rear',f.rear]].forEach(([axle,s])=>{const el=$('#'+axle+'-'+k);if(!el)return;el.value=s[k]==null?'':String(s[k]);el.dispatchEvent(new Event('input',{bubbles:true,composed:true}));});});sync();}));}
+function step(n){const next=Math.max(0,Math.min(4,n));if(next>0&&!S.model){$('#model-selection-error')?.remove();const error=document.createElement('p');error.id='model-selection-error';error.className='model-selection-error';error.textContent='Select a wheel model to continue.';$('#model-list').after(error);return;}S.step=next;document.querySelectorAll('.config-step').forEach((x,i)=>x.classList.toggle('active',i===S.step));syncStepper();$('#step-counter').textContent='0'+(S.step+1)+' / 05';$('#back-button').disabled=S.step===0;$('#next-button').hidden=S.step===4;$('#submit-button').hidden=S.step!==4;if(S.step===2)applySelectedFitment();if(S.step===4)review();}
+function save(){try{localStorage.setItem('ouranos-config-v2',JSON.stringify({market:S.market,fields:Object.fromEntries(ids.map(id=>[id,val(id)]))}));}catch{}}
+function sync(){const fmt=(a,b)=>[val(a)?val(a)+'J':'',val(b)?'×'+val(b):''].filter(Boolean).join(' ');$('#summary-vehicle').textContent=S.vehicle?.title||'Not selected';$('#summary-front').textContent=fmt('front-width','front-diameter')||'—';$('#summary-rear').textContent=fmt('rear-width','rear-diameter')||'—';$('#summary-finish').textContent=SURF[S.surface]+' · '+NAMES[S.color];save();}
+function material(c,f){if(NAMES[c])S.color=c;if(SURF[f])S.surface=f;put('wheel-color',S.color);put('wheel-surface',S.surface);wheelScene?.setMaterial(COLORS[S.color],ROUGH[S.surface]);sync();}
+function parseRim(s){const m=String(s||'').match(/([\d.]+)\s*J?\s*[x×]\s*([\d.]+)(?:\s*ET\s*(-?[\d.]+))?/i);return m?{width:m[1],diameter:m[2],offset:m[3]||''}:{};}
+function side(rec,axle){const s=rec?.[axle]||rec?.[axle+'_wheel']||rec?.[axle+'Wheel']||{},r=s.rim||s.wheel||s,p=parseRim(typeof r==='string'?r:first(r.size,r.title,s.oem_rim)),t=rec.technical||rec.specifications||{};return{diameter:num(r.diameter,r.rim_diameter,s.rim_diameter,s.oem_rim_diameter,p.diameter),width:num(r.width,r.rim_width,s.rim_width,s.oem_rim_width,p.width),offset:num(r.offset,r.rim_offset,r.et,s.rim_offset,s.oem_rim_offset,p.offset),pcd:first(r.bolt_pattern,r.pcd,s.bolt_pattern,s.pcd,t.bolt_pattern,t.pcd,rec.bolt_pattern,rec.pcd),bore:num(r.centre_bore,r.center_bore,r.cb,s.centre_bore,s.center_bore,s.cb,t.centre_bore,t.center_bore,t.cb),load:num(r.load,r.load_capacity,s.load,s.load_kg,rec.load_kg)};}
+function category(r){const t=String(first(r.fitment_type,r.type,r.category,r.source,r.kind,'')).toLowerCase();if(r.is_oe||r.is_stock||/oe|oem|original|factory|stock/.test(t))return'OE';if(/aftermarket|upgrade|option|alternative|upstep/.test(t))return'UPGRADE';return'OTHER';}
+function packages(r){let w=r.wheels||r.fitments||r.rims||r.wheel_pairs||r.wheel||[],a=[];if(Array.isArray(w))a=w;else if(w&&typeof w==='object'){const f=Array.isArray(w.front)?w.front:[w.front].filter(Boolean),b=Array.isArray(w.rear)?w.rear:[w.rear].filter(Boolean);a=f.length||b.length?Array.from({length:Math.max(f.length,b.length)},(_,i)=>({front:f[i]||f[0],rear:b[i]||b[0]})):[w];}if(!a.length)a=[r];return a.map(p=>{const front=side(p,'front'),rear=side(p,'rear'),t=r.technical||p.technical||{},pcd=first(t.bolt_pattern,t.pcd,r.bolt_pattern,r.pcd),cb=num(t.centre_bore,t.center_bore,t.cb,r.centre_bore,r.center_bore,r.cb);[front,rear].forEach(s=>{if(!s.pcd)s.pcd=pcd;if(s.bore===''||s.bore===undefined)s.bore=cb;});const type=(p.is_oe!==undefined||p.type||p.fitment_type||p.category)?category(p):category(r);return{type,front,rear};}).filter(x=>Object.values(x.front).some(v=>v!=='')||Object.values(x.rear).some(v=>v!==''));}
+function sideText(s){return s&& (s.width||s.diameter)?[s.width?s.width+'J':'',s.diameter?'×'+s.diameter:'',s.offset!==''?'ET'+s.offset:''].filter(Boolean).join(' '):'—';}
+function render(records){S.fitments=records.flatMap(packages);const body=$('#fitment-rows');body.replaceChildren();$('#fitment-count').textContent=S.fitments.length+' RESULTS';$('#fitment-table-wrap').hidden=!S.fitments.length;$('#fitment-empty').hidden=!!S.fitments.length;if(!S.fitments.length){$('#fitment-empty').textContent='No wheel specifications returned for this vehicle and market.';return;}S.fitments.forEach((f,i)=>{const tr=document.createElement('tr'),vals=[f.type==='OE'?'ORIGINAL':f.type==='UPGRADE'?'UPGRADE':'OTHER',sideText(f.front),sideText(f.rear)];vals.forEach((v,j)=>{const td=document.createElement('td');td.textContent=String(v);if(!j)td.className='fitment-type fitment-'+f.type.toLowerCase();tr.append(td);});const td=document.createElement('td'),b=document.createElement('button');b.type='button';b.className='fitment-select-button';b.textContent=S.selected===i?'SELECTED':'SELECT';b.addEventListener('click',()=>choose(i));td.append(b);tr.append(td);if(S.selected===i)tr.classList.add('selected');body.append(tr);});}
+function choose(i){const f=S.fitments[i];if(!f)return;S.selected=i;S.selectedData=f;if(S.step===2)applySelectedFitment();$('#front-source').textContent='REFERENCE · '+f.type;$('#rear-source').textContent='REFERENCE · '+f.type;$('#fitment-selection-text').textContent=[S.vehicle?.title,f.type,'Front '+sideText(f.front),'Rear '+sideText(f.rear)].filter(Boolean).join(' · ');$('#fitment-selection').hidden=false;render(S.raw||[]);sync();}
+async function regions(){const market=$('#market');market.disabled=true;status('LOADING VEHICLE MARKETS');try{S.regions=list(await api('regions'));if(!S.regions.length)throw Error('No vehicle markets returned');await Promise.all(['p-select','p-select-option'].map(tag=>customElements.whenDefined(tag)));await setOptions(market,S.regions.map(item=>({...item,name:name(item)+' · '+String(slug(item)).toUpperCase()})),'Select vehicle market');market.disabled=false;status('SELECT A VEHICLE MARKET','success');}catch{status('MARKET LOOKUP UNAVAILABLE','error');$('#fitment-empty').hidden=false;$('#fitment-empty').textContent='Vehicle markets could not be loaded. Please retry or skip vehicle selection.';}}
+async function makes(){if(!S.market)return;const make=$('#make');make.disabled=true;try{S.makes=list(await api('makes'));await setOptions(make,S.makes,'Select manufacturer');make.disabled=false;status('SELECT A MANUFACTURER','success');}catch{status('VEHICLE LOOKUP UNAVAILABLE','error');$('#fitment-empty').hidden=false;$('#fitment-empty').textContent='Vehicle lookup is temporarily unavailable. You can skip this step and enter wheel dimensions manually.';}}
+async function models(){const make=val('make');await Promise.all([reset('model','Select model'),reset('year','Select year'),reset('variant','Select trim')]);S.selected=null;S.selectedData=null;S.vehicle=null;S.fitments=[];render([]);if(!make)return;status('LOADING MODELS');try{S.models=list(await api('models',{make}));await setOptions($('#model'),S.models,'Select model');$('#model').disabled=false;status('SELECT A MODEL','success');}catch{status('MODEL LOOKUP UNAVAILABLE','error');}}
+async function years(){const make=val('make'),model=val('model');await Promise.all([reset('year','Select year'),reset('variant','Select trim')]);if(!make||!model)return;status('LOADING YEARS');try{S.years=list(await api('years',{make,model}));await setOptions($('#year'),S.years,'Select year');$('#year').disabled=false;status('SELECT A YEAR','success');}catch{status('YEAR LOOKUP UNAVAILABLE','error');}}
+async function trims(){const make=val('make'),model=val('model'),year=val('year');await reset('variant','All modifications / trims');if(!make||!model||!year)return;status('LOADING TRIMS');try{S.trims=list(await api('modifications',{make,model,year}));await setOptions($('#variant'),S.trims,'All modifications / trims');$('#variant').disabled=false;status('SELECT TRIM OR KEEP ALL','success');await search();}catch{status('TRIM LOOKUP UNAVAILABLE','error');}}
+async function search(){const make=val('make'),model=val('model'),year=val('year'),mod=val('variant');if(!make||!model||!year)return;status('SEARCHING FITMENT');$('#fitment-empty').hidden=false;$('#fitment-empty').textContent='Retrieving OE and alternative wheel specifications…';$('#fitment-table-wrap').hidden=true;try{const data=await api('search/by_model',{make,model,year,...(mod?{modification:mod}:{})}),records=list(data);S.raw=records;S.selected=null;S.selectedData=null;const mk=name(S.makes.find(x=>String(slug(x))===make)||make),md=name(S.models.find(x=>String(slug(x))===model)||model),tr=name(S.trims.find(x=>String(slug(x))===mod)||mod);S.vehicle={make:mk,model:md,year,trim:tr,title:[year,mk,md,tr].filter(Boolean).join(' ')};render(records);status(records.length?'FITMENT DATA LOADED':'NO MATCHING FITMENT',records.length?'success':'error');}catch{$('#fitment-empty').hidden=false;$('#fitment-empty').textContent='Vehicle specifications could not be loaded. Please retry or enter dimensions manually.';status('FITMENT SEARCH FAILED','error');}}
+function review(){const rows=[['MODEL',S.model?.name||'Not selected'],['VEHICLE',S.vehicle?.title||'Vehicle not selected'],['MARKET',S.market.toUpperCase()],['FRONT',sideText({width:val('front-width'),diameter:val('front-diameter'),offset:val('front-offset')})+' · PCD '+(val('front-pcd')||'—')+' · CB '+(val('front-bore')||'—')],['REAR',sideText({width:val('rear-width'),diameter:val('rear-diameter'),offset:val('rear-offset')})+' · PCD '+(val('rear-pcd')||'—')+' · CB '+(val('rear-bore')||'—')],['FINISH',SURF[S.surface]+' · '+NAMES[S.color]]];$('#review-summary').replaceChildren(...rows.map(([a,b])=>{const d=document.createElement('div');d.className='review-row';const k=document.createElement('span');k.textContent=a;const v=document.createElement('strong');v.textContent=b;d.append(k,v);return d;}));}
+function submit(e){e.preventDefault();const axle=p=>({diameter_in:val(p+'-diameter')||null,width_j:val(p+'-width')||null,offset_et_mm:val(p+'-offset')||null,pcd:val(p+'-pcd')||null,centre_bore_mm:val(p+'-bore')||null,load_kg:val(p+'-load')||null});const data={model_asset:S.model?.key||null,model_name:S.model?.name||null,vehicle:S.vehicle,market:S.market,fitment_type:S.selectedData?.type||null,front:axle('front'),rear:axle('rear'),finish:{color:NAMES[S.color],surface:SURF[S.surface],notes:val('finish-notes')},vehicle_modifications:val('vehicle-mods'),bespoke_requirements:val('special-requests'),customer:{name:val('customer-name'),email:val('customer-email')},fitment_status:'Pending engineering review'};const box=$('#submission-message');box.hidden=false;box.replaceChildren();const title=document.createElement('strong');title.textContent='Your configuration is ready for review.';const note=document.createElement('p');note.textContent='This specification has not been transmitted. Download or copy it for engineering review.';const actions=document.createElement('div');actions.className='submission-actions';const copy=document.createElement('p-button');copy.type='button';copy.variant='primary';copy.textContent='COPY CONFIGURATION';copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(JSON.stringify(data,null,2));copy.textContent='COPIED';}catch{copy.textContent='COPY UNAVAILABLE';}});const down=document.createElement('p-button');down.type='button';down.variant='secondary';down.textContent='DOWNLOAD CONFIGURATION';down.addEventListener('click',()=>{const u=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'})),a=document.createElement('a');a.href=u;a.download='ouranos-bespoke-configuration.json';a.click();URL.revokeObjectURL(u);});const pre=document.createElement('pre');pre.textContent=JSON.stringify(data,null,2);actions.append(copy,down);box.append(title,note,actions,pre);}
+$('#market').addEventListener('change',async e=>{S.market=e.target.value||'';await Promise.all(['p-select','p-select-option'].map(tag=>customElements.whenDefined(tag)));await Promise.all([reset('model','Select model'),reset('year','Select year'),reset('variant','Select trim')]);S.makes=[];await setOptions($('#make'),[],'Select manufacturer');$('#make').disabled=true;S.selected=null;S.selectedData=null;S.fitments=[];render([]);if(S.market)await makes();else status('SELECT A VEHICLE MARKET');});
+$('#make').addEventListener('change',models);$('#model').addEventListener('change',years);$('#year').addEventListener('change',trims);$('#variant').addEventListener('change',search);
+$('#back-button').addEventListener('click',()=>step(S.step-1));$('#next-button').addEventListener('click',()=>step(S.step+1));$('#skip-vehicle').addEventListener('click',()=>{S.vehicle=null;S.selected=null;S.selectedData=null;$('#front-source').textContent='MANUAL ENTRY · NO VEHICLE SELECTED';$('#rear-source').textContent='MANUAL ENTRY · NO VEHICLE SELECTED';step(2);sync();});$('#config-stepper').addEventListener('update',e=>step(e.detail.activeStepIndex));
+$('#model-prev').addEventListener('click',()=>renderModelPage(modelPage-1));$('#model-next').addEventListener('click',()=>renderModelPage(modelPage+1));
+$('#wheel-color').addEventListener('change',e=>material(e.target.value,S.surface));$('#wheel-surface').addEventListener('change',e=>material(S.color,e.target.value));ids.forEach(id=>{const el=$('#'+id);el?.addEventListener('input',sync);el?.addEventListener('change',sync);});$('#config-form').addEventListener('submit',submit);
+async function initWheel(){const canvas=$('#wheel-canvas');try{const THREE=await import('https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js'),{GLTFLoader}=await import('https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/GLTFLoader.js');const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(44,1,.1,100),defaultZoom=6.1;camera.position.set(0,.1,defaultZoom);const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;scene.add(new THREE.HemisphereLight(0xffffff,0x292d31,2.1));const light=new THREE.DirectionalLight(0xffffff,3.1);light.position.set(4,5,7);scene.add(light);const rim=new THREE.DirectionalLight(0x9aa8b4,1.5);rim.position.set(-5,-2,3);scene.add(rim);const wheel=new THREE.Group();scene.add(wheel);const url=activeModelUrl,response=await fetch(url,{credentials:'same-origin',cache:'default'});if(!response.ok)throw Error('GLB HTTP '+response.status);const buffer=await response.arrayBuffer();if(buffer.byteLength<20||new DataView(buffer).getUint32(0,true)!==0x46546c67)throw Error('Invalid GLB binary');const model=(await new GLTFLoader().parseAsync(buffer,new URL('.',new URL(url,location.origin)).href)).scene;if(!model)throw Error('Empty GLB scene');model.rotation.y=Math.PI/2;model.updateMatrixWorld(true);const box=new THREE.Box3().setFromObject(model);if(box.isEmpty())throw Error('No GLB geometry');const center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3()),scale=3.5/Math.max(size.x,size.y,size.z),group=new THREE.Group();group.add(model);group.scale.setScalar(scale);group.position.copy(center).multiplyScalar(-scale);const mats=[];model.traverse(o=>{if(!o.isMesh)return;const source=Array.isArray(o.material)?o.material:[o.material],clones=source.map(m=>{const c=m.clone();mats.push(c);if(c.color)c.color.setHex(COLORS[S.color]);if('metalness'in c)c.metalness=.88;if('roughness'in c)c.roughness=ROUGH[S.surface];return c;});o.material=Array.isArray(o.material)?clones:clones[0];});if(!mats.length)throw Error('No GLB mesh materials');wheel.add(group);wheel.rotation.set(-.08,-.22,0);let drag=false,x=0,y=0,pinch=0,pinchZoom=defaultZoom;const clamp=z=>Math.max(4.2,Math.min(10,z)),zoom=d=>camera.position.z=clamp(camera.position.z+d);canvas.addEventListener('pointerdown',e=>{drag=true;x=e.clientX;y=e.clientY;canvas.setPointerCapture?.(e.pointerId);});canvas.addEventListener('pointerup',()=>drag=false);canvas.addEventListener('pointercancel',()=>drag=false);canvas.addEventListener('pointermove',e=>{if(!drag)return;wheel.rotation.y+=(e.clientX-x)*.009;wheel.rotation.x+=(e.clientY-y)*.006;x=e.clientX;y=e.clientY;});canvas.addEventListener('wheel',e=>{e.preventDefault();zoom(e.deltaY*.004);},{passive:false});canvas.addEventListener('touchstart',e=>{if(e.touches.length===2){pinch=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);pinchZoom=camera.position.z;}},{passive:true});canvas.addEventListener('touchmove',e=>{if(e.touches.length===2&&pinch){const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);camera.position.z=clamp(pinchZoom-(d-pinch)*.012);}},{passive:true});$('#zoom-in').addEventListener('click',()=>zoom(-.45));$('#zoom-out').addEventListener('click',()=>zoom(.45));$('#zoom-reset').addEventListener('click',()=>{camera.position.z=defaultZoom;wheel.rotation.set(-.08,-.22,0);});const resize=()=>{const r=canvas.getBoundingClientRect();if(!r.width||!r.height)return;renderer.setSize(r.width,r.height,false);camera.aspect=r.width/r.height;camera.updateProjectionMatrix();};new ResizeObserver(resize).observe(canvas);resize();let animationFrame=0;const animate=()=>{renderer.render(scene,camera);animationFrame=requestAnimationFrame(animate);};animate();wheelScene={setMaterial(c,r){mats.forEach(m=>{if(m.color)m.color.setHex(c);if('roughness'in m)m.roughness=r;});},dispose(){cancelAnimationFrame(animationFrame);renderer.dispose();scene.clear();}};$('#preview-status').textContent='GLB LOADED · '+Math.round(buffer.byteLength/1024)+' KB';$('#preview-design').textContent=activeModelName.toUpperCase();}catch(e){console.error(e);$('#preview-status').textContent='MODEL LOAD FAILED · '+e.message;}}
+function renderModelPage(nextPage){
+  const pages=Math.max(1,Math.ceil(modelLibrary.length/MODELS_PER_PAGE));modelPage=Math.max(0,Math.min(pages-1,nextPage));
+  const el=$('#model-list');el.replaceChildren();
+  const visible=modelLibrary.slice(modelPage*MODELS_PER_PAGE,(modelPage+1)*MODELS_PER_PAGE);
+  visible.forEach((model)=>{
+    const b=document.createElement('button');b.type='button';b.className='model-card';b.dataset.modelKey=model.key;b.setAttribute('role','option');b.setAttribute('aria-selected',String(S.model?.key===model.key));
+    const copy=document.createElement('span');copy.className='model-card-copy';const title=document.createElement('strong');title.textContent=model.name;
+    const meta=document.createElement('small');meta.textContent=Math.round(model.size/1024)+' KB · GLB';copy.append(title,meta);
+    const state=document.createElement('span');state.className='model-card-state';state.textContent=S.model?.key===model.key?'SELECTED':'SELECT';
+    b.append(copy,state);b.addEventListener('click',()=>{
+      S.model=model;activeModelUrl=model.url;activeModelName=model.name;
+      document.querySelectorAll('.model-card').forEach(n=>{n.setAttribute('aria-selected',String(n.dataset.modelKey===model.key));const label=n.querySelector('.model-card-state');if(label)label.textContent=n.dataset.modelKey===model.key?'SELECTED':'SELECT';});
+      $('#model-selection-error')?.remove();$('#preview-design').textContent=model.name.toUpperCase();$('#preview-status').textContent='LOADING GLB';
+      wheelScene?.dispose?.();initWheel();
+    });el.append(b);
   });
-  const download = document.createElement('p-button');
-  download.type = 'button';
-  download.variant = 'secondary';
-  download.className = 'back-button';
-  download.textContent = 'DOWNLOAD CONFIGURATION';
-  download.addEventListener('click', () => {
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'ouranos-bespoke-configuration.json';
-    link.click();
-    URL.revokeObjectURL(url);
-  });
-  actions.append(copy, download);
-  const details = document.createElement('pre');
-  details.textContent = JSON.stringify(payload, null, 2);
-  details.style.cssText = 'white-space:pre-wrap;overflow-wrap:anywhere;font-size:10px;line-height:1.55;color:#c3c5c4;background:#17191b;padding:14px;margin-top:16px;max-height:260px;overflow:auto';
-  message.append(title, note, actions, details);
-  message.scrollIntoView({ behavior: 'smooth', block: 'center' });
-});
-
-async function initWheel() {
-  const canvas = $('#wheel-canvas');
-  $('#preview-status').textContent = 'LOADING GLB';
-  try {
-    const THREE = await import('https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js');
-    const { GLTFLoader } = await import('https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/GLTFLoader.js');
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
-    camera.position.set(0, 0.15, 6.2);
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
-    scene.add(new THREE.HemisphereLight(0xffffff, 0x292d31, 2.1));
-    const key = new THREE.DirectionalLight(0xffffff, 3.1); key.position.set(4, 5, 7); scene.add(key);
-    const rimLight = new THREE.DirectionalLight(0x9aa8b4, 1.5); rimLight.position.set(-5, -2, 3); scene.add(rimLight);
-    const wheel = new THREE.Group(); scene.add(wheel);
-
-    const modelUrl = 'https://pub-1b5295aa36194df7bb80c797f53c3d1b.r2.dev/models/sport_alloy_wheel_rim.glb';
-    $('#preview-status').textContent = 'FETCHING GLB';
-    const response = await Promise.race([
-      fetch(modelUrl, { mode: 'cors', credentials: 'omit', cache: 'no-cache' }),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('Network timeout while requesting GLB')), 20000)),
-    ]);
-    if (!response.ok) throw new Error('GLB request failed: HTTP ' + response.status);
-    const contentType = response.headers.get('content-type') || '';
-    if (!contentType.includes('model/gltf-binary') && !contentType.includes('octet-stream')) console.warn('Unexpected GLB content type:', contentType);
-    const buffer = await response.arrayBuffer();
-    if (buffer.byteLength < 20) throw new Error('GLB response is too small (' + buffer.byteLength + ' bytes)');
-    if (new DataView(buffer).getUint32(0, true) !== 0x46546c67) throw new Error('Response is not a valid GLB binary (missing glTF header)');
-    $('#preview-status').textContent = 'PARSING GLB';
-    const loader = new GLTFLoader();
-    const gltf = await loader.parseAsync(buffer, new URL('.', modelUrl).href);
-    const model = gltf.scene;
-    if (!model) throw new Error('GLB contains no default scene');
-    model.rotation.y = Math.PI / 2;
-    model.updateMatrixWorld(true);
-    const bounds = new THREE.Box3().setFromObject(model);
-    if (bounds.isEmpty()) throw new Error('GLB scene contains no renderable geometry');
-    const center = bounds.getCenter(new THREE.Vector3());
-    const size = bounds.getSize(new THREE.Vector3());
-    const maxDimension = Math.max(size.x, size.y, size.z);
-    if (!Number.isFinite(maxDimension) || maxDimension <= 0) throw new Error('GLB geometry has invalid dimensions');
-    const normalized = new THREE.Group();
-    normalized.add(model);
-    const scale = 3.25 / maxDimension;
-    normalized.scale.setScalar(scale);
-    normalized.position.copy(center).multiplyScalar(-scale);
-    const materialRecords = [];
-    model.traverse((object) => {
-      if (!object.isMesh) return;
-      object.castShadow = true;
-      object.receiveShadow = true;
-      const originals = Array.isArray(object.material) ? object.material : [object.material];
-      const materials = originals.map((source) => {
-        const material = source.clone();
-        materialRecords.push(material);
-        if (material.color) material.color.setHex(colorValues[state.color]);
-        if ('metalness' in material) material.metalness = 0.88;
-        if ('roughness' in material) material.roughness = surfaceRoughness[state.surface];
-        return material;
-      });
-      object.material = Array.isArray(object.material) ? materials : materials[0];
-    });
-    if (!materialRecords.length) throw new Error('GLB scene has no mesh materials to render');
-    wheel.add(normalized);
-    wheel.rotation.x = -0.08;
-    wheel.rotation.y = -0.22;
-
-    let dragging = false, lastX = 0, lastY = 0;
-    canvas.addEventListener('pointerdown', (e) => { dragging = true; lastX = e.clientX; lastY = e.clientY; canvas.setPointerCapture(e.pointerId); });
-    canvas.addEventListener('pointerup', () => { dragging = false; });
-    canvas.addEventListener('pointercancel', () => { dragging = false; });
-    canvas.addEventListener('pointermove', (e) => {
-      if (!dragging) return;
-      wheel.rotation.y += (e.clientX - lastX) * 0.009;
-      wheel.rotation.x += (e.clientY - lastY) * 0.006;
-      lastX = e.clientX; lastY = e.clientY;
-    });
-    canvas.addEventListener('wheel', (e) => { e.preventDefault(); camera.position.z = Math.max(4.8, Math.min(8.5, camera.position.z + e.deltaY * 0.004)); }, { passive: false });
-    function resize() {
-      const rect = canvas.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-      renderer.setSize(rect.width, rect.height, false);
-      camera.aspect = rect.width / rect.height;
-      camera.updateProjectionMatrix();
-    }
-    const observer = new ResizeObserver(resize); observer.observe(canvas); resize();
-    function animate() {
-      renderer.render(scene, camera);
-      requestAnimationFrame(animate);
-    }
-    animate();
-    wheelScene = {
-      setMaterial(color, roughness) {
-        materialRecords.forEach((material) => {
-          if (material.color) material.color.setHex(color);
-          if ('roughness' in material) material.roughness = roughness;
-        });
-      },
-    };
-      $('#preview-status').textContent = 'GLB LOADED · ' + Math.round(buffer.byteLength / 1024) + ' KB';
-  } catch (error) {
-    console.error('Ouranos GLB preview failed:', error);
-    canvas.hidden = false;
-    $('#preview-status').textContent = 'MODEL LOAD FAILED · ' + (error instanceof Error ? error.message : 'UNKNOWN ERROR');
-  }
+  $('#model-page-label').textContent='PAGE '+(modelPage+1)+' / '+pages;
+  $('#model-prev').disabled=modelPage===0;$('#model-next').disabled=modelPage>=pages-1;
 }
-try {
-  restoreDraft();
-  setStep(0);
-  syncSummary();
-  setMaterial(state.color, state.surface);
-  initWheel();
-} catch (error) {
-  console.error('Ouranos configurator initialization failed:', error);
-  const status = $('#preview-status');
-  if (status) status.textContent = 'CONFIGURATOR ERROR';
+async function loadModelLibrary(){
+  const count=$('#model-count');
+  try{
+    const response=await fetch('/api/models',{cache:'no-cache'});if(!response.ok)throw Error('HTTP '+response.status);
+    const data=await response.json();modelLibrary=Array.isArray(data.models)?data.models:[];
+    count.textContent=modelLibrary.length+' MODELS';
+    if(!modelLibrary.length){$('#model-list').textContent='No GLB models found in ouranos-media/models/.';return;}
+    renderModelPage(0);
+  }catch(error){count.textContent='UNAVAILABLE';$('#model-list').textContent='Model library unavailable: '+error.message;}
 }
+try{const d=JSON.parse(localStorage.getItem('ouranos-config-v2')||'null');if(d){for(const [id,v] of Object.entries(d.fields||{}))if(ids.includes(id)&&typeof v==='string')put(id,v);}}catch{}put('market',S.market);put('wheel-color',S.color);put('wheel-surface',S.surface);step(0);sync();regions();loadModelLibrary();
