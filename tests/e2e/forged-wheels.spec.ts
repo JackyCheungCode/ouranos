@@ -35,7 +35,7 @@ test('forged wheels landing page follows the seven-section business brief', asyn
   await expect(page.locator('p-stepper-horizontal-item')).toHaveCount(6);
   await expect(page.locator('.forged-construction-panel')).toHaveCount(4);
   await expect(page.locator('p-carousel')).toBeVisible();
-  await expect(page.locator('p-scroller')).toBeVisible();
+  await expect(page.locator('.forged-certifications__scroller')).toBeVisible();
   await expect(page.locator('.forged-fitment-card')).toHaveCount(5);
   await expect(page.locator('.forged-aftercare__grid article')).toHaveCount(3);
   await expect(page.locator('#forged-enquiry-form')).toBeVisible();
