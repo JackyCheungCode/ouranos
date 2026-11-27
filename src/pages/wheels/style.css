@@ -816,3 +816,125 @@ body.drawer-open {
 @media (max-width: 760px) {
   .wheel-card__body { padding: 16px; }
 }
+
+
+/* Unified white product card with grouped, non-repeating customization icons. */
+.wheels-product-card {
+  background: #fff;
+  border: 1px solid #e5e5e3;
+  border-radius: 2px;
+}
+.wheel-card__image {
+  background: #fff;
+}
+.wheel-card__body {
+  grid-template-rows: auto auto 1fr auto;
+  padding: 20px;
+  gap: 18px;
+  background: #fff;
+}
+.wheel-card__identity { min-height: 94px; }
+.wheel-card__customization {
+  margin: 0;
+  padding: 16px 0;
+  border-top: 1px solid #e5e5e3;
+  border-bottom: 1px solid #e5e5e3;
+}
+.wheel-card__customization h4 {
+  margin: 0 0 14px;
+  color: #171717;
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 600;
+}
+.wheel-card__customization-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 16px;
+  row-gap: 18px;
+}
+.wheel-card__customization-group {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  min-width: 0;
+}
+.wheel-card__customization-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.wheel-card__customization-heading p-icon {
+  flex: 0 0 18px;
+  color: #333;
+}
+.wheel-card__customization-heading strong {
+  color: #222;
+  font-size: 11px;
+  line-height: 1.35;
+  font-weight: 600;
+}
+.wheel-card__customization-group > span {
+  padding-left: 26px;
+  color: #6a6a6a;
+  font-size: 11px;
+  line-height: 1.45;
+}
+.wheel-card__availability-note {
+  margin: 14px 0 0;
+  color: #777;
+  font-size: 10px;
+  line-height: 1.45;
+}
+.wheel-card__meta {
+  display: grid;
+  gap: 12px;
+  padding: 0;
+}
+.wheel-card__actions {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 10px;
+  padding: 14px 0 0;
+  border-top: 1px solid #e5e5e3;
+}
+.wheel-card__action {
+  box-sizing: border-box;
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 11px 14px;
+  border: 1px solid #171717;
+  border-radius: 2px;
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+.wheel-card__action--primary {
+  background: #171717;
+  color: #fff;
+}
+.wheel-card__action--primary:hover {
+  background: #383838;
+  border-color: #383838;
+}
+.wheel-card__action--secondary {
+  background: #fff;
+  color: #171717;
+}
+.wheel-card__action--secondary:hover {
+  background: #f2f2f2;
+}
+@media (max-width: 760px) {
+  .wheel-card__body { padding: 16px; }
+  .wheel-card__customization-grid { column-gap: 10px; }
+  .wheel-card__customization-heading { gap: 6px; }
+  .wheel-card__customization-heading strong { font-size: 10px; }
+  .wheel-card__customization-group > span { padding-left: 24px; font-size: 10px; }
+  .wheel-card__actions { grid-template-columns: 1.1fr 1fr; }
+}
