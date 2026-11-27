@@ -1008,18 +1008,15 @@ Use tables for dense verified specifications. Use selection blocks for explicit 
     let ui: { type: 'assistant_message'; content: Array<Record<string, unknown>> } | null = null;
     const parsedValues = extractJsonObjects(response);
     const root = parsedValues.find((value) => value && typeof value === 'object' && !Array.isArray(value) && (value as {type?:string}).type === 'assistant_message') as {type?:string;content?:unknown[]} | undefined;
-    if (root && Array.isArray(root.content)) {
-      const allowed = new Set(['text','product_card','product_grid','specification_table','comparison_table','selection','image_gallery','action_group','notice']);
-      const blocks = root.content.filter((block): block is Record<string, unknown> =>
-        Boolean(block && typeof block === 'object' && allowed.has(String((block as Record<string, unknown>).type))),
-      ).slice(0, 20);
-      if (blocks.length) ui = { type: 'assistant_message', content: blocks };
-    } else if (parsedValues.length > 1) {
-      const blocks = parsedValues.filter((value): value is Record<string, unknown> =>
-        Boolean(value && typeof value === 'object' && typeof (value as Record<string, unknown>).type === 'string'),
-      ).slice(0, 20);
-      if (blocks.length) ui = { type: 'assistant_message', content: blocks };
-    }
+    const allowed = new Set(['text','product_card','product_grid','specification_table','comparison_table','selection','image_gallery','action_group','notice']);
+    const candidateBlocks = [
+      ...(root && Array.isArray(root.content) ? root.content : []),
+      ...parsedValues.filter((value) => value !== root && value && typeof value === 'object' && typeof (value as Record<string, unknown>).type === 'string'),
+    ];
+    const blocks = candidateBlocks.filter((block): block is Record<string, unknown> =>
+      Boolean(block && typeof block === 'object' && allowed.has(String((block as Record<string, unknown>).type))),
+    ).slice(0, 20);
+    if (blocks.length) ui = { type: 'assistant_message', content: blocks };
     const plainFallback = response.replace(/\x60{3}(?:json)?|\x60{3}/gi, '').trim();
     if (!ui && (/^\s*\{/.test(plainFallback) || plainFallback.includes('"type":"assistant_message"'))) {
       return json({ message: 'I could not format that response correctly. Please rephrase your question and I will try again.', model: CHAT_MODEL, sources: sourceResults.map(({source,status})=>({name:source,status})) });
