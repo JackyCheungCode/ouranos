@@ -98,5 +98,5 @@ test('forged wheels enquiry supports a one-set private owner enquiry and respons
   expect(dimensions.body).toBeLessThanOrEqual(dimensions.viewport);
   await expect(page.locator('#forged-submit')).toBeVisible();
   await expect(page.locator('.forged-swatch .swatch').first()).toHaveCSS('border-radius', '50%');
-  await expect(page.locator('.forged-form-grid label > span')).toHaveCount(1);
+  await expect(page.locator('.forged-form-grid label:has(> p-input-text) > span')).toHaveCount(0);
 });
