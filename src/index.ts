@@ -1002,7 +1002,12 @@ Use selection blocks whenever the user must choose between wheel sizes, diameter
         ...messages.slice(0, -1).map((message) => ({
           role: message.role,
           content: message.selection
-            ? message.content + '\\n[User confirmed selection: ' + message.selection.title + ' = ' + message.selection.values.join(', ') + ']'
+            ? message.content +
+              '\\n[User confirmed selection: ' +
+              message.selection.title +
+              ' = ' +
+              message.selection.values.join(', ') +
+              ']'
             : message.content,
         })),
         { role: 'user', content: latest + context },
@@ -1016,10 +1021,26 @@ Use selection blocks whenever the user must choose between wheel sizes, diameter
     try {
       const parsed = JSON.parse(response.trim()) as { type?: string; content?: unknown };
       if (parsed.type === 'assistant_message' && Array.isArray(parsed.content)) {
-        const allowed = new Set(['text', 'product_card', 'product_grid', 'specification_table', 'comparison_table', 'selection', 'image_gallery', 'action_group', 'notice']);
-        const blocks = parsed.content.filter((block): block is Record<string, unknown> =>
-          Boolean(block && typeof block === 'object' && allowed.has(String((block as Record<string, unknown>).type))),
-        ).slice(0, 20);
+        const allowed = new Set([
+          'text',
+          'product_card',
+          'product_grid',
+          'specification_table',
+          'comparison_table',
+          'selection',
+          'image_gallery',
+          'action_group',
+          'notice',
+        ]);
+        const blocks = parsed.content
+          .filter((block): block is Record<string, unknown> =>
+            Boolean(
+              block &&
+                typeof block === 'object' &&
+                allowed.has(String((block as Record<string, unknown>).type)),
+            ),
+          )
+          .slice(0, 20);
         if (blocks.length) ui = { type: 'assistant_message', content: blocks };
       }
     } catch {
