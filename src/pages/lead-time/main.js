@@ -21,7 +21,7 @@ function populateProducts() {
 function updateProductDetail() {
   const product = demoProducts.find((item) => item.id === $('#lead-product').value);
   $('#product-detail').textContent = product
-    ? [product.line, product.design, product.diameter ? product.diameter + ' in' : ''].filter(Boolean).join(' · ')
+    ? [product.design, product.diameter ? product.diameter + ' in' : ''].filter(Boolean).join(' · ')
     : 'Select a model to view its configuration.';
 }
 
