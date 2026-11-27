@@ -15,6 +15,7 @@ interface ModelsBucket {
   }>;
   get(key: string): Promise<ModelsBucketBody | null>;
   put(key: string, value: ArrayBuffer | Uint8Array, options?: { httpMetadata?: { contentType?: string } }): Promise<unknown>;
+  delete(key: string): Promise<void>;
 }
 
 interface D1Result<T = Record<string, unknown>> { results?: T[]; success: boolean; }
@@ -239,21 +240,34 @@ async function createImageDiscovery(request: Request, env: Env): Promise<Respons
 
   const id = crypto.randomUUID();
   const objectKey = 'discovery/references/' + id;
+  let objectStored = false;
+  let jobCreated = false;
   try {
     await env.MODELS_BUCKET.put(objectKey, bytes, { httpMetadata: { contentType: file.type } });
+    objectStored = true;
     await env.DB.prepare(
       'INSERT INTO discovery_jobs (id, input_type, status, reference_object_key, reference_mime_type, reference_size_bytes) VALUES (?, ?, ?, ?, ?, ?)'
     ).bind(id, 'image', 'queued', objectKey, file.type, file.size).run();
+    jobCreated = true;
     await env.DB.prepare(
       'INSERT INTO discovery_references (id, job_id, source_type) VALUES (?, ?, ?)'
     ).bind(crypto.randomUUID(), id, 'image').run();
     await env.DISCOVERY_QUEUE.send({ jobId: id, type: 'image_discovery' });
     return json({ jobId: id, status: 'queued' }, 202);
   } catch {
-    await env.MODELS_BUCKET.get(objectKey).then(async (object) => {
-      if (object) return;
-      return;
-    }).catch(() => undefined);
+    if (jobCreated) {
+      // Keep the reference and mark the job terminal if the queue could not accept it.
+      await env.DB.prepare(
+        "UPDATE discovery_jobs SET status = 'failed', error_code = ?, error_message = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND status = 'queued'"
+      ).bind(
+        'DISCOVERY_INTAKE_FAILED',
+        'The reference was stored, but the processing queue could not accept the job. Please retry.',
+        id,
+      ).run().catch(() => undefined);
+    } else if (objectStored) {
+      // No durable D1 job exists, so remove the otherwise orphaned object.
+      await env.MODELS_BUCKET.delete(objectKey).catch(() => undefined);
+    }
     return json({ error: 'DISCOVERY_INTAKE_FAILED' }, 500);
   }
 }
