@@ -6,8 +6,10 @@ test('forged wheels landing page is independent from the existing wheels catalog
   await page.goto('/forged-wheels/', { waitUntil: 'domcontentloaded' });
 
   await expect(page).toHaveTitle(/OURANOS \| Forged Wheels/);
-  await expect(page.locator('.ouranos-header')).toHaveAttribute('data-header-variant', 'stacked');
+  await expect(page.locator('.ouranos-header')).toHaveAttribute('data-header-variant', 'overlay');
   await expect(page.locator('#ouranos-ai-open')).toBeVisible();
+  await expect(page.locator('#ouranos-language-trigger')).toBeVisible();
+  await expect(page.locator('#ouranos-theme-toggle')).toBeVisible();
   await expect(page.locator('#forged-hero-title')).toContainText('FORGED.');
   await expect(page.locator('.forged-hero__video source')).toHaveAttribute(
     'src',
