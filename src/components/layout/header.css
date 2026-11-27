@@ -79,6 +79,10 @@
   display: grid;
   min-width: 176px;
   gap: 4px;
+  padding: 8px;
+  color: #010205;
+  color-scheme: light;
+  background: #fff;
 }
 .ouranos-language-option {
   display: block;
@@ -95,7 +99,7 @@
 }
 .ouranos-language-option:hover,
 .ouranos-language-option:focus-visible {
-  background: var(--pds-theme-light-background-surface, rgba(127, 127, 127, 0.12));
+  background: #f2f2f2;
 }
 .ouranos-language-option[aria-pressed="true"] {
   font-weight: 700;
@@ -128,8 +132,8 @@
   min-height: 80px;
 }
 .ouranos-header[data-header-variant="overlay"] p-button-pure {
-  color: #fff;
-  color-scheme: dark;
+  color: #fff !important;
+  color-scheme: dark !important;
 }
 @media (max-width: 900px) {
   .ouranos-header__main-inner {
