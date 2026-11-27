@@ -17,7 +17,7 @@ let selectedFile = null;
 let previewUrl = null;
 let activeJobId = null;
 
-function renderDiscoveryMatches(matches) {
+function renderDiscoveryMatches(matches, target = imagePanel) {
   const old = document.querySelector('#discovery-results');
   if (old) old.remove();
   const section = document.createElement('section');
@@ -40,7 +40,7 @@ function renderDiscoveryMatches(matches) {
     item.append(title, detail);
     section.append(item);
   }
-  imagePanel.append(section);
+  target.append(section);
 }
 
 async function pollDiscoveryJob(jobId) {
@@ -144,25 +144,65 @@ urlInput.addEventListener('input', () => {
   urlStatus.dataset.state = '';
 });
 
-urlSubmit.addEventListener('click', () => {
-  let url;
-  try {
-    url = new URL(urlInput.value.trim());
-  } catch {
-    urlStatus.textContent = 'Enter a valid product page URL.';
-    urlStatus.dataset.state = 'error';
-    return;
+async function pollUrlDiscoveryJob(jobId) {
+  const started = Date.now();
+  while (Date.now() - started < 120000) {
+    const response = await fetch(`/api/discover/jobs/${encodeURIComponent(jobId)}`, { headers: { accept: 'application/json' } });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || 'Unable to retrieve discovery status.');
+    if (data.job.status === 'completed') {
+      urlStatus.textContent = 'Product page analysed.';
+      urlStatus.dataset.state = 'success';
+      renderDiscoveryMatches(data.matches || [], urlPanel);
+      return;
+    }
+    if (data.job.status === 'failed') throw new Error(data.job.error_message || 'Product page analysis failed.');
+    urlStatus.textContent = data.job.status === 'processing' ? 'Analysing product page…' : 'Product page queued…';
+    urlStatus.dataset.state = 'info';
+    await new Promise((resolve) => setTimeout(resolve, 1800));
   }
-  const hostname = url.hostname.toLowerCase();
-  if (!['https:', 'http:'].includes(url.protocol) || !hostname.includes('.') ||
-      hostname === 'localhost' || hostname.endsWith('.local') ||
-      /^\d{1,3}(\.\d{1,3}){3}$/.test(hostname) || url.username || url.password) {
+  urlStatus.textContent = 'Analysis is taking longer than expected. Please check again later.';
+  urlStatus.dataset.state = 'info';
+}
+
+function validateProductUrl(value) {
+  try {
+    const url = new URL(value);
+    const host = url.hostname.toLowerCase().replace(/\.$/, '');
+    const ip = /^(?:\d{1,3}\.){3}\d{1,3}$/.test(host) || host.includes(':') || host.startsWith('[');
+    if (!['https:', 'http:'].includes(url.protocol) || !host.includes('.') || ip ||
+      url.username || url.password || (url.port && !['80', '443'].includes(url.port)) ||
+      host === 'localhost' || host.endsWith('.localhost') || host.endsWith('.local') ||
+      host.endsWith('.internal') || host.endsWith('.test') || host.endsWith('.invalid')) return null;
+    return url;
+  } catch { return null; }
+}
+
+urlSubmit.addEventListener('click', async () => {
+  const source = validateProductUrl(urlInput.value.trim());
+  if (!source) {
     urlStatus.textContent = 'Enter a public product page URL using HTTP or HTTPS.';
     urlStatus.dataset.state = 'error';
     return;
   }
-  urlStatus.textContent = 'Link format accepted. Automatic page extraction and catalogue matching will be enabled in the next integration phase.';
-  urlStatus.dataset.state = 'success';
+  setPdsDisabled(urlSubmit, true);
+  urlStatus.textContent = 'Submitting product page securely…';
+  urlStatus.dataset.state = 'info';
+  try {
+    const response = await fetch('/api/discover/url', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', accept: 'application/json' },
+      body: JSON.stringify({ url: source.toString() }),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.message || data.error || 'Unable to submit this product page.');
+    await pollUrlDiscoveryJob(data.jobId);
+  } catch (error) {
+    urlStatus.textContent = error instanceof Error ? error.message : 'Unable to analyse this product page.';
+    urlStatus.dataset.state = 'error';
+  } finally {
+    setPdsDisabled(urlSubmit, !urlInput.value.trim());
+  }
 });
 
 imageSubmit.addEventListener('click', async () => {
