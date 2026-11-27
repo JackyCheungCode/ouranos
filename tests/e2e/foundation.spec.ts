@@ -17,14 +17,23 @@ test('Home page is served at the root with shared Ouranos layout', async ({ page
   expect(visibleText).not.toMatch(/Porsche/i);
   await expect(page.locator('p-wordmark, p-crest')).toHaveCount(0);
 
-  const stylesheet = page.locator('link[rel="stylesheet"]').first();
-  await expect(stylesheet).toHaveAttribute('href', /\.css(?:\?|$)/);
-  const stylesheetUrl = await stylesheet.getAttribute('href');
-  expect(stylesheetUrl).not.toBeNull();
+  const stylesheets = page.locator('link[rel="stylesheet"]');
+  const stylesheetCount = await stylesheets.count();
+  const stylesheetUrls: string[] = [];
+  for (let index = 0; index < stylesheetCount; index += 1) {
+    const href = await stylesheets.nth(index).getAttribute('href');
+    if (href && /\.css(?:\?|$)/.test(href)) stylesheetUrls.push(href);
+  }
+  expect(stylesheetUrls.length).toBeGreaterThan(0);
 
-  const cssResponse = await request.get(new URL(stylesheetUrl!, page.url()).toString());
-  expect(cssResponse.ok()).toBeTruthy();
-  expect(await cssResponse.text()).toContain('--pds-');
+  const stylesheetResponses = await Promise.all(
+    stylesheetUrls.map((href) => request.get(new URL(href, page.url()).toString())),
+  );
+  expect(stylesheetResponses.every((response) => response.ok())).toBeTruthy();
+  const stylesheetContents = await Promise.all(
+    stylesheetResponses.map((response) => response.text()),
+  );
+  expect(stylesheetContents.some((css) => css.includes('--pds-'))).toBeTruthy();
   expect(pageErrors).toEqual([]);
 });
 

@@ -22,6 +22,9 @@
         <a class="sm:hidden font-semibold tracking-[0.18em] text-gray-900" href="/" aria-label="Ouranos Home">OURANOS</a>
         <a class="max-sm:hidden font-semibold tracking-[0.18em] text-gray-900" href="/" aria-label="Ouranos Home">OURANOS</a>
         <div class="flex flex-wrap gap-static-md items-center justify-end">
+          <p-button-pure id="ouranos-ai-open" class="scheme-light p-static-xs -m-static-xs" color="primary" title="OURANOS AI Assistant" type="button" icon="sparkles" hide-label="true">
+            AI Assistant
+          </p-button-pure>
           <p-button-pure class="scheme-light p-static-xs -m-static-xs" color="primary" title="Search" type="button" icon="search" hide-label="true">
             Search
           </p-button-pure>
@@ -31,3 +34,19 @@
         </div>
       </div>
     </header>
+
+    <aside id="ouranos-ai-panel" class="ouranos-ai-panel" aria-label="OURANOS AI Assistant" aria-hidden="true">
+      <div class="ouranos-ai-panel__header">
+        <div><p-heading tag="h2" size="sm">OURANOS AI</p-heading><p-text size="xs" color="contrast-medium">Your wheel fitment specialist</p-text></div>
+        <p-button-pure id="ouranos-ai-close" type="button" icon="close" hide-label="true">Close assistant</p-button-pure>
+      </div>
+      <div id="ouranos-ai-messages" class="ouranos-ai-panel__messages" aria-live="polite">
+        <div class="ouranos-ai-message ouranos-ai-message--assistant">I can help identify your vehicle, verify wheel fitment, compare specifications and explore OURANOS designs. What would you like to know?</div>
+      </div>
+      <form id="ouranos-ai-form" class="ouranos-ai-panel__form">
+        <label class="sr-only" for="ouranos-ai-input">Ask OURANOS AI</label>
+        <textarea id="ouranos-ai-input" rows="2" maxlength="4000" placeholder="Ask about your vehicle or wheel fitment..." required></textarea>
+        <button type="submit" aria-label="Send message"><span>Send</span><span aria-hidden="true">↗</span></button>
+      </form>
+      <p class="ouranos-ai-panel__disclaimer">Fitment guidance must be verified against your exact vehicle configuration.</p>
+    </aside>
