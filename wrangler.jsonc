@@ -28,6 +28,9 @@
   "queues": {
     "producers": [
       { "binding": "DISCOVERY_QUEUE", "queue": "ouranos-discovery-jobs" }
+    ],
+    "consumers": [
+      { "queue": "ouranos-discovery-jobs", "max_batch_size": 10, "max_batch_timeout": 5, "max_retries": 3 }
     ]
   },
   "vectorize": [
