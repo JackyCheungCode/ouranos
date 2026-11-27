@@ -1,50 +1,85 @@
-import * as THREE from 'three';
 import { demoProducts } from '../wheels/demo-products.js';
 import './style.css';
-const $=(s,root=document)=>root.querySelector(s); const $all=(s,root=document)=>[...root.querySelectorAll(s)];
-const routes={
-casting:[['MATERIAL PREPARATION','Alloy charge, weighing and batch preparation'],['MELTING & HOLDING','Controlled melt temperature and conditioning'],['CASTING','Wheel blank casting and solidification'],['COOLING & DEMOULDING','Cooling, release and blank inspection'],['HEAT TREATMENT','Solution treatment, quenching and ageing'],['CNC MACHINING','Precision turning, milling and drilling'],['SURFACE FINISH & QC','Finishing, dimensional inspection and quality control']],
-forging:[['BILLET PREPARATION','Alloy billet cutting and traceability'],['BILLET HEATING','Controlled billet heating'],['FORGING','Multi-stage press forming'],['HEAT TREATMENT','Solution treatment, quenching and ageing'],['CNC MACHINING','Precision machining of barrel, hub and bolt pattern'],['SURFACE FINISH','Surface preparation, coating and curing'],['FINAL INSPECTION','Runout, dimensions, balance and release']]
-};
+const $=(s,root=document)=>root.querySelector(s);
+const $all=(s,root=document)=>[...root.querySelectorAll(s)];
 const fmt=d=>new Intl.DateTimeFormat('en-US',{month:'short',day:'2-digit',year:'numeric'}).format(d);
-const workday=(d,n)=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());let k=0;while(k<n){x.setDate(x.getDate()+1);if(x.getDay()!==0&&x.getDay()!==6)k++;}return x;};
 const iso=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
-let scene,camera,renderer,group,raf,observer,timer,routeData,progress=0,stageIndex=0,playing=false;
-function initForm(){for(const p of demoProducts){const o=document.createElement('p-select-option');o.value=p.id;o.textContent=p.model+' · '+p.construction;$('#lead-product').append(o);}$('#lead-order-date').value=iso(new Date());}
-function scene3d(process){
-const canvas=$('#factory-canvas');if(renderer){cancelAnimationFrame(raf);observer.disconnect();renderer.dispose();}
-scene=new THREE.Scene();scene.background=new THREE.Color('#e9ecec');scene.fog=new THREE.Fog('#e9ecec',16,36);camera=new THREE.PerspectiveCamera(38,1,.1,100);camera.position.set(10,8,13);camera.lookAt(0,1,0);
-renderer=new THREE.WebGLRenderer({canvas,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
-scene.add(new THREE.HemisphereLight('#fff','#aab3b4',2));const light=new THREE.DirectionalLight('#fff',3);light.position.set(7,12,8);light.castShadow=true;scene.add(light);
-const floor=new THREE.Mesh(new THREE.PlaneGeometry(50,50),new THREE.MeshStandardMaterial({color:'#d7dddd',roughness:.9}));floor.rotation.x=-Math.PI/2;floor.position.y=-.05;floor.receiveShadow=true;scene.add(floor);const grid=new THREE.GridHelper(28,28,'#b9c2c3','#d1d8d8');grid.position.y=.01;scene.add(grid);
-group=new THREE.Group();scene.add(group);const material=(c,m=.4,r=.5)=>new THREE.MeshStandardMaterial({color:c,metalness:m,roughness:r});
-const box=(w,h,d,mat,x,y,z)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;group.add(o);return o;};
-const steel=material('#7e8b8e',.8,.3),dark=material('#303a3d',.5,.4),gold=material('#a68a5d',.5,.35),glass=new THREE.MeshStandardMaterial({color:'#a9c6c9',transparent:true,opacity:.5,roughness:.15});
-box(11,.3,2.4,dark,0,.55,0);for(let i=0;i<14;i++){const r=new THREE.Mesh(new THREE.CylinderGeometry(.09,.09,2.2,16),steel);r.rotation.z=Math.PI/2;r.position.set(-4.8+i*.74,.77,0);group.add(r);}
-for(const x of [-5,5])for(const z of [-1.35,1.35]){box(.12,2.5,.12,gold,x,1.3,z);box(.15,.12,.15,dark,x,2.6,z);}
-box(2.8,2.2,2.5,dark,-2,1.25,-2);box(2.5,1.2,2.3,glass,-2,1.65,-2);box(2.6,.2,2.5,gold,-2,2.45,-2);
-if(process==='forging'){box(2.5,2.8,2.2,dark,2,1.4,-2);box(1.5,.35,1.5,steel,2,2.9,-2);const ram=box(1.1,1.3,1.1,gold,2,2,-2);group.userData.ram=ram;box(1.6,.3,1.6,steel,2,.5,-2);}
-else{box(2.6,2.8,2.4,dark,2,1.4,-2);box(2.1,1.3,2,glass,2,1.8,-2);const crucible=new THREE.Mesh(new THREE.CylinderGeometry(.55,.45,.65,32),material('#b56c39',.7,.3));crucible.position.set(2,1.2,-2);group.add(crucible);}
-const carrier=new THREE.Group();carrier.position.set(-4.3,.95,0);group.add(carrier);const rim=new THREE.Mesh(new THREE.CylinderGeometry(.8,.8,.28,48,1,true),material('#9ba5a6',.85,.25));rim.rotation.x=Math.PI/2;carrier.add(rim);for(let i=0;i<10;i++){const spoke=new THREE.Mesh(new THREE.BoxGeometry(.12,.9,.1),gold);spoke.rotation.z=i*Math.PI/5;carrier.add(spoke);}group.userData.carrier=carrier;
-const beacon=new THREE.Mesh(new THREE.SphereGeometry(.13,16,12),material('#b08d55'));beacon.position.set(4,2.7,-1.2);group.add(beacon);group.userData.beacon=beacon;
-let drag=false,lastX=0,lastY=0,rot=0,tilt=0;canvas.onpointerdown=e=>{drag=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId);};canvas.onpointermove=e=>{if(!drag)return;rot+=(e.clientX-lastX)*.006;tilt=Math.max(-.2,Math.min(.3,tilt+(e.clientY-lastY)*.003));lastX=e.clientX;lastY=e.clientY;};canvas.onpointerup=()=>drag=false;canvas.onwheel=e=>{e.preventDefault();camera.position.multiplyScalar(e.deltaY>0?1.06:.94);camera.position.clampLength(8,25);};
-$('#twin-reset').onclick=()=>{rot=0;tilt=0;camera.position.set(10,8,13);camera.lookAt(0,1,0);};
-observer=new ResizeObserver(()=>{const r=canvas.getBoundingClientRect();if(!r.width||!r.height)return;renderer.setSize(r.width,r.height,false);camera.aspect=r.width/r.height;camera.updateProjectionMatrix();});observer.observe(canvas.parentElement);
-const clock=new THREE.Clock();const draw=()=>{raf=requestAnimationFrame(draw);const t=clock.getElapsedTime();group.rotation.y=rot;group.rotation.x=tilt;group.userData.carrier.position.x=-4.3+8.6*progress/100;group.userData.carrier.rotation.y=t*.4;if(group.userData.ram)group.userData.ram.position.y=2+Math.sin(t*1.7)*.17;group.userData.beacon.material.color.set(playing?'#b08d55':'#879395');renderer.render(scene,camera);};draw();
+let loading=false;
+const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+function initForm(){
+  for(const p of demoProducts){const o=document.createElement('p-select-option');o.value=p.id;o.textContent=p.model+' · '+p.construction;$('#lead-product').append(o);}
+  $('#lead-order-date').value=iso(new Date());
 }
-function makeGantt(data){
-const dates=Array.from({length:15},(_,i)=>workday(data.start,i));let html='<div class="gantt-head"><div>PRODUCTION LINE / JOB</div><div class="gantt-days">'+dates.map(d=>'<span><b>'+d.getDate()+'</b><small>'+d.toLocaleDateString("en-US",{weekday:"short"})+'</small></span>').join('')+'</div></div>';
-for(const l of data.lines){const selected=l.id===data.selectedLine;html+='<div class="gantt-row '+(selected?'is-selected':'')+'"><div class="gantt-row__name"><strong>'+l.id+'</strong><small>'+l.product+'</small></div><div class="gantt-track"><div class="gantt-grid">'+dates.map(()=>'<i></i>').join('')+'</div>';for(const segment of (l.segments||[])){const left=(l.startOffset+segment.offset)/15*100,width=segment.duration/15*100;html+='<div class="gantt-bar gantt-bar--'+segment.category+'" style="left:'+left+'%;width:'+width+'%" title="'+segment.name+'"><span>'+segment.name+'</span></div>';}html+='</div></div>';}
-$('#gantt-chart').innerHTML=html;
+function setLoadingStep(index,percent){
+  const items=$all('#loading-steps li');
+  items.forEach((item,i)=>{item.classList.toggle('is-active',i===index);item.classList.toggle('is-complete',i<index);});
+  $('#loading-percent').textContent=percent+'%';
+  $('#loading-progress').style.width=percent+'%';
 }
-
-function stage(i){stageIndex=i;const list=routes[routeData.process];$all('.stage-card').forEach((el,n)=>{el.classList.toggle('is-active',n===i);el.classList.toggle('is-complete',n<i);$('.stage-card__state',el).textContent=n<i?'COMPLETE':n===i?'IN PROGRESS':'PENDING';});$('#stage-counter').textContent='STAGE '+String(i+1).padStart(2,'0')+' / 07';$('#twin-workcell').textContent='CELL '+String(i+1).padStart(2,'0')+' · '+list[i][0];$('#animation-status').textContent=list[i][0]+' · '+list[i][1];}
-function stop(){clearInterval(timer);playing=false;$('#animation-play').textContent='PLAY SIMULATION';}
-function play(){if(playing){stop();return;}playing=true;$('#animation-play').textContent='PAUSE SIMULATION';$('#twin-status').textContent='RUNNING';let tick=0;timer=setInterval(()=>{tick++;progress=Math.min(100,tick/70*100);$('#progress-value').textContent=Math.round(progress)+'%';$('#progress-bar').style.width=progress+'%';const next=Math.min(6,Math.floor(tick/70*7));if(next!==stageIndex)stage(next);if(tick>=70){stop();$('#twin-status').textContent='COMPLETE';$('#animation-play').textContent='PLAY AGAIN';$('#animation-status').textContent='Manufacturing simulation completed · '+fmt(routeData.finish);}},180);}
-async function submit(e){e.preventDefault();const id=$('#lead-product').value;if(!id){$('#lead-form-status').textContent='Select a product to continue.';return;}stop();const product=demoProducts.find(p=>p.id===id),process=$('input[name="process"]:checked').value,quantity=Number($('#lead-quantity').value||4),orderDate=$('#lead-order-date').value||iso(new Date());$('#lead-submit').loading=true;$('#lead-form-status').textContent='Building production schedule…';
-try{const response=await fetch('/api/lead-time/simulate',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({productId:id,process,quantity,orderDate})});if(!response.ok)throw Error('Schedule service unavailable');const payload=await response.json();let start=new Date(payload.startDate+'T00:00:00');const duration=process==='casting'?8:7;routeData={process,start,finish:workday(start,duration-1),duration,selectedLine:payload.selectedLine,lines:payload.lines};
-$('#production-results').hidden=false;$('#result-product').textContent=product.model;$('#result-process').textContent=process.toUpperCase();$('#result-quantity').textContent=quantity+' WHEELS';$('#result-start').textContent=fmt(start);$('#result-finish').textContent=fmt(routeData.finish);$('#twin-process-label').textContent=process.toUpperCase()+' PRODUCTION LINE';
-$('#stage-list').innerHTML=routes[process].map((s,i)=>'<article class="stage-card '+(i===0?'is-active':'')+'"><span class="stage-card__index">0'+(i+1)+'</span><div><strong>'+s[0]+'</strong><small>'+s[1]+'</small></div><span class="stage-card__state">'+(i===0?'IN PROGRESS':'PENDING')+'</span></article>').join('');
-makeGantt(routeData);scene3d(process);progress=0;$('#progress-value').textContent='0%';$('#progress-bar').style.width='0%';$('#twin-status').textContent='READY';stage(0);$('#animation-play').textContent='PLAY SIMULATION';$('#lead-form-status').textContent='Simulation generated · '+payload.lines.length+' production routes';$('#production-results').scrollIntoView({behavior:'smooth',block:'start'});
-}catch(err){$('#lead-form-status').textContent=err.message||'Unable to generate schedule.';}finally{$('#lead-submit').loading=false;}}
-$('#lead-form').addEventListener('submit',submit);$('#animation-play').addEventListener('click',play);$('#animation-restart').addEventListener('click',()=>{stop();progress=0;$('#progress-value').textContent='0%';$('#progress-bar').style.width='0%';$('#twin-status').textContent='READY';stage(0);});initForm();
+function renderGantt(data){
+  const dates=data.dates;
+  const htmlHead='<div class="gantt-head"><div class="gantt-line-label">PRODUCTION LINE / ORDER</div><div class="gantt-days">'+dates.map((d,i)=>'<span class="'+(i===data.todayOffset?'is-today':'')+'"><b>'+d.day+'</b><small>'+d.weekday+'</small></span>').join('')+'</div></div>';
+  const rows=data.lines.map(line=>{
+    const jobs=line.jobs.map(job=>{
+      const hue=job.customer?42:(job.color*47+188)%360;
+      const color=job.customer?'#a17a3d':'hsl('+hue+' 31% 54%)';
+      const bars=job.segments.map(seg=>{
+        const left=seg.offset/dates.length*100,width=seg.duration/dates.length*100;
+        return '<span class="gantt-segment" style="left:'+left+'%;width:'+width+'%;background:'+color+'" title="'+job.orderId+' · '+seg.name+'">'+(seg.duration>=1?'<b>'+seg.short+'</b>':'')+'</span>';
+      }).join('');
+      return '<div class="gantt-job '+(job.customer?'is-customer':'')+'" style="--job-color:'+color+'">'+bars+'</div>';
+    }).join('');
+    return '<div class="gantt-row"><div class="gantt-row__name"><strong>'+line.id+'</strong><small>'+line.jobs.length+' scheduled orders</small></div><div class="gantt-track"><div class="gantt-grid">'+dates.map((_,i)=>'<i class="'+(i===data.todayOffset?'is-today':'')+'"></i>').join('')+'</div>'+jobs+'</div></div>';
+  }).join('');
+  $('#gantt-chart').innerHTML=htmlHead+rows;
+}
+async function runLoadingSequence(){
+  $('#lead-loading').hidden=false;
+  $('#production-results').hidden=true;
+  $('#loading-steps li').forEach?.(()=>{});
+  setLoadingStep(0,0);
+  const steps=[{ms:1500,pct:21},{ms:2500,pct:57},{ms:1500,pct:79},{ms:1500,pct:100}];
+  for(let i=0;i<steps.length;i++){await wait(steps[i].ms);setLoadingStep(i+1,steps[i].pct);}
+  await wait(180);
+}
+async function submit(e){
+  e.preventDefault();
+  if(loading)return;
+  const id=$('#lead-product').value;
+  if(!id){$('#lead-form-status').textContent='Select a product to continue.';return;}
+  const product=demoProducts.find(p=>p.id===id);
+  const quantity=Number($('#lead-quantity').value||4);
+  const orderDate=$('#lead-order-date').value||iso(new Date());
+  // Manufacturing route is derived from the selected product; no process choice is exposed to customers.
+  const process=String(product?.construction||'Forged').toLowerCase()==='cast'?'casting':'forging';
+  loading=true;
+  $('#lead-submit').disabled=true;
+  $('#lead-form-status').textContent='Checking production availability…';
+  try{
+    const scheduleRequest=fetch('/api/lead-time/simulate',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({productId:id,process,quantity,orderDate})});
+    await runLoadingSequence();
+    const response=await scheduleRequest;
+    if(!response.ok)throw Error('Production schedule service unavailable.');
+    const payload=await response.json();
+    const start=new Date(payload.startDate+'T00:00:00');
+    const finish=new Date(payload.finishDate+'T00:00:00');
+    $('#result-product').textContent=product.model;
+    $('#result-quantity').textContent=quantity+' WHEELS';
+    $('#result-start').textContent=fmt(start);
+    $('#result-finish').textContent=fmt(finish);
+    $('#result-duration').textContent=payload.targetWorkingDays+' WORKING DAYS';
+    renderGantt(payload);
+    $('#lead-loading').hidden=true;
+    $('#production-results').hidden=false;
+    $('#lead-form-status').textContent='Schedule generated · '+payload.lines.length+' production lines';
+    $('#production-results').scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(err){
+    $('#lead-loading').hidden=true;
+    $('#lead-form-status').textContent=err.message||'Unable to generate the production schedule.';
+  }finally{
+    loading=false;
+    $('#lead-submit').disabled=false;
+  }
+}
+$('#lead-form').addEventListener('submit',submit);
+initForm();
