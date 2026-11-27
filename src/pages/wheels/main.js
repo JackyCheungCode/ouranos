@@ -74,6 +74,7 @@ function render() {
   else if (sort === 'newest') visible.sort((a,b) => products.indexOf(b) - products.indexOf(a));
   else visible.sort((a,b) => products.indexOf(a) - products.indexOf(b));
   grid.innerHTML = visible.map(card).join('');
+  grid.querySelectorAll('img').forEach((image) => image.addEventListener('error', () => { image.src = '/images/wheel-placeholder.svg'; }, { once: true }));
   count.textContent = visible.length + (visible.length === 1 ? ' product' : ' products');
   empty.hidden = visible.length > 0;
   grid.hidden = visible.length === 0;
@@ -121,6 +122,7 @@ function showDetail(id) {
   const image = document.querySelector('#detail-image');
   image.src = product.image;
   image.alt = product.model + ' wheel product image';
+  image.onerror = () => { image.src = '/images/wheel-placeholder.svg'; image.onerror = null; };
   const entries = [['Construction',product.construction],['Design',product.design],['Diameter',product.diameter + '″'],['Width',product.width + 'J'],['Finish',product.finish],['Fitment overview',product.fitment],['Wheel size',product.specs.size],['PCD',product.specs.pcd],['Offset',product.specs.offset],['Center bore',product.specs.bore],['Load rating',product.specs.load],['Weight',product.specs.weight],['Face profile',product.specs.profile]];
   document.querySelector('#detail-specs').innerHTML = entries.filter(([,value]) => value).map(([label,value]) => '<div class="wheel-detail__spec"><span>' + label + '</span><strong>' + value + '</strong></div>').join('');
   history.replaceState({}, '', '/wheels/?model=' + product.id);
