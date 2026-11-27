@@ -141,10 +141,6 @@ const icons = {
   Weight: 'weight',
   'Face profile': 'configurate',
 };
-function spec(label, value) {
-  if (!value) return '';
-  return '<div class="wheel-card__spec"><span><p-icon name="' + (icons[label] || 'configurate') + '" size="xs"></p-icon>' + escapeHtml(label) + '</span><strong>' + escapeHtml(value) + '</strong></div>';
-}
 function inquiryUrl(product) {
   const subject = 'OURANOS wheel enquiry — ' + product.model;
   const body = [
