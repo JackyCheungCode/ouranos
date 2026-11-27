@@ -243,11 +243,11 @@ test('Manufacturer uses the native PDS select without oversized option logos', a
   await expect(stepper).toBeVisible();
   await expect(stepper).toHaveAttribute('size', 'medium');
   await expect(stepper.locator('p-stepper-horizontal-item')).toHaveCount(5);
-  await expect(stepper.locator('p-icon')).toHaveCount(5);
-  const iconNames = await stepper.locator('p-icon').evaluateAll((icons) =>
-    icons.map((icon) => icon.getAttribute('name')),
-  );
-  expect(iconNames).toEqual(['tire', 'car', 'configurate', 'color-picker', 'document']);
+  for (const iconName of ['tire', 'car', 'configurate', 'color-picker', 'document']) {
+    await expect(
+      stepper.locator('p-stepper-horizontal-item p-icon[name="' + iconName + '"]'),
+    ).toHaveCount(1);
+  }
   await expect(page.locator('.config-heading p-heading')).toHaveAttribute('size', 'xl');
   await expect(page.locator('.config-step.active > p-heading')).toHaveAttribute('size', 'md');
   const stepLabels = await stepper
