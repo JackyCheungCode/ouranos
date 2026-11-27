@@ -33,6 +33,7 @@ test('Wheels catalogue fills the viewport and cards form aligned, equal-height r
   for (const { width, columns } of viewports) {
     await page.setViewportSize({ width, height: 1000 });
     await page.goto('/wheels/', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('[data-product]')).toHaveCount(10);
 
     const layout = await page.evaluate(() => {
       const catalogue = document.querySelector<HTMLElement>('.wheels-catalogue')!;
@@ -106,7 +107,7 @@ test('Wheels catalogue filters, clears and sorts demo products', async ({ page }
     (element as HTMLSelectElement).value = 'az';
     element.dispatchEvent(new Event('change', { bubbles: true }));
   });
-  await expect(page.locator('[data-product] p-heading').first()).toHaveText('ARC-8RT');
+  await expect(page.locator('[data-product] .wheel-card__title').first()).toHaveText('ARC-8RT');
 });
 
 test('Wheels mobile filter drawer applies filters and can be dismissed', async ({ page }) => {
@@ -230,7 +231,7 @@ test('Vehicle filter uses Wheel Size and transfers the selected fitment into spe
 
 test('Configure opens a product-specific form and submits an enquiry to the Worker API', async ({ page }) => {
   await page.goto('/wheels/', { waitUntil: 'domcontentloaded' });
-  await page.locator('[data-product]').first().locator('a[href^="/configure/"]').click();
+  await page.locator('[data-product]').first().locator('p-button[href^="/configure/"]').click();
   await expect(page).toHaveURL(/\/configure\//);
   await expect(page.locator('#wheel-model')).toHaveText('VS-5RS');
   await expect(page.locator('#wheel-image')).toHaveAttribute('src', /cdn\.sanity\.io/);
