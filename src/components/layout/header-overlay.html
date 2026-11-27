@@ -1,0 +1,43 @@
+<header
+  class="ouranos-header z-1 grid-template absolute inset-x-0 before:absolute before:inset-[0_0_-60px_0] before:-z-1 before:pointer-events-none before:bg-fade-to-b"
+  data-header-variant="overlay"
+  aria-label="OURANOS site header"
+>
+  <div class="col-wide grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-fluid-md items-center min-h-[80px]">
+    <div class="flex flex-wrap gap-static-md items-center justify-start">
+      <nav aria-label="Main">
+        <p-button-pure id="nav-button" class="scheme-dark p-static-xs -m-static-xs" type="button" icon="menu-lines" hide-label="{base: true, s: false}" aria="{'aria-haspopup': 'dialog'}">
+          Menu
+        </p-button-pure>
+        <p-drilldown id="nav-drilldown">
+  <p-drilldown-item identifier="ouranos-wheels" label="Wheels">
+    <p-drilldown-link><a href="/wheels/">Wheels catalogue</a></p-drilldown-link>
+    <p-drilldown-link><a href="/wheels/#catalogue">Find your fit</a></p-drilldown-link>
+    <p-drilldown-link><a href="/discover/">Discover wheels</a></p-drilldown-link>
+  </p-drilldown-item>
+  <p-drilldown-item identifier="ouranos-support" label="Support">
+    <p-drilldown-link><a href="/customize/">Wheel Design Studio</a></p-drilldown-link>
+    <p-drilldown-link><a href="/contact/">Contact us</a></p-drilldown-link>
+  </p-drilldown-item>
+</p-drilldown>
+      </nav>
+    </div>
+    <a class="scheme-dark font-semibold tracking-[0.2em] whitespace-nowrap" href="/" aria-label="OURANOS Home">OURANOS</a>
+    <div class="scheme-dark flex flex-wrap gap-static-md items-center justify-end">
+      <p-popover id="ouranos-language-popover" direction="bottom" compact="true">
+        <p-button-pure slot="button" id="ouranos-language-trigger" class="p-static-xs -m-static-xs" type="button" icon="globe" hide-label="true" title="Language: English" aria-label="Language: English">Language: English</p-button-pure>
+        <div class="ouranos-language-menu" role="group" aria-label="Select language">
+          <button class="ouranos-language-option" type="button" data-locale="en" aria-pressed="true">English</button>
+          <button class="ouranos-language-option" type="button" data-locale="zh-CN" aria-pressed="false">简体中文</button>
+          <button class="ouranos-language-option" type="button" data-locale="de" aria-pressed="false">Deutsch</button>
+          <button class="ouranos-language-option" type="button" data-locale="fr" aria-pressed="false">Français</button>
+          <button class="ouranos-language-option" type="button" data-locale="ja" aria-pressed="false">日本語</button>
+        </div>
+      </p-popover>
+      <p-button-pure id="ouranos-ai-open" class="p-static-xs -m-static-xs" type="button" icon="ai-chat" hide-label="true" title="OURANOS AI Assistant" aria-label="OURANOS AI Assistant">AI Assistant</p-button-pure>
+      <p-button-pure id="ouranos-search" class="p-static-xs -m-static-xs" title="Search" type="button" icon="search" hide-label="true">Search</p-button-pure>
+      <p-button-pure id="ouranos-account" class="p-static-xs -m-static-xs" title="Account" type="button" icon="user" hide-label="true">Account</p-button-pure>
+      <p-button-pure id="ouranos-theme-toggle" class="p-static-xs -m-static-xs" title="Switch to dark mode" type="button" icon="moon" hide-label="true" aria-pressed="false">Switch theme</p-button-pure>
+    </div>
+  </div>
+</header>
