@@ -7,7 +7,7 @@ if (header) {
   const navButton = header.querySelector('#nav-button');
   const languagePopover = header.querySelector('#ouranos-language-popover');
   const languageTrigger = header.querySelector('#ouranos-language-trigger');
-  const languageOptions = [...header.querySelectorAll('[data-locale]')];
+  const getLanguageOptions = () => [...header.querySelectorAll('[data-locale]')];
 
   const localeNames = {
     en: 'English',
@@ -108,7 +108,7 @@ if (header) {
       languageTrigger.setAttribute('title', label);
     }
 
-    languageOptions.forEach((option) => {
+    getLanguageOptions().forEach((option) => {
       option.setAttribute('aria-pressed', String(option.dataset.locale === selected));
     });
 
@@ -142,7 +142,7 @@ if (header) {
   // attached to pre-upgrade nodes that PDS may replace.
   const bindLocaleOptions = () => {
     requestAnimationFrame(() => {
-      languageOptions.forEach((option) => {
+      getLanguageOptions().forEach((option) => {
         option.addEventListener('click', () => {
           applyLocale(option.dataset.locale, true);
           if (languagePopover) languagePopover.open = false;
