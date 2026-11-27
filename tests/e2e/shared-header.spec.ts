@@ -11,12 +11,11 @@ test('shared header switches between overlay and stacked patterns and preserves 
   await expect(header).toHaveAttribute('data-shared-header-ready', 'true');
   await expect(header).toHaveAttribute('data-language-controller-ready', 'true');
   await expect(header).toHaveAttribute('data-theme-controller-ready', 'true');
-  await expect(page.locator('#ouranos-theme-toggle')).toBeVisible();
+  await expect(page.locator('#ouranos-theme-toggle')).toHaveCount(0);
+  await expect(page.locator('#ouranos-search')).toHaveCount(0);
+  await expect(page.locator('#ouranos-search-mobile')).toHaveCount(0);
   await expect(page.locator('html')).toHaveClass(/scheme-light/);
-  await page.locator('#ouranos-theme-toggle').click();
-  await expect(page.locator('html')).toHaveClass(/scheme-dark/);
-  await page.locator('#ouranos-theme-toggle').click();
-  await expect(page.locator('html')).toHaveClass(/scheme-light/);
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await expect(page.locator('#ouranos-ai-open')).toBeVisible();
 
   await page.locator('#ouranos-language-trigger').click();
@@ -55,7 +54,8 @@ test('shared header keeps language, AI and menu controls available on mobile', a
   await expect(page.locator('#ouranos-language-trigger')).toBeVisible();
   await expect(page.locator('#ouranos-ai-open')).toBeVisible();
   await expect(page.locator('#nav-button')).toBeVisible();
-  await expect(page.locator('#ouranos-search-mobile')).toBeVisible();
-  await expect(page.locator('#ouranos-search')).toBeHidden();
+  await expect(page.locator('#ouranos-search-mobile')).toHaveCount(0);
+  await expect(page.locator('#ouranos-search')).toHaveCount(0);
+  await expect(page.locator('#ouranos-theme-toggle')).toHaveCount(0);
   await expect(page.locator('.ouranos-header__primary-nav')).toBeHidden();
 });
