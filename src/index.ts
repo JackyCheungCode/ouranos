@@ -1023,87 +1023,91 @@ async function leadTimeSimulationRequest(request: Request): Promise<Response> {
   const quantity = Number(body.quantity);
   if (
     !['casting', 'forging'].includes(process || '') ||
-    !/^\d{4}-\d{2}-\d{2}$/.test(orderDate) ||
+    !/^\\d{4}-\\d{2}-\\d{2}$/.test(orderDate) ||
     !Number.isInteger(quantity) ||
     quantity < 1 ||
     quantity > 5000 ||
     typeof body.productId !== 'string' ||
     !/^[a-z0-9-]{1,80}$/i.test(body.productId)
   ) {
-    return json({ error: 'INVALID_SCHEDULE_REQUEST' }, 400);
+    return json({ error: 'INVALID_ESTIMATE_REQUEST', message: 'Check the wheel model, quantity and order date.' }, 400);
   }
+
   const parseDate = (value: string) => new Date(value + 'T00:00:00.000Z');
-  const isWeekend = (date: Date) => date.getUTCDay() === 0 || date.getUTCDay() === 6;
+  const isWorkday = (date: Date) => date.getUTCDay() !== 0 && date.getUTCDay() !== 6;
   const addWorkdays = (date: Date, count: number) => {
-    const next = new Date(date);
+    const result = new Date(date);
     let added = 0;
     while (added < count) {
-      next.setUTCDate(next.getUTCDate() + 1);
-      if (!isWeekend(next)) added++;
+      result.setUTCDate(result.getUTCDate() + 1);
+      if (isWorkday(result)) added++;
     }
-    return next;
+    return result;
   };
+  const requestedDate = parseDate(orderDate);
+  if (Number.isNaN(requestedDate.getTime()) || requestedDate.toISOString().slice(0, 10) !== orderDate) {
+    return json({ error: 'INVALID_ORDER_DATE', message: 'Enter a valid order date.' }, 400);
+  }
+
   const today = new Date();
-  const earliest = addWorkdays(
-    new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate())),
-    1,
-  );
-  let requested = parseDate(orderDate);
-  if (requested < earliest) requested = earliest;
-  while (isWeekend(requested)) requested.setUTCDate(requested.getUTCDate() + 1);
-  const start = requested;
-  const stages =
-    process === 'casting'
-      ? [
-          'MATERIAL PREP',
-          'MELTING',
-          'CASTING',
-          'COOLING',
-          'HEAT TREAT',
-          'CNC MACHINING',
-          'SURFACE & QC',
-        ]
-      : [
-          'BILLET PREP',
-          'BILLET HEATING',
-          'FORGING',
-          'HEAT TREAT',
-          'CNC MACHINING',
-          'SURFACE FINISH',
-          'FINAL QC',
-        ];
-  const duration = process === 'casting' ? 8 : 7;
-  const lines = Array.from({ length: 36 }, (_, index) => {
-    const startOffset = index === 0 ? 0 : Math.floor(Math.random() * 8);
-    const stageDurations = Array.from({ length: 7 }, () => 1);
-    if (duration === 8) stageDurations[5] = 2;
-    const segments = stages.map((name, stageIndex) => ({
-      name,
-      offset: stageDurations.slice(0, stageIndex).reduce((sum, value) => sum + value, 0),
-      duration: stageDurations[stageIndex],
-      category: stageIndex < 2 ? 'prep' : stageIndex < 5 ? 'process' : 'finish',
-    }));
+  const todayUtc = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+  const earliestStart = addWorkdays(todayUtc, 1);
+  const start = requestedDate > todayUtc ? requestedDate : earliestStart;
+  while (!isWorkday(start)) start.setUTCDate(start.getUTCDate() + 1);
+
+  const baseWorkingDays = process === 'casting' ? 8 : 7;
+  const assumedBatchSize = 8;
+  const quantityAdjustmentDays = Math.ceil(Math.max(0, quantity - 4) / assumedBatchSize);
+  const stages = process === 'casting'
+    ? [
+        { name: 'Order and material preparation', durationDays: 1 },
+        { name: 'Wheel casting', durationDays: 3 },
+        { name: 'CNC machining', durationDays: 2 },
+        { name: 'Surface finishing', durationDays: 1 },
+        { name: 'Quality inspection', durationDays: 1 },
+      ]
+    : [
+        { name: 'Order and material preparation', durationDays: 1 },
+        { name: 'Forging and forming', durationDays: 2 },
+        { name: 'CNC machining', durationDays: 2 },
+        { name: 'Surface finishing', durationDays: 1 },
+        { name: 'Quality inspection', durationDays: 1 },
+      ];
+  stages[1].durationDays += quantityAdjustmentDays;
+  const addWorkdaysFromStart = (offset: number) => {
+    const result = new Date(start);
+    let added = 0;
+    while (added < offset) {
+      result.setUTCDate(result.getUTCDate() + 1);
+      if (isWorkday(result)) added++;
+    }
+    return result;
+  };
+  let elapsed = 0;
+  const datedStages = stages.map((stage) => {
+    const stageStart = addWorkdaysFromStart(elapsed);
+    const stageEnd = addWorkdaysFromStart(elapsed + stage.durationDays - 1);
+    elapsed += stage.durationDays;
     return {
-      id: 'LINE-' + String(index + 1).padStart(2, '0'),
-      product: 'Production order ' + String(index + 1).padStart(3, '0'),
-      process,
-      phase: stages[0],
-      startOffset,
-      duration,
-      segments,
+      ...stage,
+      startDate: stageStart.toISOString().slice(0, 10),
+      endDate: stageEnd.toISOString().slice(0, 10),
     };
   });
-  lines[0].product = body.productId.toUpperCase();
-  lines[0].phase = 'SELECTED ORDER ROUTE';
+  const completionDate = datedStages[datedStages.length - 1].endDate;
+
   return json({
     source: 'simulated',
     process,
-    quantity,
     productId: body.productId,
-    selectedLine: lines[0].id,
+    quantity,
     startDate: start.toISOString().slice(0, 10),
-    targetWorkingDays: duration,
-    lines,
+    completionDate,
+    targetWorkingDays: elapsed,
+    baseWorkingDays,
+    quantityAdjustmentDays,
+    assumptions: { standardBatchSize: assumedBatchSize, workingWeek: 'Monday-Friday', liveCapacityConnected: false },
+    stages: datedStages,
   });
 }
 

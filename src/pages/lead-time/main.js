@@ -1,50 +1,142 @@
-import * as THREE from 'three';
 import { demoProducts } from '../wheels/demo-products.js';
 import './style.css';
-const $=(s,root=document)=>root.querySelector(s); const $all=(s,root=document)=>[...root.querySelectorAll(s)];
-const routes={
-casting:[['MATERIAL PREPARATION','Alloy charge, weighing and batch preparation'],['MELTING & HOLDING','Controlled melt temperature and conditioning'],['CASTING','Wheel blank casting and solidification'],['COOLING & DEMOULDING','Cooling, release and blank inspection'],['HEAT TREATMENT','Solution treatment, quenching and ageing'],['CNC MACHINING','Precision turning, milling and drilling'],['SURFACE FINISH & QC','Finishing, dimensional inspection and quality control']],
-forging:[['BILLET PREPARATION','Alloy billet cutting and traceability'],['BILLET HEATING','Controlled billet heating'],['FORGING','Multi-stage press forming'],['HEAT TREATMENT','Solution treatment, quenching and ageing'],['CNC MACHINING','Precision machining of barrel, hub and bolt pattern'],['SURFACE FINISH','Surface preparation, coating and curing'],['FINAL INSPECTION','Runout, dimensions, balance and release']]
-};
-const fmt=d=>new Intl.DateTimeFormat('en-US',{month:'short',day:'2-digit',year:'numeric'}).format(d);
-const workday=(d,n)=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());let k=0;while(k<n){x.setDate(x.getDate()+1);if(x.getDay()!==0&&x.getDay()!==6)k++;}return x;};
-const iso=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
-let scene,camera,renderer,group,raf,observer,timer,routeData,progress=0,stageIndex=0,playing=false;
-function initForm(){for(const p of demoProducts){const o=document.createElement('p-select-option');o.value=p.id;o.textContent=p.model+' · '+p.construction;$('#lead-product').append(o);}$('#lead-order-date').value=iso(new Date());}
-function scene3d(process){
-const canvas=$('#factory-canvas');if(renderer){cancelAnimationFrame(raf);observer.disconnect();renderer.dispose();}
-scene=new THREE.Scene();scene.background=new THREE.Color('#e9ecec');scene.fog=new THREE.Fog('#e9ecec',16,36);camera=new THREE.PerspectiveCamera(38,1,.1,100);camera.position.set(10,8,13);camera.lookAt(0,1,0);
-renderer=new THREE.WebGLRenderer({canvas,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
-scene.add(new THREE.HemisphereLight('#fff','#aab3b4',2));const light=new THREE.DirectionalLight('#fff',3);light.position.set(7,12,8);light.castShadow=true;scene.add(light);
-const floor=new THREE.Mesh(new THREE.PlaneGeometry(50,50),new THREE.MeshStandardMaterial({color:'#d7dddd',roughness:.9}));floor.rotation.x=-Math.PI/2;floor.position.y=-.05;floor.receiveShadow=true;scene.add(floor);const grid=new THREE.GridHelper(28,28,'#b9c2c3','#d1d8d8');grid.position.y=.01;scene.add(grid);
-group=new THREE.Group();scene.add(group);const material=(c,m=.4,r=.5)=>new THREE.MeshStandardMaterial({color:c,metalness:m,roughness:r});
-const box=(w,h,d,mat,x,y,z)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;group.add(o);return o;};
-const steel=material('#7e8b8e',.8,.3),dark=material('#303a3d',.5,.4),gold=material('#a68a5d',.5,.35),glass=new THREE.MeshStandardMaterial({color:'#a9c6c9',transparent:true,opacity:.5,roughness:.15});
-box(11,.3,2.4,dark,0,.55,0);for(let i=0;i<14;i++){const r=new THREE.Mesh(new THREE.CylinderGeometry(.09,.09,2.2,16),steel);r.rotation.z=Math.PI/2;r.position.set(-4.8+i*.74,.77,0);group.add(r);}
-for(const x of [-5,5])for(const z of [-1.35,1.35]){box(.12,2.5,.12,gold,x,1.3,z);box(.15,.12,.15,dark,x,2.6,z);}
-box(2.8,2.2,2.5,dark,-2,1.25,-2);box(2.5,1.2,2.3,glass,-2,1.65,-2);box(2.6,.2,2.5,gold,-2,2.45,-2);
-if(process==='forging'){box(2.5,2.8,2.2,dark,2,1.4,-2);box(1.5,.35,1.5,steel,2,2.9,-2);const ram=box(1.1,1.3,1.1,gold,2,2,-2);group.userData.ram=ram;box(1.6,.3,1.6,steel,2,.5,-2);}
-else{box(2.6,2.8,2.4,dark,2,1.4,-2);box(2.1,1.3,2,glass,2,1.8,-2);const crucible=new THREE.Mesh(new THREE.CylinderGeometry(.55,.45,.65,32),material('#b56c39',.7,.3));crucible.position.set(2,1.2,-2);group.add(crucible);}
-const carrier=new THREE.Group();carrier.position.set(-4.3,.95,0);group.add(carrier);const rim=new THREE.Mesh(new THREE.CylinderGeometry(.8,.8,.28,48,1,true),material('#9ba5a6',.85,.25));rim.rotation.x=Math.PI/2;carrier.add(rim);for(let i=0;i<10;i++){const spoke=new THREE.Mesh(new THREE.BoxGeometry(.12,.9,.1),gold);spoke.rotation.z=i*Math.PI/5;carrier.add(spoke);}group.userData.carrier=carrier;
-const beacon=new THREE.Mesh(new THREE.SphereGeometry(.13,16,12),material('#b08d55'));beacon.position.set(4,2.7,-1.2);group.add(beacon);group.userData.beacon=beacon;
-let drag=false,lastX=0,lastY=0,rot=0,tilt=0;canvas.onpointerdown=e=>{drag=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId);};canvas.onpointermove=e=>{if(!drag)return;rot+=(e.clientX-lastX)*.006;tilt=Math.max(-.2,Math.min(.3,tilt+(e.clientY-lastY)*.003));lastX=e.clientX;lastY=e.clientY;};canvas.onpointerup=()=>drag=false;canvas.onwheel=e=>{e.preventDefault();camera.position.multiplyScalar(e.deltaY>0?1.06:.94);camera.position.clampLength(8,25);};
-$('#twin-reset').onclick=()=>{rot=0;tilt=0;camera.position.set(10,8,13);camera.lookAt(0,1,0);};
-observer=new ResizeObserver(()=>{const r=canvas.getBoundingClientRect();if(!r.width||!r.height)return;renderer.setSize(r.width,r.height,false);camera.aspect=r.width/r.height;camera.updateProjectionMatrix();});observer.observe(canvas.parentElement);
-const clock=new THREE.Clock();const draw=()=>{raf=requestAnimationFrame(draw);const t=clock.getElapsedTime();group.rotation.y=rot;group.rotation.x=tilt;group.userData.carrier.position.x=-4.3+8.6*progress/100;group.userData.carrier.rotation.y=t*.4;if(group.userData.ram)group.userData.ram.position.y=2+Math.sin(t*1.7)*.17;group.userData.beacon.material.color.set(playing?'#b08d55':'#879395');renderer.render(scene,camera);};draw();
-}
-function makeGantt(data){
-const dates=Array.from({length:15},(_,i)=>workday(data.start,i));let html='<div class="gantt-head"><div>PRODUCTION LINE / JOB</div><div class="gantt-days">'+dates.map(d=>'<span><b>'+d.getDate()+'</b><small>'+d.toLocaleDateString("en-US",{weekday:"short"})+'</small></span>').join('')+'</div></div>';
-for(const l of data.lines){const selected=l.id===data.selectedLine;html+='<div class="gantt-row '+(selected?'is-selected':'')+'"><div class="gantt-row__name"><strong>'+l.id+'</strong><small>'+l.product+'</small></div><div class="gantt-track"><div class="gantt-grid">'+dates.map(()=>'<i></i>').join('')+'</div>';for(const segment of (l.segments||[])){const left=(l.startOffset+segment.offset)/15*100,width=segment.duration/15*100;html+='<div class="gantt-bar gantt-bar--'+segment.category+'" style="left:'+left+'%;width:'+width+'%" title="'+segment.name+'"><span>'+segment.name+'</span></div>';}html+='</div></div>';}
-$('#gantt-chart').innerHTML=html;
+
+const $ = (selector, root = document) => root.querySelector(selector);
+const formatDate = (value) => new Intl.DateTimeFormat('en-US', { month: 'short', day: '2-digit', year: 'numeric', timeZone: 'UTC' }).format(new Date(value + 'T00:00:00Z'));
+const isoDate = (date) => [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-');
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+let isSubmitting = false;
+
+function populateProducts() {
+  const select = $('#lead-product');
+  for (const product of demoProducts) {
+    const option = document.createElement('p-select-option');
+    option.value = product.id;
+    option.textContent = product.model;
+    select.append(option);
+  }
+  $('#lead-order-date').value = isoDate(new Date());
 }
 
-function stage(i){stageIndex=i;const list=routes[routeData.process];$all('.stage-card').forEach((el,n)=>{el.classList.toggle('is-active',n===i);el.classList.toggle('is-complete',n<i);$('.stage-card__state',el).textContent=n<i?'COMPLETE':n===i?'IN PROGRESS':'PENDING';});$('#stage-counter').textContent='STAGE '+String(i+1).padStart(2,'0')+' / 07';$('#twin-workcell').textContent='CELL '+String(i+1).padStart(2,'0')+' · '+list[i][0];$('#animation-status').textContent=list[i][0]+' · '+list[i][1];}
-function stop(){clearInterval(timer);playing=false;$('#animation-play').textContent='PLAY SIMULATION';}
-function play(){if(playing){stop();return;}playing=true;$('#animation-play').textContent='PAUSE SIMULATION';$('#twin-status').textContent='RUNNING';let tick=0;timer=setInterval(()=>{tick++;progress=Math.min(100,tick/70*100);$('#progress-value').textContent=Math.round(progress)+'%';$('#progress-bar').style.width=progress+'%';const next=Math.min(6,Math.floor(tick/70*7));if(next!==stageIndex)stage(next);if(tick>=70){stop();$('#twin-status').textContent='COMPLETE';$('#animation-play').textContent='PLAY AGAIN';$('#animation-status').textContent='Manufacturing simulation completed · '+fmt(routeData.finish);}},180);}
-async function submit(e){e.preventDefault();const id=$('#lead-product').value;if(!id){$('#lead-form-status').textContent='Select a product to continue.';return;}stop();const product=demoProducts.find(p=>p.id===id),process=$('input[name="process"]:checked').value,quantity=Number($('#lead-quantity').value||4),orderDate=$('#lead-order-date').value||iso(new Date());$('#lead-submit').loading=true;$('#lead-form-status').textContent='Building production schedule…';
-try{const response=await fetch('/api/lead-time/simulate',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({productId:id,process,quantity,orderDate})});if(!response.ok)throw Error('Schedule service unavailable');const payload=await response.json();let start=new Date(payload.startDate+'T00:00:00');const duration=process==='casting'?8:7;routeData={process,start,finish:workday(start,duration-1),duration,selectedLine:payload.selectedLine,lines:payload.lines};
-$('#production-results').hidden=false;$('#result-product').textContent=product.model;$('#result-process').textContent=process.toUpperCase();$('#result-quantity').textContent=quantity+' WHEELS';$('#result-start').textContent=fmt(start);$('#result-finish').textContent=fmt(routeData.finish);$('#twin-process-label').textContent=process.toUpperCase()+' PRODUCTION LINE';
-$('#stage-list').innerHTML=routes[process].map((s,i)=>'<article class="stage-card '+(i===0?'is-active':'')+'"><span class="stage-card__index">0'+(i+1)+'</span><div><strong>'+s[0]+'</strong><small>'+s[1]+'</small></div><span class="stage-card__state">'+(i===0?'IN PROGRESS':'PENDING')+'</span></article>').join('');
-makeGantt(routeData);scene3d(process);progress=0;$('#progress-value').textContent='0%';$('#progress-bar').style.width='0%';$('#twin-status').textContent='READY';stage(0);$('#animation-play').textContent='PLAY SIMULATION';$('#lead-form-status').textContent='Simulation generated · '+payload.lines.length+' production routes';$('#production-results').scrollIntoView({behavior:'smooth',block:'start'});
-}catch(err){$('#lead-form-status').textContent=err.message||'Unable to generate schedule.';}finally{$('#lead-submit').loading=false;}}
-$('#lead-form').addEventListener('submit',submit);$('#animation-play').addEventListener('click',play);$('#animation-restart').addEventListener('click',()=>{stop();progress=0;$('#progress-value').textContent='0%';$('#progress-bar').style.width='0%';$('#twin-status').textContent='READY';stage(0);});initForm();
+function updateProductDetail() {
+  const product = demoProducts.find((item) => item.id === $('#lead-product').value);
+  $('#product-detail').textContent = product
+    ? [product.design, product.diameter ? product.diameter + ' in' : ''].filter(Boolean).join(' · ')
+    : 'Select a model to view its configuration.';
+}
+
+async function runCalculationFeedback() {
+  const panel = $('#lead-loading');
+  const steps = [...$('#loading-steps').children];
+  const progress = $('#loading-progress');
+  const percent = $('#loading-percent');
+  panel.hidden = false;
+  $('#production-results').hidden = true;
+  steps.forEach((step) => step.classList.remove('is-active', 'is-complete'));
+  progress.style.width = '0%';
+  percent.textContent = '0%';
+  const sequence = [
+    ['Reviewing wheel configuration', 650],
+    ['Applying the standard manufacturing route', 800],
+    ['Calculating the estimated completion date', 650],
+  ];
+  let elapsed = 0;
+  const total = sequence.reduce((sum, item) => sum + item[1], 0);
+  for (let index = 0; index < sequence.length; index += 1) {
+    steps[index].classList.add('is-active');
+    await wait(sequence[index][1]);
+    elapsed += sequence[index][1];
+    steps[index].classList.remove('is-active');
+    steps[index].classList.add('is-complete');
+    const value = Math.round((elapsed / total) * 100);
+    progress.style.width = value + '%';
+    percent.textContent = value + '%';
+  }
+  await wait(120);
+  panel.hidden = true;
+}
+
+function renderJourney(stages) {
+  const list = $('#production-journey');
+  list.replaceChildren();
+  for (const stage of stages) {
+    const item = document.createElement('li');
+    const title = document.createElement('strong');
+    const date = document.createElement('span');
+    const duration = document.createElement('small');
+    title.textContent = stage.name;
+    date.textContent = formatDate(stage.startDate) + (stage.endDate !== stage.startDate ? ' — ' + formatDate(stage.endDate) : '');
+    duration.textContent = stage.durationDays + (stage.durationDays === 1 ? ' WORKING DAY' : ' WORKING DAYS');
+    item.append(title, date, duration);
+    list.append(item);
+  }
+}
+
+async function submitEstimate(event) {
+  event.preventDefault();
+  if (isSubmitting) return;
+  const product = demoProducts.find((item) => item.id === $('#lead-product').value);
+  const quantity = Number($('#lead-quantity').value || 4);
+  const orderDate = $('#lead-order-date').value;
+  if (!product || !orderDate || !Number.isInteger(quantity) || quantity < 1 || quantity > 5000) {
+    $('#lead-form-status').textContent = 'Check the wheel model, quantity and order date.';
+    return;
+  }
+
+  isSubmitting = true;
+  $('#lead-submit').disabled = true;
+  $('#lead-form-status').textContent = 'Preparing your estimate…';
+  try {
+    await runCalculationFeedback();
+    const process = String(product.construction || '').toLowerCase().includes('cast') ? 'casting' : 'forging';
+    const response = await fetch('/api/lead-time/simulate', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', accept: 'application/json' },
+      body: JSON.stringify({ productId: product.id, process, quantity, orderDate }),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.message || 'We could not calculate your estimate. Please try again.');
+
+    $('#result-product').textContent = product.model;
+    $('#result-finish').textContent = formatDate(data.completionDate);
+    $('#result-duration').textContent = data.targetWorkingDays;
+    $('#result-quantity').textContent = quantity + (quantity === 1 ? ' WHEEL' : ' WHEELS');
+    $('#result-start').textContent = formatDate(data.startDate);
+    renderJourney(data.stages);
+    $('#production-results').hidden = false;
+    $('#lead-form-status').textContent = 'Your indicative estimate is ready.';
+    $('#production-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (error) {
+    $('#lead-form-status').textContent = error.message || 'Unable to calculate the estimate.';
+  } finally {
+    isSubmitting = false;
+    $('#lead-submit').disabled = false;
+  }
+}
+
+const navDrilldown = $('#nav-drilldown');
+const navButton = $('#nav-button');
+if (navDrilldown && navButton) {
+  navButton.addEventListener('click', () => { navDrilldown.open = true; });
+  navDrilldown.addEventListener('dismiss', (event) => { event.target.open = false; });
+  navDrilldown.addEventListener('update', (event) => { event.target.activeIdentifier = event.detail.activeIdentifier; });
+}
+
+$('#lead-product').addEventListener('change', updateProductDetail);
+$('#lead-form').addEventListener('submit', submitEstimate);
+$('#lead-submit').addEventListener('click', () => $('#lead-form').requestSubmit());
+$('#new-estimate').addEventListener('click', () => {
+  $('#production-results').hidden = true;
+  $('#lead-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+});
+const pauseButton = $('#pause-button');
+const heroVideo = $('video');
+pauseButton?.addEventListener('click', () => {
+  if (!heroVideo) return;
+  const paused = heroVideo.paused;
+  heroVideo[paused ? 'play' : 'pause']();
+  pauseButton.textContent = paused ? 'Pause Video' : 'Play Video';
+  pauseButton.icon = paused ? 'pause' : 'play';
+});
+
+populateProducts();
