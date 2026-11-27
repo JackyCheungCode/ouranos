@@ -876,8 +876,9 @@ function normalizeVehicleQuery(input: string) {
   for (const [pattern, value] of aliases) normalized = normalized.replace(pattern, value);
   const make = aliases.find(([pattern]) => pattern.test(input))?.[1] ||
     normalized.match(/\b(BMW|Mercedes-Benz|Audi|Porsche|Volkswagen|Toyota|Honda|Nissan|Lexus|Tesla)\b/i)?.[0] || '';
-  const remainder = normalized.replace(year, ' ').replace(make, ' ');
-  const model = remainder.replace(/\b(?:year|model|车型|車型|适合|适配|轮毂|轮圈|wheels?|fitment|will|fit|for|my|the|a|an)\b/gi, ' ')
+  const remainder = normalized.replace(year, ' ').replace(make, ' ').replace(/年/g, ' ')
+    .split(/适合|適合|适配|輪毂|轮毂|轮圈|能不能|是否|可以|wheels?|fitment|will\s+it\s+fit|fit\s+my/i)[0];
+  const model = remainder.replace(/\b(?:year|model|车型|車型|fit|for|my|the|a|an)\b/gi, ' ')
     .replace(/[，,。.!?？]/g, ' ').replace(/\s+/g, ' ').trim();
   return { year, make, model };
 }
