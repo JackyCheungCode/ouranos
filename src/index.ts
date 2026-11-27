@@ -6,6 +6,7 @@ interface ModelsBucketObject {
 interface ModelsBucketBody extends ModelsBucketObject {
   body: ReadableStream;
   httpEtag: string;
+  httpMetadata?: { contentType?: string };
 }
 interface ModelsBucket {
   list(options: { prefix: string; limit: number; cursor?: string }): Promise<{
@@ -23,6 +24,7 @@ interface D1Statement {
   bind(...values: unknown[]): D1Statement;
   first<T = Record<string, unknown>>(): Promise<T | null>;
   run<T = Record<string, unknown>>(): Promise<D1Result<T>>;
+  all<T = Record<string, unknown>>(): Promise<D1Result<T>>;
 }
 interface D1Database { prepare(query: string): D1Statement; }
 interface DiscoveryQueue { send(message: Record<string, unknown>): Promise<void>; }
