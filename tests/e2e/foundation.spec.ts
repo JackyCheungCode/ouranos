@@ -64,7 +64,7 @@ test('Home overlay navigation and image tiles use the light PDS scheme', async (
   await expect(header).toHaveCSS('color-scheme', 'light');
   await expect(header.locator('a[aria-label="Ouranos Home"]').first()).toHaveCSS(
     'color',
-    'rgb(17, 24, 39)',
+    'rgb(0, 0, 0)',
   );
   await expect(header.locator('p-button-pure').first()).toHaveAttribute('color', 'primary');
 
