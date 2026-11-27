@@ -13,7 +13,7 @@
   z-index: 0;
   inset: 0 0 auto;
   width: 100%;
-  height: 156px;
+  height: min(720px, 100svh);
   object-fit: cover;
   object-position: center 46%;
   pointer-events: none;
@@ -23,7 +23,9 @@ body.forged-wheels-page .ouranos-header__video {
 }
 .ouranos-header.ouranos-header::before {
   z-index: 1;
-  background: linear-gradient(180deg, rgb(0 0 0 / 52%) 0%, rgb(0 0 0 / 34%) 58%, transparent 100%);
+  inset: 0 0 auto;
+  height: min(720px, 100svh);
+  background: linear-gradient(180deg, rgb(0 0 0 / 62%) 0%, rgb(0 0 0 / 46%) 52%, rgb(0 0 0 / 18%) 82%, transparent 100%);
 }
 .ouranos-header > div {
   position: relative;
@@ -88,8 +90,16 @@ body.forged-wheels-page .ouranos-header__video {
   outline-offset: 3px;
 }
 .forged-hero {
+  position: relative;
+  z-index: 2;
   padding: clamp(8rem, 15vh, 11rem) var(--forged-gutter) 2.5rem;
-  background: var(--color-canvas);
+  background: transparent;
+}
+.forged-hero__copy {
+  color: #fff;
+}
+.forged-hero__copy p-text {
+  color: rgb(255 255 255 / 84%) !important;
 }
 .forged-hero__grid {
   display: grid;
@@ -643,82 +653,78 @@ body.forged-wheels-page .ouranos-header__video {
 }
 
 .forged-brand-wall {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  grid-auto-flow: dense;
-  align-items: center;
-  gap: clamp(1.1rem, 2.4vw, 2.4rem) clamp(1rem, 2.5vw, 2.75rem);
-  padding: clamp(1.5rem, 4vw, 3rem) 0 clamp(2.5rem, 5vw, 4rem);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 2vw, 1.75rem);
+  overflow: hidden;
+  padding: clamp(1.5rem, 4vw, 3rem) 0;
   margin-bottom: 1.5rem;
   border-top: 1px solid var(--color-contrast-low);
   border-bottom: 1px solid var(--color-contrast-low);
 }
+.forged-brand-marquee {
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+}
+.forged-brand-track {
+  display: flex;
+  flex: 0 0 auto;
+  width: max-content;
+  align-items: center;
+  gap: clamp(2rem, 4vw, 4.5rem);
+  padding-right: clamp(2rem, 4vw, 4.5rem);
+  animation: forged-brand-marquee 52s linear infinite;
+  will-change: transform;
+}
+.forged-brand-marquee--reverse .forged-brand-track {
+  animation-direction: reverse;
+  animation-duration: 64s;
+}
+.forged-brand-wall:hover .forged-brand-track {
+  animation-play-state: paused;
+}
 .forged-brand-logo {
   display: grid;
+  flex: 0 0 128px;
   min-width: 0;
-  min-height: 48px;
+  min-height: 66px;
   place-items: center;
-  grid-column: span 2;
-  opacity: 0.86;
-  transition:
-    opacity 160ms ease,
-    transform 160ms ease;
-}
-.forged-brand-logo:hover {
   opacity: 1;
-  transform: translateY(-2px);
 }
 .forged-brand-logo img {
   display: block;
   width: 100%;
-  max-width: 116px;
-  height: 40px;
+  max-width: 128px;
+  height: 52px;
   object-fit: contain;
-  filter: grayscale(1);
+  filter: none;
 }
 .forged-brand-logo--wide {
-  grid-column: span 3;
+  flex-basis: 164px;
+}
+.forged-brand-logo--wide img {
+  max-width: 164px;
+}
+.forged-brand-logo--small {
+  flex-basis: 104px;
 }
 .forged-brand-logo--small img {
-  max-width: 74px;
+  max-width: 104px;
   height: 48px;
 }
 .forged-brand-logo--large {
-  grid-column: span 3;
+  flex-basis: 190px;
 }
 .forged-brand-logo--large img {
-  max-width: 156px;
-  height: 66px;
+  max-width: 190px;
+  height: 64px;
 }
-.forged-brand-logo--1 {
-  transform: translateY(3px);
-}
-.forged-brand-logo--2 {
-  transform: translateY(-5px);
-}
-.forged-brand-logo--3 {
-  transform: translateY(7px);
-}
-.forged-brand-logo--4 {
-  transform: translateY(-2px);
-}
-.forged-brand-logo--5 {
-  transform: translateY(5px);
-}
-.forged-brand-logo--6 {
-  transform: translateY(-7px);
-}
-.forged-brand-logo--7 {
-  transform: translateY(1px);
-}
-.forged-brand-logo--1:hover,
-.forged-brand-logo--2:hover,
-.forged-brand-logo--3:hover,
-.forged-brand-logo--4:hover,
-.forged-brand-logo--5:hover,
-.forged-brand-logo--6:hover,
-.forged-brand-logo--7:hover {
-  transform: translateY(-2px);
+@keyframes forged-brand-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 }
 
 .forged-gallery {
@@ -986,23 +992,17 @@ body.forged-wheels-page .ouranos-header__video {
   .forged-certifications__list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .forged-brand-wall {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 1.25rem 0.75rem;
-  }
-  .forged-brand-logo,
-  .forged-brand-logo--wide,
-  .forged-brand-logo--large {
-    grid-column: span 2;
-  }
-  .forged-brand-logo img {
-    max-width: 92px;
-    height: 34px;
-  }
-  .forged-brand-logo--large img {
-    max-width: 120px;
-    height: 48px;
-  }
+  .forged-brand-wall { gap: 0.9rem; }
+  .forged-brand-track { gap: 1.75rem; padding-right: 1.75rem; animation-duration: 42s; }
+  .forged-brand-marquee--reverse .forged-brand-track { animation-duration: 50s; }
+  .forged-brand-logo { flex-basis: 104px; min-height: 54px; }
+  .forged-brand-logo img { max-width: 104px; height: 42px; }
+  .forged-brand-logo--wide { flex-basis: 132px; }
+  .forged-brand-logo--wide img { max-width: 132px; }
+  .forged-brand-logo--small { flex-basis: 84px; }
+  .forged-brand-logo--small img { max-width: 84px; height: 40px; }
+  .forged-brand-logo--large { flex-basis: 148px; }
+  .forged-brand-logo--large img { max-width: 148px; height: 50px; }
   .forged-construction-panel {
     grid-template-columns: 1fr;
   }
@@ -1027,6 +1027,10 @@ body.forged-wheels-page .ouranos-header__video {
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .forged-brand-wall { overflow: visible; }
+  .forged-brand-marquee { overflow: visible; mask-image: none; -webkit-mask-image: none; }
+  .forged-brand-track { width: 100%; flex-wrap: wrap; justify-content: space-around; animation: none; }
+  .forged-brand-logo[aria-hidden='true'] { display: none; }
   .forged-page * {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
