@@ -4,7 +4,7 @@ test('Home page is served at the root with shared Ouranos layout', async ({ page
   const pageErrors: string[] = [];
   page.on('pageerror', (error) => pageErrors.push(error.message));
 
-  await page.goto('/');
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
   await expect(page).toHaveTitle('Ouranos | Precision in Every Form');
   await expect(page.locator('p-heading#heading-section-1')).toContainText(
     'Precision in Every Form',
@@ -38,7 +38,7 @@ test('Home page is served at the root with shared Ouranos layout', async ({ page
 });
 
 test('Home exposes the two primary entry tiles and five wheel collections', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
 
   await expect(page.locator('p-link-tile[label="Find Wheels for Your Vehicle"]')).toHaveAttribute(
     'href',
@@ -71,7 +71,7 @@ test('Home exposes the two primary entry tiles and five wheel collections', asyn
 test('Home header uses white branding while image tiles retain the light PDS scheme', async ({
   page,
 }) => {
-  await page.goto('/');
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
   const header = page.locator('header');
   await expect(page.locator('html')).toHaveClass(/scheme-light/);
   await expect(header).toHaveCSS('color-scheme', 'dark');
@@ -108,7 +108,7 @@ test('Home header uses white branding while image tiles retain the light PDS sch
 });
 
 test('PDS font preload links are emitted into the Home document head', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('head link[rel="preload"][as="font"]').first()).toHaveCount(1);
 });
 

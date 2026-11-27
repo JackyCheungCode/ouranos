@@ -1,30 +1,30 @@
 import { expect, test } from '@playwright/test';
 
-test('shared navigation opens the OURANOS AI panel and sends a chat message', async ({ page }) => {
+test('OURANOS AI renders structured content and carries confirmed selections into the next turn', async ({ page }) => {
+  let calls = 0;
   await page.route('**/api/ai/chat', async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        message: 'Please provide your vehicle year, make and model.',
-        model: 'test-model',
-        sources: [],
-      }),
-    });
+    calls += 1;
+    const body = calls === 1
+      ? { ui: { type: 'assistant_message', content: [
+          { type: 'text', value: 'Choose a wheel specification.' },
+          { type: 'selection', title: 'Wheel size', options: [
+            { label: '20 × 9J', value: '20 × 9J', description: 'Front' },
+            { label: '20 × 10J', value: '20 × 10J', description: 'Rear' },
+          ] },
+          { type: 'comparison_table', columns: ['Specification', 'Option'], rows: [['Diameter', '20 inch']] },
+        ] }, model: 'test-model', sources: [] }
+      : { message: 'Selection received. Let us verify fitment.', model: 'test-model', sources: [] };
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) });
   });
 
-  await page.goto('/');
-  const open = page.locator('#ouranos-ai-open');
-  const panel = page.locator('#ouranos-ai-panel');
-  await expect(open).toHaveCount(1);
-  await open.click();
-  await expect(panel).toHaveClass(/is-open/);
-  await expect(panel).toHaveAttribute('aria-hidden', 'false');
-
-  await page.locator('#ouranos-ai-input').fill('Will these wheels fit my car?');
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.locator('#ouranos-ai-open').click();
+  await page.locator('#ouranos-ai-input').fill('Show me wheel sizes.');
   await page.locator('#ouranos-ai-form button[type="submit"]').click();
-  await expect(panel).toContainText('Please provide your vehicle year, make and model.');
-
-  await page.locator('#ouranos-ai-close').click();
-  await expect(panel).toHaveAttribute('aria-hidden', 'true');
+  await expect(page.locator('#ouranos-ai-messages')).toContainText('Choose a wheel specification.');
+  await expect(page.locator('.ouranos-ai-table')).toBeVisible();
+  await page.locator('.ouranos-ai-choice input').first().check();
+  await page.getByRole('button', { name: 'Confirm selection' }).click();
+  await expect(page.locator('#ouranos-ai-messages')).toContainText('Selection received. Let us verify fitment.');
+  await expect.poll(async () => calls).toBe(2);
 });
