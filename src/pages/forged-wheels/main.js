@@ -3,13 +3,11 @@ import './style.css';
 const video = document.querySelector('.forged-hero__video');
 const toggle = document.querySelector('#forged-video-toggle');
 const label = document.querySelector('#forged-video-label');
-const icon = document.querySelector('.forged-video-toggle__icon');
-
-if (video instanceof HTMLVideoElement && toggle instanceof HTMLButtonElement) {
+if (video instanceof HTMLVideoElement && toggle instanceof HTMLElement) {
   const syncVideoControl = () => {
     const paused = video.paused;
-    label.textContent = paused ? 'Play film' : 'Pause film';
-    icon.textContent = paused ? '▶' : 'Ⅱ';
+    toggle.textContent = paused ? 'Play film' : 'Pause film';
+    toggle.setAttribute('icon', paused ? 'play' : 'pause');
     toggle.setAttribute('aria-label', paused ? 'Play background video' : 'Pause background video');
   };
 
