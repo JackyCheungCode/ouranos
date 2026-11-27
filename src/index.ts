@@ -1169,7 +1169,8 @@ const handler = {
   },
   async fetch(request: Request, env: Env) {
     const url = new URL(request.url);
-    if (url.pathname.startsWith('/api/products/')) return productRequest(request, env);\n    if (url.pathname === '/api/ai/chat') return aiAssistantRequest(request, env);
+    if (url.pathname.startsWith('/api/products/')) return productRequest(request, env);
+    if (url.pathname === '/api/ai/chat') return aiAssistantRequest(request, env);
     if (url.pathname === '/api/discover/image') return createImageDiscovery(request, env);
     if (url.pathname === '/api/discover/url') return createUrlDiscovery(request, env);
     if (url.pathname.startsWith('/api/discover/jobs/') && url.pathname.endsWith('/confirm'))
