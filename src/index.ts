@@ -866,7 +866,7 @@ async function getDiscoveryJob(request: Request, env: Env): Promise<Response> {
 
 
 function normalizeVehicleQuery(input: string) {
-  const year = input.match(/\\b(?:19|20)\\d{2}\\b/)?.[0] || '';
+  const year = input.match(/\b(?:19|20)\d{2}\b/)?.[0] || '';
   const aliases: Array<[RegExp, string]> = [
     [/宝马|寶馬/i, 'BMW'], [/奔驰|賓士/i, 'Mercedes-Benz'], [/奥迪|奧迪/i, 'Audi'],
     [/保时捷|保時捷/i, 'Porsche'], [/大众|福斯/i, 'Volkswagen'], [/丰田|豐田/i, 'Toyota'],
@@ -875,9 +875,37 @@ function normalizeVehicleQuery(input: string) {
   let normalized = input;
   for (const [pattern, value] of aliases) normalized = normalized.replace(pattern, value);
   const make = aliases.find(([pattern]) => pattern.test(input))?.[1] ||
-    normalized.match(/\\b(BMW|Mercedes-Benz|Audi|Porsche|Volkswagen|Toyota|Honda|Nissan|Lexus|Tesla)\\b/i)?.[0] || '';
-  let remainder = normalized.replace(year, ' ');
-  if (make) remainder = remainder.replace(new RegExp(make.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\const CHAT_MODEL = '@cf/meta/llama-3.3-70b-instruct-fp8-fast';'), 'i'), ' ');
+    normalized.match(/\b(BMW|Mercedes-Benz|Audi|Porsche|Volkswagen|Toyota|Honda|Nissan|Lexus|Tesla)\b/i)?.[0] || '';
+  const remainder = normalized.replace(year, ' ').replace(make, ' ');
+  const model = remainder.replace(/\b(?:year|model|车型|車型|适合|适配|轮毂|轮圈|wheels?|fitment|will|fit|for|my|the|a|an)\b/gi, ' ')
+    .replace(/[，,。.!?？]/g, ' ').replace(/\s+/g, ' ').trim();
+  return { year, make, model };
+}
+function extractJsonObjects(source: string): unknown[] {
+  const cleaned = source.replace(/^\s*\x60{3}(?:json)?\s*/i, '').replace(/\s*\x60{3}\s*$/i, '').trim();
+  const values: unknown[] = [];
+  let start = -1, depth = 0, quoted = false, escaped = false;
+  for (let i = 0; i < cleaned.length; i++) {
+    const char = cleaned[i];
+    if (quoted) {
+      if (escaped) escaped = false;
+      else if (char === '\\') escaped = true;
+      else if (char === '"') quoted = false;
+      continue;
+    }
+    if (char === '"') { quoted = true; continue; }
+    if (char === '{') { if (depth === 0) start = i; depth++; }
+    else if (char === '}') {
+      depth--;
+      if (depth === 0 && start >= 0) {
+        try { values.push(JSON.parse(cleaned.slice(start, i + 1))); } catch { /* malformed fragment */ }
+        start = -1;
+      }
+    }
+  }
+  return values;
+}
+const CHAT_MODEL = '@cf/meta/llama-3.3-70b-instruct-fp8-fast';'), 'i'), ' ');
   const model = remainder.replace(/\\b(?:year|model|车型|車型|适合|适配|轮毂|轮圈|wheels?|fitment|will|fit|for|my|the|a|an)\\b/gi, ' ')
     .replace(/[，,。.!?？]/g, ' ').replace(/\\s+/g, ' ').trim();
   return { year, make, model };
