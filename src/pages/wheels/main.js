@@ -103,7 +103,10 @@ function relocateFilterControls() {
   if (!filterControls || !mobileHost || !desktopHost) return;
   const mobile = window.matchMedia('(max-width: 760px)').matches;
   const target = mobile ? mobileHost : desktopHost;
-  if (filterControls.parentElement !== target) target.append(filterControls);
+  if (filterControls.parentElement !== target) {
+    if (mobile) target.append(filterControls);
+    else target.insertBefore(filterControls, $('.wheels-toolbar__actions'));
+  }
 }
 function currentFilters() {
   return Object.fromEntries(filterKeys.map((key) => [key, valueOf(filterIds[key])]));
