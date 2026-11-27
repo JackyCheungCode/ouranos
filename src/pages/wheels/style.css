@@ -3,7 +3,7 @@
 @import '@porsche-design-system/components-js/tailwindcss';
 
 :root { color-scheme: light; }
-body.wheels-page { color-scheme: light; background: var(--pds-theme-light-background-base, #fff); }
+body.wheels-page { color-scheme: light; background: var(--pds-theme-light-background-base, #fff); }\nbody.drawer-open { overflow: hidden; }
 .wheels-page header, .wheels-page p-select, .wheels-page p-button, .wheels-page p-button-pure { color-scheme: light; }
 .wheels-shell { display: grid; gap: clamp(64px, 9vw, 132px); padding-bottom: 48px; }
 .wheels-hero { position: relative; display: grid; align-items: end; min-height: clamp(520px, 76vh, 850px); overflow: hidden; background: #e9e9e7; }
