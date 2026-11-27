@@ -58,6 +58,7 @@ jobs:
             git push origin HEAD:"${PR_BRANCH}"
           fi
           git checkout -
+          cp /tmp/ouranos-package-lock.json package-lock.json
 
       - name: Install locked dependencies
         run: npm ci --legacy-peer-deps
