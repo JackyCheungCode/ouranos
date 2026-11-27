@@ -48,7 +48,7 @@ async function chooseMarket(page: Page) {
 
 test('Configurator retrieves USDM fitment and maps staggered front/rear specifications', async ({ page }) => {
   const errors: string[] = [];
-  page.on('pageerror', (error) => errors.push(error.message));
+  page.on('pageerror', (error) => errors.push(error.stack || error.message));
   await mockWheelSize(page);
   await page.goto('/customize/');
 
