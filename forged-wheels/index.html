@@ -359,21 +359,11 @@
             <p-text color="contrast-medium">Share your vehicle, preferred construction and contact details. An OURANOS representative will review your brief.</p-text>
           </div>
           <form id="forged-enquiry-form" class="forged-enquiry-form">
-            <fieldset>
-              <legend>Enquiry type</legend>
-              <p-radio-group id="customer-type" name="customer_type" value="owner" direction="row">
-                <p-radio-group-option value="owner">Private owner</p-radio-group-option>
-                <p-radio-group-option value="trade">Workshop / Distributor</p-radio-group-option>
-              </p-radio-group>
-            </fieldset>
             <div class="forged-form-grid">
               <label><p-input-text label="Name" name="customer_name" required="true" autocomplete="name" placeholder="Your name"></p-input-text></label>
-              <label class="forged-trade-field" hidden><p-input-text label="Company" name="customer_company" autocomplete="organization" placeholder="Company name"></p-input-text></label>
               <label><p-input-email label="Email" name="customer_email" required="true" autocomplete="email" placeholder="name@example.com"></p-input-email></label>
               <label><p-input-tel label="WhatsApp / Phone" name="customer_phone" autocomplete="tel" placeholder="+ country code"></p-input-tel></label>
               <label><p-select label="Wheel construction" name="construction_choice" value="Monoblock" aria-label="Wheel construction"><p-select-option value="Monoblock">Monoblock</p-select-option><p-select-option value="Two-Piece">Two-Piece</p-select-option><p-select-option value="Three-Piece">Three-Piece</p-select-option><p-select-option value="Off-Road / Beadlock">Off-Road / Beadlock</p-select-option><p-select-option value="Carbon Barrel">Carbon Barrel</p-select-option><p-select-option value="Not sure yet">Not sure yet</p-select-option></p-select></label>
-              <label class="forged-quantity-field" hidden><p-input-number label="Estimated quantity" name="quantity" value="1" min="1" max="10000" step="1"></p-input-number></label>
-              <label class="forged-trade-field" hidden><p-input-text label="Business type" name="business_type" placeholder="Tuning shop, distributor, OEM / ODM"></p-input-text></label>
               <label><p-input-text label="Vehicle make" name="vehicle_make" placeholder="e.g. Porsche"></p-input-text></label>
               <label><p-input-text label="Vehicle model / year" name="vehicle_model" placeholder="Model, generation and year"></p-input-text></label>
               <label class="forged-form-grid__full"><p-textarea id="notes" label="Wheel specification / project brief" name="notes" rows="4" placeholder="Front and rear dimensions, PCD, centre bore, ET, finish, logo or other requirements"></p-textarea></label>
