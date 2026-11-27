@@ -66,7 +66,8 @@ function templatePartials() {
       const isAdmin = context.filename.includes('/admin-panel/');
       const isCustomizer = context.filename.includes('/customize/');
       const isDiscover = context.filename.includes('/discover/');
-      if (!isHome && !isAdmin && !isCustomizer && !isDiscover) return html;
+      const isWheels = context.filename.includes('/wheels/');
+      if (!isHome && !isAdmin && !isCustomizer && !isDiscover && !isWheels) return html;
       const validChunks = new Set([
         'accordion',
         'ai-tag',
@@ -152,7 +153,9 @@ function templatePartials() {
               ? 'Ouranos | Wheel Atelier'
               : isDiscover
                 ? 'Ouranos | Discover Wheels'
-                : 'Ouranos Admin Panel',
+                : isWheels
+                  ? 'Ouranos | Wheels'
+                  : 'Ouranos Admin Panel',
         }),
       ].join('');
       return html
@@ -179,6 +182,7 @@ export default defineConfig({
         adminPanel: resolve(rootDir, 'admin-panel/index.html'),
         customize: resolve(rootDir, 'customize/index.html'),
         discover: resolve(rootDir, 'discover/index.html'),
+        wheels: resolve(rootDir, 'wheels/index.html'),
       },
     },
   },
