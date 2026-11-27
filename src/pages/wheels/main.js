@@ -192,7 +192,7 @@ function card(product) {
   const propertyMarkup = properties.map((property) =>
     '<li><p-tag>' + escapeHtml(property) + '</p-tag></li>'
   ).join('');
-  return '<div data-product="' + escapeHtml(product.id) + '" class="col-basic justify-self-center w-full max-w-[400px] grid gap-fluid-md rounded-3xl bg-canvas p-fluid-md">'
+  return '<div data-product="' + escapeHtml(product.id) + '" class="justify-self-center w-full max-w-[400px] grid gap-fluid-md rounded-3xl bg-canvas p-fluid-md">'
     + '<img class="justify-self-center w-4/5" src="' + escapeHtml(product.image) + '" alt="" width="900" height="900" loading="lazy" decoding="async">'
     + '<div class="grid gap-fluid-sm"><div class="grid gap-static-xs">'
     + '<p-heading tag="h3" size="lg">' + escapeHtml(product.model) + '</p-heading>'
