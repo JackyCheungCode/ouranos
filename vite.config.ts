@@ -72,7 +72,8 @@ function sharedLayoutPartials() {
 
       const isHome = resolve(context.filename) === resolve(rootDir, 'index.html');
       const isForgedWheels = context.filename.includes(`${sep}forged-wheels${sep}`);
-      const isOverlay = isHome || isForgedWheels || context.filename.includes(`${sep}customize${sep}`);
+      const isOverlay =
+        isHome || isForgedWheels || context.filename.includes(`${sep}customize${sep}`);
       const readPartial = (name: string) =>
         readFileSync(resolve(rootDir, 'src/components/layout', name), 'utf8');
       const sidebar = readPartial('sidebar.html');
