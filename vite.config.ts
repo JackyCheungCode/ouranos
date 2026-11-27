@@ -68,7 +68,8 @@ function templatePartials() {
       const isDiscover = context.filename.includes('/discover/');
       const isWheels = context.filename.includes('/wheels/');
       const isLeadTime = context.filename.includes('/lead-time/');
-      if (!isHome && !isAdmin && !isCustomizer && !isDiscover && !isWheels && !isLeadTime) return html;
+      if (!isHome && !isAdmin && !isCustomizer && !isDiscover && !isWheels && !isLeadTime)
+        return html;
       const validChunks = new Set([
         'accordion',
         'ai-tag',
