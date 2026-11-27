@@ -29,10 +29,34 @@ test('forged wheels landing page is independent from the existing wheels catalog
     '/videos/mood-porsche-gts.mp4',
   );
   await expect(page.locator('#collection-title')).toBeVisible();
+  const sectionOrder = await page.locator('main.forged-page > section').evaluateAll((sections) =>
+    sections.map((section) => section.classList[0]),
+  );
+  expect(sectionOrder).toEqual([
+    'forged-hero',
+    'forged-collection',
+    'forged-construction',
+    'forged-engineering',
+    'forged-design',
+    'forged-customization',
+    'forged-fitment',
+    'forged-ordering',
+    'forged-faq',
+    'forged-final',
+  ]);
+  await expect(page.locator('.forged-intro')).toHaveCount(0);
+  await expect(page.locator('.forged-hero .forged-hero__content .forged-hero__actions p-link')).toHaveCount(2);
+  await expect(page.locator('.forged-final__content p-link')).toHaveCount(2);
+  expect(
+    await page.locator('.forged-construction-tile').evaluateAll((tiles) =>
+      tiles.map((tile) => tile.getAttribute('aspect-ratio')),
+    ),
+  ).toEqual(['3/4', '3/4', '3/4']);
   await expect(page.locator('#engineering-title')).toBeVisible();
   await expect(page.locator('#customization-title')).toBeVisible();
   await expect(page.locator('#ordering-title')).toBeVisible();
   await expect(page.locator('#fitment-title')).toBeVisible();
+  await expect(page.locator('.forged-fitment p-link[href="/wheels/#catalogue"]')).toBeVisible();
   await expect(page.locator('#faq-title')).toBeVisible();
 
   await expect(page.locator('#forged-video-toggle')).toBeVisible();
@@ -58,6 +82,7 @@ test('forged wheels page remains responsive and navigation exposes the new desti
     ),
   ).toHaveCount(1);
 
+  await expect(page.locator('.forged-custom-grid')).toBeVisible();
   const pageWidth = await page.locator('body').evaluate((element) => element.scrollWidth);
   const viewportWidth = await page.evaluate(() => window.innerWidth);
   expect(pageWidth).toBeLessThanOrEqual(viewportWidth);

@@ -3,6 +3,8 @@ import './style.css';
 const video = document.querySelector('.forged-hero__video');
 const toggle = document.querySelector('#forged-video-toggle');
 if (video instanceof HTMLVideoElement && toggle instanceof HTMLElement) {
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (reducedMotion.matches) video.pause();
   const syncVideoControl = () => {
     const paused = video.paused;
     toggle.textContent = paused ? 'Play film' : 'Pause film';
@@ -25,6 +27,9 @@ if (video instanceof HTMLVideoElement && toggle instanceof HTMLElement) {
 
   video.addEventListener('play', syncVideoControl);
   video.addEventListener('pause', syncVideoControl);
+  reducedMotion.addEventListener('change', (event) => {
+    if (event.matches) video.pause();
+  });
   syncVideoControl();
 }
 
