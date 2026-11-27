@@ -1042,19 +1042,19 @@ async function leadTimeSimulationRequest(request: Request): Promise<Response> {
     : ['BILLET PREP', 'BILLET HEATING', 'FORGING', 'HEAT TREAT', 'CNC MACHINING', 'SURFACE FINISH', 'FINAL QC'];
   const duration = process === 'casting' ? 8 : 7;
   const lines = Array.from({ length: 36 }, (_, index) => {
-    const startOffset = index === 0 ? 0 : Math.floor(Math.random() * 10);
-    return {
-      id: 'LINE-' + String(index + 1).padStart(2, '0'),
-      product: 'Production order ' + String(index + 1).padStart(3, '0'),
-      process,
-      phase: stages[Math.floor(Math.random() * stages.length)],
-      startOffset,
-      duration: duration + Math.floor(Math.random() * 3),
-    };
+    const startOffset = index === 0 ? 0 : Math.floor(Math.random() * 9);
+    const stageDurations = Array.from({ length: 7 }, () => 1);
+    if (duration === 8) stageDurations[5] = 2;
+    const segments = stages.map((name, stageIndex) => ({
+      name,
+      offset: stageDurations.slice(0, stageIndex).reduce((sum, value) => sum + value, 0),
+      duration: stageDurations[stageIndex],
+      category: stageIndex < 2 ? 'prep' : stageIndex < 5 ? 'process' : 'finish',
+    }));
+    return { id: 'LINE-' + String(index + 1).padStart(2, '0'), product: 'Production order ' + String(index + 1).padStart(3, '0'), process, phase: stages[0], startOffset, duration, segments };
   });
   lines[0].product = body.productId.toUpperCase();
   lines[0].phase = 'SELECTED ORDER ROUTE';
-  lines[0].duration = duration;
   return json({
     source: 'simulated',
     process,
