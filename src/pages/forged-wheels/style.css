@@ -25,7 +25,13 @@ body.forged-wheels-page .ouranos-header__video {
   z-index: 1;
   inset: 0 0 auto;
   height: min(720px, 100svh);
-  background: linear-gradient(180deg, rgb(0 0 0 / 62%) 0%, rgb(0 0 0 / 46%) 52%, rgb(0 0 0 / 18%) 82%, transparent 100%);
+  background: linear-gradient(
+    180deg,
+    rgb(0 0 0 / 62%) 0%,
+    rgb(0 0 0 / 46%) 52%,
+    rgb(0 0 0 / 18%) 82%,
+    transparent 100%
+  );
 }
 .ouranos-header > div {
   position: relative;
@@ -723,8 +729,12 @@ body.forged-wheels-page .ouranos-header__video {
   height: 64px;
 }
 @keyframes forged-brand-marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 .forged-gallery {
@@ -992,17 +1002,45 @@ body.forged-wheels-page .ouranos-header__video {
   .forged-certifications__list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .forged-brand-wall { gap: 0.9rem; }
-  .forged-brand-track { gap: 1.75rem; padding-right: 1.75rem; animation-duration: 42s; }
-  .forged-brand-marquee--reverse .forged-brand-track { animation-duration: 50s; }
-  .forged-brand-logo { flex-basis: 104px; min-height: 54px; }
-  .forged-brand-logo img { max-width: 104px; height: 42px; }
-  .forged-brand-logo--wide { flex-basis: 132px; }
-  .forged-brand-logo--wide img { max-width: 132px; }
-  .forged-brand-logo--small { flex-basis: 84px; }
-  .forged-brand-logo--small img { max-width: 84px; height: 40px; }
-  .forged-brand-logo--large { flex-basis: 148px; }
-  .forged-brand-logo--large img { max-width: 148px; height: 50px; }
+  .forged-brand-wall {
+    gap: 0.9rem;
+  }
+  .forged-brand-track {
+    gap: 1.75rem;
+    padding-right: 1.75rem;
+    animation-duration: 42s;
+  }
+  .forged-brand-marquee--reverse .forged-brand-track {
+    animation-duration: 50s;
+  }
+  .forged-brand-logo {
+    flex-basis: 104px;
+    min-height: 54px;
+  }
+  .forged-brand-logo img {
+    max-width: 104px;
+    height: 42px;
+  }
+  .forged-brand-logo--wide {
+    flex-basis: 132px;
+  }
+  .forged-brand-logo--wide img {
+    max-width: 132px;
+  }
+  .forged-brand-logo--small {
+    flex-basis: 84px;
+  }
+  .forged-brand-logo--small img {
+    max-width: 84px;
+    height: 40px;
+  }
+  .forged-brand-logo--large {
+    flex-basis: 148px;
+  }
+  .forged-brand-logo--large img {
+    max-width: 148px;
+    height: 50px;
+  }
   .forged-construction-panel {
     grid-template-columns: 1fr;
   }
@@ -1027,10 +1065,23 @@ body.forged-wheels-page .ouranos-header__video {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .forged-brand-wall { overflow: visible; }
-  .forged-brand-marquee { overflow: visible; mask-image: none; -webkit-mask-image: none; }
-  .forged-brand-track { width: 100%; flex-wrap: wrap; justify-content: space-around; animation: none; }
-  .forged-brand-logo[aria-hidden='true'] { display: none; }
+  .forged-brand-wall {
+    overflow: visible;
+  }
+  .forged-brand-marquee {
+    overflow: visible;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+  .forged-brand-track {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    animation: none;
+  }
+  .forged-brand-logo[aria-hidden='true'] {
+    display: none;
+  }
   .forged-page * {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
