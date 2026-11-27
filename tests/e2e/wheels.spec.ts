@@ -18,6 +18,70 @@ test('Wheels catalogue uses the PDS Vehicle Listing pattern with multi-parameter
   await expect(page.locator('body')).not.toContainText('Add to cart');
 });
 
+
+test('Wheels catalogue fills the viewport and cards form aligned, equal-height responsive grid rows', async ({
+  page,
+}) => {
+  const viewports = [
+    { width: 1440, columns: 4 },
+    { width: 1024, columns: 3 },
+    { width: 600, columns: 2 },
+    { width: 390, columns: 1 },
+  ];
+
+  for (const { width, columns } of viewports) {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto('/wheels/', { waitUntil: 'domcontentloaded' });
+
+    const layout = await page.evaluate(() => {
+      const catalogue = document.querySelector<HTMLElement>('.wheels-catalogue')!;
+      const grid = document.querySelector<HTMLElement>('#wheels-grid')!;
+      const cards = [...grid.querySelectorAll<HTMLElement>('[data-product]')];
+      const catalogueRect = catalogue.getBoundingClientRect();
+      const gridRect = grid.getBoundingClientRect();
+      const cardRects = cards.map((card) => {
+        const rect = card.getBoundingClientRect();
+        return { left: rect.left, top: rect.top, right: rect.right, height: rect.height };
+      });
+      const tracks = getComputedStyle(grid).gridTemplateColumns.trim().split(/\\s+/);
+      const rows = new Map<number, number[]>();
+      for (const rect of cardRects) {
+        const row = Math.round(rect.top);
+        rows.set(row, [...(rows.get(row) ?? []), rect.height]);
+      }
+      return {
+        catalogueLeft: catalogueRect.left,
+        catalogueRight: catalogueRect.right,
+        catalogueWidth: catalogueRect.width,
+        viewportWidth: document.documentElement.clientWidth,
+        background: getComputedStyle(catalogue).backgroundColor,
+        columns: tracks.length,
+        gridLeft: gridRect.left,
+        firstCardLeft: cardRects[0]?.left,
+        cardLefts: cardRects.map((rect) => Math.round(rect.left)),
+        rows: [...rows.values()],
+        horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+      };
+    });
+
+    expect(layout.catalogueLeft).toBeLessThanOrEqual(0.5);
+    expect(layout.catalogueRight).toBeGreaterThanOrEqual(layout.viewportWidth - 0.5);
+    expect(layout.catalogueWidth).toBeGreaterThanOrEqual(layout.viewportWidth - 0.5);
+    expect(layout.background).toBe('rgb(240, 240, 242)');
+    expect(layout.columns, `grid columns at ${width}px`).toBe(columns);
+    expect(layout.firstCardLeft).toBeCloseTo(layout.gridLeft, 0);
+    expect(layout.horizontalOverflow).toBe(false);
+
+    for (const row of layout.rows) {
+      expect(Math.max(...row) - Math.min(...row), `card heights at ${width}px`).toBeLessThanOrEqual(1);
+    }
+    for (let index = 0; index < layout.cardLefts.length; index += columns) {
+      const rowLefts = layout.cardLefts.slice(index, index + columns);
+      expect(new Set(rowLefts).size).toBe(rowLefts.length);
+    }
+  }
+});
+
 test('Wheels catalogue filters, clears and sorts demo products', async ({ page }) => {
   await page.goto('/wheels/', { waitUntil: 'domcontentloaded' });
   await page.locator('#filter-construction').evaluate((element) => {
