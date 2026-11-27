@@ -1,3 +1,5 @@
+import './ai-assistant.css';
+
 const openButton = document.getElementById('ouranos-ai-open');
 const closeButton = document.getElementById('ouranos-ai-close');
 const panel = document.getElementById('ouranos-ai-panel');
