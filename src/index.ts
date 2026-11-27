@@ -1032,7 +1032,7 @@ async function leadTimeSimulationRequest(request: Request): Promise<Response> {
     return next;
   };
   const today = new Date();
-  const earliest = addWorkdays(new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate())), 0);
+  const earliest = addWorkdays(new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate())), 1);
   let requested = parseDate(orderDate);
   if (requested < earliest) requested = earliest;
   while (isWeekend(requested)) requested.setUTCDate(requested.getUTCDate() + 1);
