@@ -1074,7 +1074,7 @@ async function leadTimeSimulationRequest(request: Request): Promise<Response> {
         ];
   const duration = process === 'casting' ? 8 : 7;
   const lines = Array.from({ length: 36 }, (_, index) => {
-    const startOffset = index === 0 ? 0 : Math.floor(Math.random() * 8);
+    const startOffset = index === 0 ? 1 : -22 + Math.floor(Math.random() * 22);
     const stageDurations = Array.from({ length: 7 }, () => 1);
     if (duration === 8) stageDurations[5] = 2;
     const segments = stages.map((name, stageIndex) => ({
@@ -1087,6 +1087,7 @@ async function leadTimeSimulationRequest(request: Request): Promise<Response> {
       id: 'LINE-' + String(index + 1).padStart(2, '0'),
       product: 'Production order ' + String(index + 1).padStart(3, '0'),
       process,
+      orderColor: `hsl(${(index * 137.508) % 360} 27% 43%)`,
       phase: stages[0],
       startOffset,
       duration,
