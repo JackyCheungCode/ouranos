@@ -3,7 +3,9 @@ import { expect, test } from '@playwright/test';
 test('Lead time estimator presents a focused customer estimate and manufacturing journey', async ({ page }) => {
   await page.route('**/api/lead-time/simulate', async (route) => {
     const body = route.request().postDataJSON();
-    const start = new Date(body.orderDate + 'T00:00:00Z');
+    const today = new Date();
+    const todayUtc = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+    const requested = new Date(body.orderDate + 'T00:00:00Z');
     const addWorkdays = (date: Date, count: number) => {
       const result = new Date(date);
       let added = 0;
@@ -11,21 +13,24 @@ test('Lead time estimator presents a focused customer estimate and manufacturing
         result.setUTCDate(result.getUTCDate() + 1);
         if (result.getUTCDay() !== 0 && result.getUTCDay() !== 6) added += 1;
       }
-      return result.toISOString().slice(0, 10);
+      return result;
     };
+    const start = requested > todayUtc ? requested : addWorkdays(todayUtc, 1);
+    while (start.getUTCDay() === 0 || start.getUTCDay() === 6) start.setUTCDate(start.getUTCDate() + 1);
+    const addWorkdayDate = (date: Date, count: number) => addWorkdays(date, count).toISOString().slice(0, 10);
     const stages = [
       { name: 'Order and material preparation', durationDays: 1, startDate: start.toISOString().slice(0, 10), endDate: start.toISOString().slice(0, 10) },
-      { name: 'Forging and forming', durationDays: 2, startDate: addWorkdays(start, 1), endDate: addWorkdays(start, 2) },
-      { name: 'CNC machining', durationDays: 2, startDate: addWorkdays(start, 3), endDate: addWorkdays(start, 4) },
-      { name: 'Surface finishing', durationDays: 1, startDate: addWorkdays(start, 5), endDate: addWorkdays(start, 5) },
-      { name: 'Quality inspection', durationDays: 1, startDate: addWorkdays(start, 6), endDate: addWorkdays(start, 6) },
+      { name: 'Forging and forming', durationDays: 2, startDate: addWorkdayDate(start, 1), endDate: addWorkdayDate(start, 2) },
+      { name: 'CNC machining', durationDays: 2, startDate: addWorkdayDate(start, 3), endDate: addWorkdayDate(start, 4) },
+      { name: 'Surface finishing', durationDays: 1, startDate: addWorkdayDate(start, 5), endDate: addWorkdays(start, 5) },
+      { name: 'Quality inspection', durationDays: 1, startDate: addWorkdayDate(start, 6), endDate: addWorkdays(start, 6) },
     ];
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({
         source: 'simulated', process: 'forging', productId: body.productId, quantity: body.quantity,
-        startDate: stages[0].startDate, completionDate: stages[4].endDate, targetWorkingDays: 7,
+        startDate: start.toISOString().slice(0, 10), completionDate: stages[4].endDate, targetWorkingDays: 7,
         baseWorkingDays: 7, quantityAdjustmentDays: 0, stages,
         assumptions: { standardBatchSize: 8, workingWeek: 'Monday-Friday', liveCapacityConnected: false },
       }),
