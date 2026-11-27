@@ -57,3 +57,10 @@ test('Wheels detail view shows technical specifications and does not invent a GL
   await expect(page.locator('.wheel-detail__viewer')).toContainText('3D MODEL NOT AVAILABLE');
   await expect(page.locator('.wheel-detail__viewer')).not.toContainText('canvas');
 });
+
+test('Homepage wheel entry points resolve to the Wheels catalogue and its collection filters', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('p-button[href="/wheels/"]').first()).toHaveCount(1);
+  await expect(page.locator('p-link-tile[href="/wheels/?collection=performance"]')).toHaveCount(1);
+  await expect(page.locator('p-link-tile[href="/wheels/?collection=heritage"]')).toHaveCount(1);
+});
