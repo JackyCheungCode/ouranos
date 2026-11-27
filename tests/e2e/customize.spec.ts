@@ -308,11 +308,16 @@ test('Missing rear axle API data is initialized from the front axle', async ({ p
   await expect(page.locator('#fitment-table-wrap')).toBeVisible();
   await page.locator('.fitment-select-button').first().click();
   await page.locator('#next-button').click();
-  for (const field of ['diameter', 'width', 'offset', 'pcd', 'bore']) {
-    await expect(page.locator('#rear-' + field)).toHaveJSProperty(
-      'value',
-      await page.locator('#front-' + field).evaluate((element) => (element as HTMLElement & { value: string }).value),
-    );
+  const expectedAxleValues = {
+    diameter: '20',
+    width: '8.5',
+    offset: '50',
+    pcd: '5x130',
+    bore: '71.6',
+  };
+  for (const [field, expected] of Object.entries(expectedAxleValues)) {
+    await expect(page.locator('#front-' + field)).toHaveJSProperty('value', expected);
+    await expect(page.locator('#rear-' + field)).toHaveJSProperty('value', expected);
   }
 });
 
