@@ -7,6 +7,10 @@ test('Wheels catalogue loads ten temporary product records with six technical fi
   await expect(page.locator('.wheel-card')).toHaveCount(10);
   await expect(page.locator('#product-count')).toContainText('10 products');
   await expect(page.locator('.wheel-card').first().locator('.wheel-card__spec')).toHaveCount(6);
+  await expect(page.locator('.wheel-card').first().locator('p-icon')).toHaveCount(6);
+  await expect(page.locator('.wheel-card').first().locator('p-button')).toHaveCount(2);
+  await expect(page.locator('.wheel-card').first()).toContainText('INQUIRE');
+  await expect(page.locator('.wheel-card').first()).toContainText('CUSTOMIZE THIS WHEEL');
   await expect(page.locator('.wheels-demo-note')).toContainText('TEMPORARY APEX TEST DATA');
   await expect(page.locator('body')).not.toContainText('Add to cart');
 });
@@ -40,7 +44,11 @@ test('Wheels mobile filter drawer applies filters and can be dismissed', async (
   await page.locator('#mobile-filter-open').click();
   await expect(page.locator('#filter-drawer')).toHaveClass(/is-open/);
   await expect(page.locator('#mobile-filter-apply')).toBeVisible();
-  await page.locator('#mobile-collection').evaluate((element) => {
+  await page.locator('#filter-mode').evaluate((element) => {
+    (element as HTMLSelectElement).value = 'specification';
+    element.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await page.locator('#filter-collection').evaluate((element) => {
     (element as HTMLSelectElement).value = 'Performance';
     element.dispatchEvent(new Event('change', { bubbles: true }));
   });
@@ -63,4 +71,56 @@ test('Homepage wheel entry points resolve to the Wheels catalogue and its collec
   await expect(page.locator('p-button[href="/wheels/"]').first()).toHaveCount(1);
   await expect(page.locator('p-link-tile[href="/wheels/?collection=performance"]')).toHaveCount(1);
   await expect(page.locator('p-link-tile[href="/wheels/?collection=heritage"]')).toHaveCount(1);
+});
+
+
+test('Vehicle filter uses Wheel Size and transfers the selected fitment into specification filters', async ({ page }) => {
+  await page.route('**/api/wheel-size/**', async (route) => {
+    const url = new URL(route.request().url());
+    const path = url.pathname.split('/').filter(Boolean).at(-1);
+    const payloads: Record<string, unknown> = {
+      regions: [{ slug: 'usdm', name: 'United States' }],
+      makes: [{ slug: 'bmw', name: 'BMW' }],
+      models: [{ slug: '3-series', name: '3 Series' }],
+      years: [{ slug: '2024', name: '2024' }],
+      modifications: [{ slug: '330i', name: '330i' }],
+      'by_model': {
+        data: [{
+          is_oe: true,
+          front: { rim: { diameter: 19, width: 8.5, offset: 25, bolt_pattern: '5x112', center_bore: 66.6 } },
+          rear: { rim: { diameter: 19, width: 8.5, offset: 25, bolt_pattern: '5x112', center_bore: 66.6 } },
+        }],
+      },
+    };
+    const key = path === 'by_model' ? 'by_model' : path;
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(payloads[key] ?? { data: [] }) });
+  });
+  await page.goto('/wheels/', { waitUntil: 'domcontentloaded' });
+  await page.locator('#filter-region').evaluate((element) => {
+    (element as HTMLSelectElement).value = 'usdm';
+    element.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await page.locator('#filter-make').evaluate((element) => {
+    (element as HTMLSelectElement).value = 'bmw';
+    element.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await page.locator('#filter-model').evaluate((element) => {
+    (element as HTMLSelectElement).value = '3-series';
+    element.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await page.locator('#filter-year').evaluate((element) => {
+    (element as HTMLSelectElement).value = '2024';
+    element.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await expect(page.locator('#filter-fitment')).toBeEnabled();
+  await page.locator('#filter-fitment').evaluate((element) => {
+    (element as HTMLSelectElement).value = '0';
+    element.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await expect(page.locator('#filter-mode')).toHaveJSProperty('value', 'specification');
+  await expect(page.locator('#filter-diameter')).toHaveJSProperty('value', '19');
+  await expect(page.locator('#filter-width')).toHaveJSProperty('value', '8.5');
+  await expect(page.locator('#filter-pcd')).toHaveJSProperty('value', '5x112');
+  await expect(page.locator('#filter-offset')).toHaveJSProperty('value', 'ET25');
+  await expect(page.locator('#filter-bore')).toHaveJSProperty('value', '66.6');
 });
