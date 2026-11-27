@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#ffffff">
     <title>OURANOS | Forged Wheel Engineering & Customisation</title>
   </head>
-  <body class="scheme-light">
+  <body class="scheme-light forged-wheels-page">
     <!-- OURANOS:HEADER -->
     <main class="forged-page">
       <section class="forged-hero" aria-labelledby="forged-hero-title">
@@ -85,14 +85,14 @@
           <p-heading id="manufacturing-title" tag="h2" size="xl">Six stages.<br>One considered process.</p-heading>
           <p-text color="contrast-medium">A transparent view of the specified manufacturing route, from material verification to final testing.</p-text>
         </div>
-        <p-stepper-horizontal id="manufacturing-stepper" size="medium">
-          <p-stepper-horizontal-item state="current">Material inspection</p-stepper-horizontal-item>
-          <p-stepper-horizontal-item>Forging & forming</p-stepper-horizontal-item>
-          <p-stepper-horizontal-item>CNC machining</p-stepper-horizontal-item>
-          <p-stepper-horizontal-item>Surface finishing</p-stepper-horizontal-item>
-          <p-stepper-horizontal-item>Dimensional inspection</p-stepper-horizontal-item>
-          <p-stepper-horizontal-item>Laboratory testing</p-stepper-horizontal-item>
-        </p-stepper-horizontal>
+        <p-tabs-bar id="manufacturing-stepper" active-tab-index="0" size="medium" aria-label="Six manufacturing stages">
+          <button type="button" role="tab" aria-selected="true">Material inspection</button>
+          <button type="button" role="tab" aria-selected="false">Forging & forming</button>
+          <button type="button" role="tab" aria-selected="false">CNC machining</button>
+          <button type="button" role="tab" aria-selected="false">Surface finishing</button>
+          <button type="button" role="tab" aria-selected="false">Dimensional inspection</button>
+          <button type="button" role="tab" aria-selected="false">Laboratory testing</button>
+        </p-tabs-bar>
         <div class="forged-process-panel">
           <div class="forged-process-panel__index" id="process-index">01 / 06</div>
           <div>
@@ -107,16 +107,25 @@
           <div class="forged-process-panel__mark" aria-hidden="true" id="process-mark">01</div>
         </div>
         <div class="forged-certifications">
-          <div>
+          <div class="forged-certifications__intro">
             <p-text size="xs" color="contrast-medium">CERTIFICATION & TESTING</p-text>
             <p-heading tag="h3" size="lg">Standards that can be verified.</p-heading>
           </div>
-          <p-scroller class="forged-certifications__scroller">
-            <div class="forged-certifications__list">
-              <span>JWL</span><span>VIA</span><span>TÜV</span><span>DOT</span><span>ISO 9001</span>
+          <div class="forged-certifications__list" aria-label="Wheel standards and registration marks">
+            <a class="forged-certification-mark" href="https://www.jwtc.jp/open/html/e/situmon1.html" target="_blank" rel="noreferrer" aria-label="JWL passenger car wheel technical standard">
+              <img src="https://irs.co.jp/wordpress/wp-content/uploads/2015/10/elem_local_t_know_jwl.gif" alt="JWL official technical standard mark" loading="lazy">
+              <span>Passenger-car wheel standard</span>
+            </a>
+            <a class="forged-certification-mark" href="https://www.jwtc.jp/open/html/e/situmon1.html" target="_blank" rel="noreferrer" aria-label="VIA wheel registration mark">
+              <img src="https://irs.co.jp/wordpress/wp-content/uploads/2015/10/elem_local_t_know_via.gif" alt="VIA official registration mark" loading="lazy">
+              <span>Third-party wheel registration</span>
+            </a>
+            <div class="forged-certification-note">
+              <strong>Other market requirements</strong>
+              <span>TÜV marks are certificate-specific and require their issued ID. DOT is a manufacturer-applied regulatory marking where applicable. ISO 9001 is certified by an external certification body; ISO does not certify companies or permit general use of its logo.</span>
             </div>
-          </p-scroller>
-          <p-text size="xs" color="contrast-medium">Certification marks and test reports are displayed only for the applicable product, facility and market after documentary verification.</p-text>
+          </div>
+          <p-text size="xs" color="contrast-medium">OURANOS does not claim certification from the display of these reference marks. Product, factory and market-specific approvals will be published only after the original certificates, registration and scope have been verified.</p-text>
         </div>
       </section>
 
@@ -171,11 +180,11 @@
               <p-segmented-control-item value="paint">Paint</p-segmented-control-item>
             </p-segmented-control>
             <div class="forged-finish-swatches" id="finish-swatches">
-              <button type="button" class="forged-swatch is-selected" data-finish="Brushed Titanium" aria-pressed="true"><span class="swatch swatch--titanium"></span><span>Brushed Titanium</span></button>
-              <button type="button" class="forged-swatch" data-finish="Brushed Silver" aria-pressed="false"><span class="swatch swatch--silver"></span><span>Brushed Silver</span></button>
-              <button type="button" class="forged-swatch" data-finish="Brushed Dark Grey" aria-pressed="false"><span class="swatch swatch--dark"></span><span>Brushed Dark Grey</span></button>
-              <button type="button" class="forged-swatch" data-finish="Brushed Bronze" aria-pressed="false"><span class="swatch swatch--bronze"></span><span>Brushed Bronze</span></button>
-              <button type="button" class="forged-swatch" data-finish="Brushed Black" aria-pressed="false"><span class="swatch swatch--black"></span><span>Brushed Black</span></button>
+              <button type="button" class="forged-swatch is-selected" data-finish="Brushed Titanium" aria-pressed="true"><span class="swatch swatch--brushed-1"></span><span>Brushed Titanium</span></button>
+              <button type="button" class="forged-swatch" data-finish="Brushed Silver" aria-pressed="false"><span class="swatch swatch--brushed-2"></span><span>Brushed Silver</span></button>
+              <button type="button" class="forged-swatch" data-finish="Brushed Dark Grey" aria-pressed="false"><span class="swatch swatch--brushed-3"></span><span>Brushed Dark Grey</span></button>
+              <button type="button" class="forged-swatch" data-finish="Brushed Bronze" aria-pressed="false"><span class="swatch swatch--brushed-4"></span><span>Brushed Bronze</span></button>
+              <button type="button" class="forged-swatch" data-finish="Brushed Black" aria-pressed="false"><span class="swatch swatch--brushed-5"></span><span>Brushed Black</span></button>
             </div>
           </div>
           <div class="forged-customisation__options">
@@ -193,6 +202,98 @@
           <p-text size="xs" color="contrast-medium">04 / FITMENT GALLERY & SOCIAL PROOF</p-text>
           <p-heading id="gallery-title" tag="h2" size="xl">Designed for the vehicle.<br>Verified in the details.</p-heading>
           <p-text color="contrast-medium">Explore vehicle categories and the data required for a properly documented fitment. Verified customer installations will be added as approved case records become available.</p-text>
+        </div>
+        <div class="forged-brand-wall" aria-label="Vehicle manufacturers supported for fitment review">
+          <div class="forged-brand-logo forged-brand-logo--large forged-brand-logo--1">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Porsche%20Logo%20Horizontal.svg" alt="Porsche logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--wide forged-brand-logo--2">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/MB%20Logo%20Horizontal.svg" alt="Mercedes-Benz logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--small forged-brand-logo--3">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/BMW%20Logo%20Horizontal.svg" alt="BMW logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--wide forged-brand-logo--4">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Audi%20Logo%20Horizontal.svg" alt="Audi logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--small forged-brand-logo--5">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Volkswagen%20Logo%20Horizontal.svg" alt="Volkswagen logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--wide forged-brand-logo--6">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Ferrari%20Logo%20Horizontal.svg" alt="Ferrari logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--wide forged-brand-logo--7">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Lamborghini%20Logo%20Horizontal.svg" alt="Lamborghini logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--wide forged-brand-logo--1">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/McLaren%20Logo%20Horizontal.svg" alt="McLaren logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--wide forged-brand-logo--2">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Aston%20Martin%20Logo%20Horizontal.svg" alt="Aston Martin logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--wide forged-brand-logo--3">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Bentley%20Logo%20Horizontal.svg" alt="Bentley logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--wide forged-brand-logo--4">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Rolls%20Royce%20Logo%20Horizontal.svg" alt="Rolls-Royce logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--wide forged-brand-logo--5">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Landrover%20Logo%20Horizontal.svg" alt="Land Rover logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--small forged-brand-logo--6">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Lexus%20Logo%20Horizontal.svg" alt="Lexus logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--small forged-brand-logo--7">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Tesla%20Logo%20Horizontal.svg" alt="Tesla logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--small forged-brand-logo--1">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Toyota%20Logo%20Horizontal.svg" alt="Toyota logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--small forged-brand-logo--2">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Nissan%20Logo%20Horizontal.svg" alt="Nissan logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--wide forged-brand-logo--3">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Maserati%20Logo%20Horizontal.svg" alt="Maserati logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--wide forged-brand-logo--4">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Bugatti%20Logo%20Horizontal.svg" alt="Bugatti logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--small forged-brand-logo--5">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Jaguar%20Logo%20Horizontal.svg" alt="Jaguar logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--small forged-brand-logo--6">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Lotus%20Logo%20Horizontal.svg" alt="Lotus logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--wide forged-brand-logo--7">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Koenigsegg%20Logo%20Horizontal.svg" alt="Koenigsegg logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--wide forged-brand-logo--1">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Pagani%20Logo%20Horizontal.svg" alt="Pagani logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--wide forged-brand-logo--2">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Genesis%20Logo%20Horizontal.svg" alt="Genesis logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--small forged-brand-logo--3">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Volvo%20Logo%20Horizontal.svg" alt="Volvo logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--small forged-brand-logo--4">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Chevrolet%20Logo%20Horizontal.svg" alt="Chevrolet logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--small forged-brand-logo--5">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Ford%20Logo%20Horizontal.svg" alt="Ford logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--small forged-brand-logo--6">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Honda%20Logo%20Horizontal.svg" alt="Honda logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--small forged-brand-logo--7">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Subaru%20Logo%20Horizontal.svg" alt="Subaru logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--wide forged-brand-logo--1">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Polestar%20Logo%20Horizontal.svg" alt="Polestar logo" loading="lazy" decoding="async">
+          </div>
+          <div class="forged-brand-logo forged-brand-logo--wide forged-brand-logo--2">
+            <img src="https://cdn.jsdelivr.net/gh/cardog-ai/icons@master/core/optimized/Rivian%20Logo%20Horizontal.svg" alt="Rivian logo" loading="lazy" decoding="async">
+          </div>
         </div>
         <p-segmented-control id="vehicle-filter" value="all" aria-label="Filter fitment gallery">
           <p-segmented-control-item value="all">All vehicles</p-segmented-control-item>
@@ -260,22 +361,22 @@
           <form id="forged-enquiry-form" class="forged-enquiry-form">
             <fieldset>
               <legend>Enquiry type</legend>
-              <p-radio-group label="Enquiry type" id="customer-type" name="customer_type" value="owner" direction="row">
+              <p-radio-group id="customer-type" name="customer_type" value="owner" direction="row">
                 <p-radio-group-option value="owner">Private owner</p-radio-group-option>
                 <p-radio-group-option value="trade">Workshop / Distributor</p-radio-group-option>
               </p-radio-group>
             </fieldset>
             <div class="forged-form-grid">
-              <label><span>Name *</span><p-input-text label="Name" name="customer_name" required="true" autocomplete="name" placeholder="Your name"></p-input-text></label>
+              <label><p-input-text label="Name" name="customer_name" required="true" autocomplete="name" placeholder="Your name"></p-input-text></label>
               <label class="forged-trade-field" hidden><span>Company</span><p-input-text label="Company" name="customer_company" autocomplete="organization" placeholder="Company name"></p-input-text></label>
-              <label><span>Email *</span><p-input-email label="Email" name="customer_email" required="true" autocomplete="email" placeholder="name@example.com"></p-input-email></label>
-              <label><span>WhatsApp / Phone</span><p-input-tel label="WhatsApp / Phone" name="customer_phone" autocomplete="tel" placeholder="+ country code"></p-input-tel></label>
-              <label><span>Wheel construction</span><p-select label="Wheel construction" name="construction_choice" value="Monoblock" aria-label="Wheel construction"><p-select-option value="Monoblock">Monoblock</p-select-option><p-select-option value="Two-Piece">Two-Piece</p-select-option><p-select-option value="Three-Piece">Three-Piece</p-select-option><p-select-option value="Off-Road / Beadlock">Off-Road / Beadlock</p-select-option><p-select-option value="Carbon Barrel">Carbon Barrel</p-select-option><p-select-option value="Not sure yet">Not sure yet</p-select-option></p-select></label>
+              <label><p-input-email label="Email" name="customer_email" required="true" autocomplete="email" placeholder="name@example.com"></p-input-email></label>
+              <label><p-input-tel label="WhatsApp / Phone" name="customer_phone" autocomplete="tel" placeholder="+ country code"></p-input-tel></label>
+              <label><p-select label="Wheel construction" name="construction_choice" value="Monoblock" aria-label="Wheel construction"><p-select-option value="Monoblock">Monoblock</p-select-option><p-select-option value="Two-Piece">Two-Piece</p-select-option><p-select-option value="Three-Piece">Three-Piece</p-select-option><p-select-option value="Off-Road / Beadlock">Off-Road / Beadlock</p-select-option><p-select-option value="Carbon Barrel">Carbon Barrel</p-select-option><p-select-option value="Not sure yet">Not sure yet</p-select-option></p-select></label>
               <label class="forged-quantity-field" hidden><span>Estimated quantity</span><p-input-number label="Estimated quantity" name="quantity" value="1" min="1" max="10000" step="1"></p-input-number></label>
               <label class="forged-trade-field" hidden><span>Business type</span><p-input-text label="Business type" name="business_type" placeholder="Tuning shop, distributor, OEM / ODM"></p-input-text></label>
-              <label><span>Vehicle make</span><p-input-text label="Vehicle make" name="vehicle_make" placeholder="e.g. Porsche"></p-input-text></label>
-              <label><span>Vehicle model / year</span><p-input-text label="Vehicle model / year" name="vehicle_model" placeholder="Model, generation and year"></p-input-text></label>
-              <label class="forged-form-grid__full"><span>Wheel specification / project brief</span><p-textarea id="notes" label="Wheel specification / project brief" name="notes" rows="4" placeholder="Front and rear dimensions, PCD, centre bore, ET, finish, logo or other requirements"></p-textarea></label>
+              <label><p-input-text label="Vehicle make" name="vehicle_make" placeholder="e.g. Porsche"></p-input-text></label>
+              <label><p-input-text label="Vehicle model / year" name="vehicle_model" placeholder="Model, generation and year"></p-input-text></label>
+              <label class="forged-form-grid__full"><p-textarea id="notes" label="Wheel specification / project brief" name="notes" rows="4" placeholder="Front and rear dimensions, PCD, centre bore, ET, finish, logo or other requirements"></p-textarea></label>
               <label class="forged-form-grid__full"><span>Reference image (JPG, PNG or WebP, max 5 MB)</span><input id="reference-image" name="reference_image" type="file" accept="image/jpeg,image/png,image/webp"></label>
             </div>
             <p-text class="forged-form-consent" size="xs" color="contrast-medium">By submitting, you agree that OURANOS may use these details to respond to your enquiry.</p-text>
