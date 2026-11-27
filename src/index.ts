@@ -1023,43 +1023,94 @@ async function leadTimeSimulationRequest(request: Request): Promise<Response> {
   const quantity = Number(body.quantity);
   if (
     !['casting', 'forging'].includes(process || '') ||
-    !/^\d{4}-\d{2}-\d{2}$/.test(orderDate) ||
+    !/^\\d{4}-\\d{2}-\\d{2}$/.test(orderDate) ||
     !Number.isInteger(quantity) ||
     quantity < 1 ||
     quantity > 5000 ||
     typeof body.productId !== 'string' ||
     !/^[a-z0-9-]{1,80}$/i.test(body.productId)
   ) {
-    return json({ error: 'INVALID_SCHEDULE_REQUEST' }, 400);
+    return json({ error: 'INVALID_ESTIMATE_REQUEST', message: 'Check the wheel model, quantity and order date.' }, 400);
   }
+
   const parseDate = (value: string) => new Date(value + 'T00:00:00.000Z');
-  const isWeekend = (date: Date) => date.getUTCDay() === 0 || date.getUTCDay() === 6;
+  const isWorkday = (date: Date) => date.getUTCDay() !== 0 && date.getUTCDay() !== 6;
   const addWorkdays = (date: Date, count: number) => {
-    const next = new Date(date);
+    const result = new Date(date);
     let added = 0;
     while (added < count) {
-      next.setUTCDate(next.getUTCDate() + 1);
-      if (!isWeekend(next)) added++;
+      if (added > 0 || !isWorkday(result)) {
+        result.setUTCDate(result.getUTCDate() + 1);
+        if (!isWorkday(result)) continue;
+      }
+      added++;
     }
-    return next;
+    return result;
   };
+  const requestedDate = parseDate(orderDate);
+  if (Number.isNaN(requestedDate.getTime()) || requestedDate.toISOString().slice(0, 10) !== orderDate) {
+    return json({ error: 'INVALID_ORDER_DATE', message: 'Enter a valid order date.' }, 400);
+  }
+
   const today = new Date();
-  const earliest = addWorkdays(
-    new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate())),
-    1,
-  );
-  let requested = parseDate(orderDate);
-  if (requested < earliest) requested = earliest;
-  while (isWeekend(requested)) requested.setUTCDate(requested.getUTCDate() + 1);
-  const start = requested;
-  const duration = process === 'casting' ? 8 : 7;
+  const todayUtc = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+  const earliestStart = addWorkdays(todayUtc, 1);
+  let start = requestedDate > todayUtc ? requestedDate : earliestStart;
+  while (!isWorkday(start)) start.setUTCDate(start.getUTCDate() + 1);
+
+  const baseWorkingDays = process === 'casting' ? 8 : 7;
+  const assumedBatchSize = 8;
+  const quantityAdjustmentDays = Math.ceil(Math.max(0, quantity - 4) / assumedBatchSize);
+  const stages = process === 'casting'
+    ? [
+        { name: 'Order and material preparation', durationDays: 1 },
+        { name: 'Wheel casting', durationDays: 3 },
+        { name: 'CNC machining', durationDays: 2 },
+        { name: 'Surface finishing', durationDays: 1 },
+        { name: 'Quality inspection', durationDays: 1 },
+      ]
+    : [
+        { name: 'Order and material preparation', durationDays: 1 },
+        { name: 'Forging and forming', durationDays: 2 },
+        { name: 'CNC machining', durationDays: 2 },
+        { name: 'Surface finishing', durationDays: 1 },
+        { name: 'Quality inspection', durationDays: 1 },
+      ];
+  stages[1].durationDays += quantityAdjustmentDays;
+  const addWorkdaysFromStart = (offset: number) => {
+    let result = new Date(start);
+    let added = 0;
+    while (added < offset) {
+      result.setUTCDate(result.getUTCDate() + 1);
+      if (isWorkday(result)) added++;
+    }
+    return result;
+  };
+  let elapsed = 0;
+  const datedStages = stages.map((stage) => {
+    const stageStart = addWorkdaysFromStart(elapsed);
+    const stageEnd = addWorkdaysFromStart(elapsed + stage.durationDays - 1);
+    elapsed += stage.durationDays;
+    return {
+      ...stage,
+      startDate: stageStart.toISOString().slice(0, 10),
+      endDate: stageEnd.toISOString().slice(0, 10),
+    };
+  });
+  const completionDate = datedStages[datedStages.length - 1].endDate;
+
   return json({
     source: 'simulated',
     process,
-    quantity,
     productId: body.productId,
+    quantity,
     startDate: start.toISOString().slice(0, 10),
-    targetWorkingDays: duration,
+    completionDate,
+    targetWorkingDays: elapsed,
+    baseWorkingDays,
+    quantityAdjustmentDays,
+    assumptions: { standardBatchSize: assumedBatchSize, workingWeek: 'Monday-Friday', liveCapacityConnected: false },
+    stages: datedStages,
   });
 }
 
