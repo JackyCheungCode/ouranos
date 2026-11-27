@@ -128,40 +128,94 @@ function corsHeaders(origin: string | null) {
 async function createWheelInquiry(request: Request, env: Env): Promise<Response> {
   if (request.method !== 'POST') return json({ error: 'METHOD_NOT_ALLOWED' }, 405);
   let body: Record<string, unknown>;
-  try { body = (await request.json()) as Record<string, unknown>; }
-  catch { return json({ error: 'INVALID_JSON' }, 400); }
-  const product = body.product && typeof body.product === 'object'
-    ? body.product as Record<string, unknown> : {};
+  try {
+    body = (await request.json()) as Record<string, unknown>;
+  } catch {
+    return json({ error: 'INVALID_JSON' }, 400);
+  }
+  const product =
+    body.product && typeof body.product === 'object'
+      ? (body.product as Record<string, unknown>)
+      : {};
   const textField = (key: string, max = 500) =>
     typeof body[key] === 'string' ? String(body[key]).trim().slice(0, max) : '';
   const productId = typeof product.id === 'string' ? product.id.trim().slice(0, 80) : '';
   const productModel = typeof product.model === 'string' ? product.model.trim().slice(0, 100) : '';
-  const construction = typeof product.construction === 'string' ? product.construction.trim().slice(0, 40) : '';
+  const construction =
+    typeof product.construction === 'string' ? product.construction.trim().slice(0, 40) : '';
   const customerName = textField('customer_name', 120);
   const customerEmail = textField('customer_email', 254);
   const quantity = Number(body.quantity);
-  if (!productId || !/^[a-z0-9][a-z0-9-]*$/i.test(productId) || !productModel ||
-      !['Forged', 'Cast', 'Flow Formed'].includes(construction) ||
-      !customerName || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail) ||
-      !Number.isInteger(quantity) || quantity < 4 || quantity > 10000) {
-    return json({ error: 'INVALID_INQUIRY', message: 'Check the selected wheel, contact details and quantity (minimum 4 PCS).' }, 400);
+  if (
+    !productId ||
+    !/^[a-z0-9][a-z0-9-]*$/i.test(productId) ||
+    !productModel ||
+    !['Forged', 'Cast', 'Flow Formed'].includes(construction) ||
+    !customerName ||
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail) ||
+    !Number.isInteger(quantity) ||
+    quantity < 4 ||
+    quantity > 10000
+  ) {
+    return json(
+      {
+        error: 'INVALID_INQUIRY',
+        message: 'Check the selected wheel, contact details and quantity (minimum 4 PCS).',
+      },
+      400,
+    );
   }
   const reference = 'WR-' + crypto.randomUUID().slice(0, 8).toUpperCase();
   const payload = {
-    front: { diameter: textField('front_diameter', 20), width: textField('front_width', 20), offset: textField('front_offset', 20), pcd: textField('front_pcd', 40), centre_bore: textField('front_cb', 20) },
-    rear: { diameter: textField('rear_diameter', 20), width: textField('rear_width', 20), offset: textField('rear_offset', 20), pcd: textField('rear_pcd', 40), centre_bore: textField('rear_cb', 20) },
-    finish: textField('finish', 80), colour: textField('colour', 100), finish_details: textField('finish_details', 2000),
-    vehicle: { make: textField('vehicle_make', 100), model: textField('vehicle_model', 100), year: textField('vehicle_year', 8) },
-    customer: { name: customerName, email: customerEmail }, quantity,
-    notes: textField('notes', 3000), product: { id: productId, model: productModel, construction }
+    front: {
+      diameter: textField('front_diameter', 20),
+      width: textField('front_width', 20),
+      offset: textField('front_offset', 20),
+      pcd: textField('front_pcd', 40),
+      centre_bore: textField('front_cb', 20),
+    },
+    rear: {
+      diameter: textField('rear_diameter', 20),
+      width: textField('rear_width', 20),
+      offset: textField('rear_offset', 20),
+      pcd: textField('rear_pcd', 40),
+      centre_bore: textField('rear_cb', 20),
+    },
+    finish: textField('finish', 80),
+    colour: textField('colour', 100),
+    finish_details: textField('finish_details', 2000),
+    vehicle: {
+      make: textField('vehicle_make', 100),
+      model: textField('vehicle_model', 100),
+      year: textField('vehicle_year', 8),
+    },
+    customer: { name: customerName, email: customerEmail },
+    quantity,
+    notes: textField('notes', 3000),
+    product: { id: productId, model: productModel, construction },
   };
   try {
     await env.DB.prepare(
-      'INSERT INTO wheel_inquiries (id, reference, product_id, product_model, construction, payload_json) VALUES (?, ?, ?, ?, ?, ?)'
-    ).bind(crypto.randomUUID(), reference, productId, productModel, construction, JSON.stringify(payload)).run();
+      'INSERT INTO wheel_inquiries (id, reference, product_id, product_model, construction, payload_json) VALUES (?, ?, ?, ?, ?, ?)',
+    )
+      .bind(
+        crypto.randomUUID(),
+        reference,
+        productId,
+        productModel,
+        construction,
+        JSON.stringify(payload),
+      )
+      .run();
     return json({ ok: true, reference }, 201);
   } catch {
-    return json({ error: 'INQUIRY_STORAGE_FAILED', message: 'Your enquiry could not be stored. Please try again.' }, 503);
+    return json(
+      {
+        error: 'INQUIRY_STORAGE_FAILED',
+        message: 'Your enquiry could not be stored. Please try again.',
+      },
+      503,
+    );
   }
 }
 
