@@ -1001,31 +1001,6 @@ interface ChatRequestBody {
   messages?: ChatMessage[];
   vehicle?: Record<string, string>;
 }
-async function remoteMcpCall(endpoint: string, name: string, args: Record<string, string>) {
-  const headers = {
-    'content-type': 'application/json',
-    accept: 'application/json, text/event-stream',
-  };
-  try {
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({
-        jsonrpc: '2.0',
-        id: 1,
-        method: 'tools/call',
-        params: { name, arguments: args },
-      }),
-      signal: AbortSignal.timeout(12000),
-    });
-    if (!response.ok) return { status: 'unavailable', httpStatus: response.status };
-    const text = await response.text();
-    return { status: 'connected', result: text.slice(0, 10000) };
-  } catch {
-    return { status: 'unavailable' };
-  }
-}
-
 async function aiAssistantRequest(request: Request, env: Env): Promise<Response> {
   if (request.method !== 'POST') return json({ error: 'METHOD_NOT_ALLOWED' }, 405);
   let body: ChatRequestBody;
