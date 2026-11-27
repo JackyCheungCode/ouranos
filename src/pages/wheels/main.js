@@ -159,26 +159,38 @@ function configureUrl(product) {
 }
 function card(product) {
   const detailUrl = '/wheels/?model=' + encodeURIComponent(product.id);
-  const customization = product.customizationSummary || 'Size, Fitment & Finish';
+  const customizationGroups = [
+    { icon: 'adjust', title: 'Wheel dimensions', options: 'Diameter · Width' },
+    { icon: 'car', title: 'Vehicle fitment', options: 'ET · PCD · CB' },
+    { icon: 'color-picker', title: 'Appearance', options: 'Finish · Color' },
+    { icon: 'edit', title: 'Personalization', options: 'Center Cap · Engraving' },
+  ];
   const minimumOrder = product.minimumOrder || (product.construction === 'Forged' ? '4 PCS' : product.supplyMode === 'production_order' ? '100 PCS' : 'By availability');
   const leadTime = product.manufacturingLeadTime || '10–15 days';
-  const iconRow = (icon, label, value) =>
-    '<div class="wheel-card-meta"><p-icon name="' + icon + '" size="xs" color="contrast-medium"></p-icon><div><span>' + label + '</span><strong>' + escapeHtml(value) + '</strong></div></div>';
+  const customizationMarkup = customizationGroups.map((group) =>
+    '<div class="wheel-card__customization-group">'
+      + '<div class="wheel-card__customization-heading"><p-icon name="' + group.icon + '" size="small"></p-icon><strong>' + group.title + '</strong></div>'
+      + '<span>' + group.options + '</span>'
+    + '</div>'
+  ).join('');
+  const metaRow = (icon, label, value) =>
+    '<div class="wheel-card-meta"><p-icon name="' + icon + '" size="small"></p-icon><div><span>' + label + '</span><strong>' + escapeHtml(value) + '</strong></div></div>';
   return '<article data-product="' + escapeHtml(product.id) + '" class="wheels-product-card wheel-card">'
     + '<div class="wheel-card__image"><span class="wheel-card__tag">' + escapeHtml(product.construction.toUpperCase()) + '</span>'
     + '<img src="' + escapeHtml(product.image) + '" alt="' + escapeHtml(product.model + ' wheel design') + '" width="900" height="900" loading="lazy" decoding="async"></div>'
-    + '<div class="wheel-card__body"><div><p class="wheel-card__eyebrow">' + escapeHtml(product.line) + '</p>'
+    + '<div class="wheel-card__body"><div class="wheel-card__identity"><p class="wheel-card__eyebrow">' + escapeHtml(product.line) + '</p>'
     + '<h3 class="wheel-card__title">' + escapeHtml(product.model) + '</h3>'
     + '<p class="wheel-card__design">' + escapeHtml(product.design) + '</p></div>'
-    + '<p class="wheel-card__customization">Customization: ' + escapeHtml(customization) + '</p>'
+    + '<section class="wheel-card__customization" aria-label="Customization"><h4>Customization</h4>'
+    + '<div class="wheel-card__customization-grid">' + customizationMarkup + '</div>'
+    + '<p class="wheel-card__availability-note">Options vary by model and manufacturing specification.</p></section>'
     + '<div class="wheel-card__meta">'
-    + iconRow('factory', 'Manufacturing', product.construction === 'Forged' ? 'Forged Aluminium' : product.construction)
-    + iconRow('configurate', 'Customization', customization)
-    + iconRow('package', 'Minimum order', minimumOrder)
-    + iconRow('calendar', 'Manufacturing lead time', leadTime)
+    + metaRow('factory', 'Manufacturing', product.construction === 'Forged' ? 'Forged Aluminium' : product.construction)
+    + metaRow('package', 'Minimum order', minimumOrder)
+    + metaRow('calendar', 'Manufacturing lead time', leadTime)
     + '</div>'
-    + '<div class="wheel-card__actions"><p-link><a href="' + detailUrl + '" aria-label="Discover ' + escapeHtml(product.model) + '">Discover</a></p-link>'
-    + '<p-button variant="primary" href="' + configureUrl(product) + '" aria-label="Configure ' + escapeHtml(product.model) + '">Configure</p-button></div>'
+    + '<div class="wheel-card__actions"><a class="wheel-card__action wheel-card__action--primary" href="' + detailUrl + '" aria-label="Discover ' + escapeHtml(product.model) + '">Discover <span aria-hidden="true">→</span></a>'
+    + '<a class="wheel-card__action wheel-card__action--secondary" href="' + configureUrl(product) + '" aria-label="Configure ' + escapeHtml(product.model) + '">Configure</a></div>'
     + '</div></article>';
 }
 function updateUrl(state, sort) {
