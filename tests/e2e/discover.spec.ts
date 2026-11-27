@@ -15,13 +15,13 @@ test('Discover Wheels image intake validates files and previews accepted images'
   await page.locator('#wheel-image').setInputFiles({
     name: 'reference.png',
     mimeType: 'image/png',
-    buffer: Buffer.from('not-a-real-image'),
+    buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/pZ8AAAAASUVORK5CYII=', 'base64'),
   });
   await expect(page.locator('#image-status')).toContainText('Reference image ready');
-  await expect(page.locator('#image-submit')).toBeEnabled();
+  await expect(page.locator('#image-submit')).not.toHaveAttribute('disabled', '');
   await expect(page.locator('#image-preview')).toBeVisible();
   await page.locator('#remove-image').click();
-  await expect(page.locator('#image-submit')).toBeDisabled();
+  await expect(page.locator('#image-submit')).toHaveAttribute('disabled', '');
   await expect(page.locator('#image-dropzone')).toBeVisible();
 });
 
