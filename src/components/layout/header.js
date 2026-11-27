@@ -60,7 +60,7 @@ if (header) {
     if (themeButton) {
       const nextTheme = selected === 'dark' ? 'light' : 'dark';
       const label = nextTheme === 'dark' ? 'Switch to dark mode' : 'Switch to light mode';
-      themeButton.icon = nextTheme === 'dark' ? 'moon' : 'sun';
+      themeButton.setAttribute('icon', nextTheme === 'dark' ? 'moon' : 'sun');
       themeButton.setAttribute('aria-label', label);
       themeButton.setAttribute('title', label);
       themeButton.setAttribute('aria-pressed', String(selected === 'dark'));
