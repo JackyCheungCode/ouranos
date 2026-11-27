@@ -65,7 +65,8 @@ function templatePartials() {
       const isHome = context.filename === resolve(rootDir, 'index.html');
       const isAdmin = context.filename.includes('/admin-panel/');
       const isCustomizer = context.filename.includes('/customize/');
-      if (!isHome && !isAdmin && !isCustomizer) return html;
+      const isDiscover = context.filename.includes('/discover/');
+      if (!isHome && !isAdmin && !isCustomizer && !isDiscover) return html;
       const validChunks = new Set([
         'accordion',
         'ai-tag',
@@ -149,6 +150,8 @@ function templatePartials() {
             ? 'Ouranos | Home'
             : isCustomizer
               ? 'Ouranos | Wheel Atelier'
+              : isDiscover
+              ? 'Ouranos | Discover Wheels'
               : 'Ouranos Admin Panel',
         }),
       ].join('');
@@ -175,6 +178,7 @@ export default defineConfig({
         main: resolve(rootDir, 'index.html'),
         adminPanel: resolve(rootDir, 'admin-panel/index.html'),
         customize: resolve(rootDir, 'customize/index.html'),
+        discover: resolve(rootDir, 'discover/index.html'),
       },
     },
   },

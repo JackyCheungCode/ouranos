@@ -20,7 +20,46 @@
     }
   },
   "r2_buckets": [
-    { "binding": "MODELS_BUCKET", "bucket_name": "ouranos-media" }
+    {
+      "binding": "MODELS_BUCKET",
+      "bucket_name": "ouranos-media"
+    }
   ],
-  "account_id": "ea4e98dce9c478d7dd5c07f10e5c722d"
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "uranus-cortex-dev",
+      "database_id": "76b73d1c-76db-4d29-8e2d-2c0f92cb1070",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "queues": {
+    "producers": [
+      {
+        "binding": "DISCOVERY_QUEUE",
+        "queue": "ouranos-discovery-jobs"
+      }
+    ],
+    "consumers": [
+      {
+        "queue": "ouranos-discovery-jobs",
+        "max_batch_size": 10,
+        "max_batch_timeout": 5,
+        "max_retries": 3
+      }
+    ]
+  },
+  "vectorize": [
+    {
+      "binding": "WHEEL_INDEX",
+      "index_name": "ouranos-wheel-visual-v1"
+    }
+  ],
+  "ai": {
+    "binding": "AI"
+  },
+  "account_id": "ea4e98dce9c478d7dd5c07f10e5c722d",
+  "browser": {
+    "binding": "BROWSER"
+  }
 }
