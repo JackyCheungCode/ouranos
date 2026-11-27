@@ -13,7 +13,7 @@ test('shared header switches between overlay and stacked patterns and preserves 
   await expect(page.locator('#ouranos-ai-open')).toBeVisible();
 
   await page.locator('#ouranos-language-trigger').click();
-  const chineseOption = page.locator('[data-locale="zh-CN"]');
+  const chineseOption = page.locator('.ouranos-language-option[data-locale="zh-CN"]');
   await expect(chineseOption).toBeVisible();
   await chineseOption.click();
 
