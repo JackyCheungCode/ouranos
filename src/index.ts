@@ -1002,7 +1002,7 @@ async function aiAssistantRequest(request: Request, env: Env): Promise<Response>
   const sourceResults: Array<{ source: string; status: string; result?: unknown }> = [];
   let catalogProducts: Record<string, unknown>[] = [];
   let verifiedFitments: Record<string, unknown>[] = [];
-  if (/(wheel|wheels|rim|rims|轮毂|轮圈|商品|产品|推荐|recommend|compare|比较)/i.test(latest)) {
+  if (/(wheel|wheels|rim|rims|轮毂|轮圈|商品|产品|推荐|recommend|compare|比较)/i.test(conversationText)) {
     try { catalogProducts = await searchPublishedProducts(env, conversationText); }
     catch { sourceResults.push({ source: 'OURANOS D1 Product Catalogue', status: 'unavailable' }); }
     if (!catalogProducts.length && !sourceResults.some((item) => item.source === 'OURANOS D1 Product Catalogue'))
