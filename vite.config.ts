@@ -13,12 +13,39 @@ import {
   getLoaderScript,
   getMetaTagsAndIconLinks as getJsMetaTagsAndIconLinks,
 } from '@porsche-design-system/components-js/partials';
-import { readFileSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
+import { readdirSync, readFileSync } from 'node:fs';
+import { dirname, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 
 const rootDir = dirname(fileURLToPath(import.meta.url));
+const excludedDirectories = new Set(['.git', '.wrangler', 'coverage', 'dist', 'node_modules']);
+
+function discoverHtmlEntries(directory = rootDir, entries: string[] = []) {
+  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
+      if (!excludedDirectories.has(entry.name) && !entry.name.startsWith('.')) {
+        discoverHtmlEntries(resolve(directory, entry.name), entries);
+      }
+      continue;
+    }
+
+    if (entry.isFile() && entry.name === 'index.html') {
+      entries.push(resolve(directory, entry.name));
+    }
+  }
+
+  return entries;
+}
+
+function htmlEntryPoints() {
+  return Object.fromEntries(
+    discoverHtmlEntries().map((file) => {
+      const path = relative(rootDir, file).split(sep).join('/');
+      return [path === 'index.html' ? 'main' : path.replace(/\.html$/, ''), file];
+    }),
+  );
+}
 
 function reactHeadPartials() {
   return {
@@ -39,21 +66,53 @@ function reactHeadPartials() {
 function sharedLayoutPartials() {
   return {
     name: 'ouranos-shared-layout-partials',
-    transformIndexHtml(html: string) {
-      if (!html.includes('<!-- OURANOS:HEADER -->') && !html.includes('<!-- OURANOS:FOOTER -->'))
-        return html;
+    transformIndexHtml(html: string, context: { filename: string }) {
+      const isAdmin = context.filename.includes(`${sep}admin-panel${sep}`);
+      if (isAdmin || html.includes('<!-- OURANOS:NO-SHARED-HEADER -->')) return html;
 
+      const isHome = resolve(context.filename) === resolve(rootDir, 'index.html');
+      const isOverlay = isHome || context.filename.includes(`${sep}customize${sep}`);
       const readPartial = (name: string) =>
         readFileSync(resolve(rootDir, 'src/components/layout', name), 'utf8');
-      const header = readPartial('header.html');
-      const topbar = readPartial('topbar.html').replace(
-        '<!-- OURANOS:SIDEBAR -->',
-        readPartial('sidebar.html'),
-      );
+      const sidebar = readPartial('sidebar.html');
+      const topbar = readPartial('topbar.html')
+        .replace('<!-- OURANOS:SIDEBAR -->', sidebar)
+        .replace('class="ouranos-header"', `class="ouranos-header ${isOverlay ? 'scheme-dark' : 'scheme-light'}"`)
+        .replace('data-header-variant="auto"', `data-header-variant="${isOverlay ? 'overlay' : 'stacked'}"`);
+      const header = readPartial('header.html').replace('<!-- OURANOS:TOPBAR -->', topbar);
 
-      return html
-        .replace('<!-- OURANOS:HEADER -->', header.replace('<!-- OURANOS:TOPBAR -->', topbar))
-        .replace('<!-- OURANOS:FOOTER -->', readPartial('footer.html'));
+      let transformed = html;
+      if (transformed.includes('<!-- OURANOS:HEADER -->')) {
+        transformed = transformed.replace('<!-- OURANOS:HEADER -->', header);
+      } else if (!transformed.includes('class="ouranos-header"')) {
+        transformed = transformed.replace(/<body\b[^>]*>/i, (openingTag) => `${openingTag}\n${header}`);
+      }
+
+      if (transformed.includes('<!-- OURANOS:FOOTER -->')) {
+        transformed = transformed.replace('<!-- OURANOS:FOOTER -->', readPartial('footer.html'));
+      }
+
+      // The Worker asset dev server does not reliably resolve a module script
+      // injected late by an HTML transform. Inline the small shared controller
+      // after stripping its CSS import, and add the stylesheet as a normal link.
+      if (!transformed.includes('ouranos-header-controller-inline')) {
+        const controller = readPartial('header.js').replace(/^import ['"]\.\/header\.css['"];?\s*/m, '');
+        transformed = transformed.replace(
+          '</head>',
+          '<link rel="stylesheet" href="/src/components/layout/header.css">\n</head>',
+        );
+        transformed = transformed.replace(
+          '</body>',
+          `<script id="ouranos-header-controller-inline">\n${controller}\n</script>\n</body>`,
+        );
+      }
+      if (!transformed.includes('/src/components/ai-assistant.js')) {
+        transformed = transformed.replace(
+          '</body>',
+          '<script type="module" src="/src/components/ai-assistant.js"></script>\n</body>',
+        );
+      }
+      return transformed;
     },
   };
 }
@@ -68,8 +127,6 @@ function templatePartials() {
       const isDiscover = context.filename.includes('/discover/');
       const isWheels = context.filename.includes('/wheels/');
       const isContact = context.filename.includes('/contact/');
-      if (!isHome && !isAdmin && !isCustomizer && !isDiscover && !isWheels && !isContact)
-        return html;
       const validChunks = new Set([
         'accordion',
         'ai-tag',
@@ -144,23 +201,24 @@ function templatePartials() {
             .filter((name) => validChunks.has(name)),
         ),
       ];
+      const appTitle = isHome
+        ? 'Ouranos | Home'
+        : isCustomizer
+          ? 'Ouranos | Wheel Atelier'
+          : isDiscover
+            ? 'Ouranos | Discover Wheels'
+            : isWheels
+              ? 'Ouranos | Wheels'
+              : isContact
+                ? 'Ouranos | Contact Us'
+                : isAdmin
+                  ? 'Ouranos Admin Panel'
+                  : 'Ouranos';
       const partials = [
         getJsComponentChunkLinks({ components: components as never[] }),
         getJsFontLinks(),
         getJsIconLinks(),
-        getJsMetaTagsAndIconLinks({
-          appTitle: isHome
-            ? 'Ouranos | Home'
-            : isCustomizer
-              ? 'Ouranos | Wheel Atelier'
-              : isDiscover
-                ? 'Ouranos | Discover Wheels'
-                : isWheels
-                  ? 'Ouranos | Wheels'
-                  : isContact
-                    ? 'Ouranos | Contact Us'
-                    : 'Ouranos Admin Panel',
-        }),
+        getJsMetaTagsAndIconLinks({ appTitle }),
       ].join('');
       return html
         .replace('</head>', `${partials}</head>`)
@@ -181,14 +239,7 @@ export default defineConfig({
     outDir: 'dist',
     emptyOutDir: true,
     rollupOptions: {
-      input: {
-        main: resolve(rootDir, 'index.html'),
-        adminPanel: resolve(rootDir, 'admin-panel/index.html'),
-        customize: resolve(rootDir, 'customize/index.html'),
-        discover: resolve(rootDir, 'discover/index.html'),
-        wheels: resolve(rootDir, 'wheels/index.html'),
-        contact: resolve(rootDir, 'contact/index.html'),
-      },
+      input: htmlEntryPoints(),
     },
   },
 });

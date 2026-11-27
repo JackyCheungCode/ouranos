@@ -1,25 +1,9 @@
 import './style.css';
 
-const navDrilldown = document.getElementById('nav-drilldown');
-const navButton = document.getElementById('nav-button');
 const pauseButton = document.getElementById('pause-button');
 const video = document.querySelector('video');
 const selectRegion = document.querySelector('p-select[name="region"]');
 const selectRegionSelectedSlot = selectRegion?.querySelector('[slot="selected"]');
-
-if (navDrilldown && navButton) {
-  navButton.addEventListener('click', () => {
-    navDrilldown.open = true;
-  });
-
-  navDrilldown.addEventListener('dismiss', (e) => {
-    e.target.open = false;
-  });
-
-  navDrilldown.addEventListener('update', (e) => {
-    e.target.activeIdentifier = e.detail.activeIdentifier;
-  });
-}
 
 if (pauseButton && video instanceof HTMLVideoElement) {
   pauseButton.addEventListener('click', () => {
