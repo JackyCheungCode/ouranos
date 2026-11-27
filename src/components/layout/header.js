@@ -5,7 +5,6 @@ const header = document.querySelector('.ouranos-header');
 if (header) {
   const navDrilldown = header.querySelector('#nav-drilldown');
   const navButton = header.querySelector('#nav-button');
-  const languagePopover = header.querySelector('#ouranos-language-popover');
   const languageTrigger = header.querySelector('#ouranos-language-trigger');
   const languageOptions = [...header.querySelectorAll('[data-locale]')];
 
