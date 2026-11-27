@@ -53,6 +53,7 @@
               </div>
             </div>
             <div class="discover-actions">
+              <div class="discover-progress" id="image-progress" hidden><div class="discover-progress-meta"><span id="image-progress-step">Waiting to upload</span><span id="image-progress-value">0%</span></div><progress id="image-progress-bar" max="100" value="0" aria-label="Image discovery progress"></progress></div>
               <p-text id="image-status" class="discover-status" color="contrast-medium" aria-live="polite">Your image stays in this browser until you choose to continue.</p-text>
               <p-button id="image-submit" type="button" disabled>Find matching wheels</p-button>
             </div>
@@ -69,6 +70,7 @@
               <p-button id="url-submit" type="button" disabled>Analyse link</p-button>
             </div>
             <p-text id="url-help" size="xs" color="contrast-medium">Only public product pages can be analysed. Pages requiring sign-in or blocking automated access may need a reference image instead.</p-text>
+            <div class="discover-progress" id="url-progress" hidden><div class="discover-progress-meta"><span id="url-progress-step">Waiting to analyse</span><span id="url-progress-value">0%</span></div><progress id="url-progress-bar" max="100" value="0" aria-label="Product link analysis progress"></progress></div>
             <p-text id="url-status" class="discover-status" color="contrast-medium" aria-live="polite">Supported URL intake is being prepared. No page content is fetched at this stage.</p-text>
           </section>
         </div>
