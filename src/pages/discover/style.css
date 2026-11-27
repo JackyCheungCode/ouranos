@@ -286,7 +286,9 @@ body {
   border-radius: 4px;
   background: #fff;
 }
-.discover-product-preview[hidden] { display: none; }
+.discover-product-preview[hidden] {
+  display: none;
+}
 .discover-product-preview > img {
   display: block;
   width: 100%;
@@ -325,7 +327,13 @@ body {
   overflow-wrap: anywhere;
 }
 @media (max-width: 600px) {
-  .discover-product-preview { grid-template-columns: 1fr; }
-  .discover-product-preview > img { max-width: 280px; }
-  .discover-product-fields { grid-template-columns: 1fr 1fr; }
+  .discover-product-preview {
+    grid-template-columns: 1fr;
+  }
+  .discover-product-preview > img {
+    max-width: 280px;
+  }
+  .discover-product-fields {
+    grid-template-columns: 1fr 1fr;
+  }
 }

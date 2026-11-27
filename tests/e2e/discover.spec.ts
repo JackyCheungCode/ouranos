@@ -41,7 +41,9 @@ test('Discover Wheels switches to URL intake and rejects unsafe URLs', async ({ 
   await expect(page.locator('#url-status')).toHaveAttribute('data-state', 'error');
 });
 
-test('URL discovery shows extracted product details and waits for explicit confirmation', async ({ page }) => {
+test('URL discovery shows extracted product details and waits for explicit confirmation', async ({
+  page,
+}) => {
   let confirmed = false;
   await page.route('**/api/discover/url', async (route) => {
     await route.fulfill({
@@ -70,16 +72,27 @@ test('URL discovery shows extracted product details and waits for explicit confi
           extracted_brand: 'Example Wheels',
           extracted_model: 'F-01',
           extracted_image_url: 'https://example.com/wheel.jpg',
-          extracted_specs_json: JSON.stringify({ sku: 'F01-19', diameter: 19, width: 8.5, pcdHoles: 5, pcdMm: 112, offsetMm: 35 }),
+          extracted_specs_json: JSON.stringify({
+            sku: 'F01-19',
+            diameter: 19,
+            width: 8.5,
+            pcdHoles: 5,
+            pcdMm: 112,
+            offsetMm: 35,
+          }),
           source_domain: 'example.com',
           confirmation_status: confirmed ? 'confirmed' : 'pending',
         },
-        matches: confirmed ? [{
-          id: 'match-1',
-          match_type: 'specification_similar',
-          product_name: 'OURANOS Test Wheel',
-          similarity_score: null,
-        }] : [],
+        matches: confirmed
+          ? [
+              {
+                id: 'match-1',
+                match_type: 'specification_similar',
+                product_name: 'OURANOS Test Wheel',
+                similarity_score: null,
+              },
+            ]
+          : [],
       }),
     });
   });
@@ -89,7 +102,10 @@ test('URL discovery shows extracted product details and waits for explicit confi
   await page.locator('#url-submit').click();
   await expect(page.locator('#url-product-preview')).toBeVisible();
   await expect(page.locator('#url-product-title')).toContainText('Forged Performance Wheel');
-  await expect(page.locator('#url-product-image')).toHaveAttribute('src', 'https://example.com/wheel.jpg');
+  await expect(page.locator('#url-product-image')).toHaveAttribute(
+    'src',
+    'https://example.com/wheel.jpg',
+  );
   await expect(page.locator('#url-product-fields')).toContainText('Example Wheels');
   await expect(page.locator('#url-product-fields')).toContainText('5 × 112');
   await expect(page.locator('#url-status')).toContainText('请核对图片和参数');

@@ -525,7 +525,13 @@ async function extractWheelReference(env: Env, sourceUrl: URL): Promise<Extracte
           const text = (document.body?.innerText || '').slice(0, 12000);
           return {
             title: String(product.name || meta('og:title') || document.title || ''),
-            image: (() => { const value = product.image || meta('og:image'); if (Array.isArray(value)) return String(value[0]?.url || value[0] || ''); if (value && typeof value === 'object') return String((value as Record<string, unknown>).url || ''); return String(value || ''); })(),
+            image: (() => {
+              const value = product.image || meta('og:image');
+              if (Array.isArray(value)) return String(value[0]?.url || value[0] || '');
+              if (value && typeof value === 'object')
+                return String((value as Record<string, unknown>).url || '');
+              return String(value || '');
+            })(),
             brand: brand || meta('product:brand'),
             model: String(product.model || product.mpn || ''),
             sku: String(product.sku || product.productID || ''),
@@ -544,7 +550,17 @@ async function extractWheelReference(env: Env, sourceUrl: URL): Promise<Extracte
     };
     const text = data.text || '';
     let imageUrl = '';
-    try { const candidate = new URL(data.image || '', sourceUrl); if (['http:', 'https:'].includes(candidate.protocol) && !candidate.username && !candidate.password) imageUrl = candidate.toString(); } catch { /* Ignore invalid product image URLs. */ }
+    try {
+      const candidate = new URL(data.image || '', sourceUrl);
+      if (
+        ['http:', 'https:'].includes(candidate.protocol) &&
+        !candidate.username &&
+        !candidate.password
+      )
+        imageUrl = candidate.toString();
+    } catch {
+      /* Ignore invalid product image URLs. */
+    }
     const dimension = text.match(/(?:^|\s)(\d{2})\s*[x×]\s*(\d+(?:\.\d+)?)\s*(?:J)?/i);
     const pcd = text.match(/PCD\s*[:：]?\s*(\d{1,2})\s*[x×]\s*(\d{2,3}(?:\.\d+)?)/i);
     const offset = text.match(/(?:ET|OFFSET)\s*[:：]?\s*(-?\d{1,3})/i);
@@ -575,7 +591,7 @@ async function runUrlDiscovery(env: Env, jobId: string): Promise<void> {
   if (!sourceUrl) throw new Error('INVALID_SOURCE_URL');
   const extracted = await extractWheelReference(env, sourceUrl);
   await env.DB.prepare(
-    'UPDATE discovery_references SET source_domain = ?, extracted_title = ?, extracted_brand = ?, extracted_model = ?, extracted_image_url = ?, extracted_specs_json = ?, confirmation_status = \'pending\' WHERE job_id = ?',
+    "UPDATE discovery_references SET source_domain = ?, extracted_title = ?, extracted_brand = ?, extracted_model = ?, extracted_image_url = ?, extracted_specs_json = ?, confirmation_status = 'pending' WHERE job_id = ?",
   )
     .bind(
       sourceUrl.hostname,
@@ -630,21 +646,43 @@ async function runUrlMatching(env: Env, jobId: string): Promise<void> {
       await env.DB.prepare(
         "INSERT OR IGNORE INTO discovery_matches (id, job_id, product_id, match_type, similarity_score, explanation) VALUES (?, ?, ?, 'exact', 1, ?)",
       )
-        .bind(crypto.randomUUID(), jobId, product.id, 'Exact SKU match found in the OURANOS catalogue.')
+        .bind(
+          crypto.randomUUID(),
+          jobId,
+          product.id,
+          'Exact SKU match found in the OURANOS catalogue.',
+        )
         .run();
     }
   }
-  if (!exactMatches.length && extracted.diameter && extracted.width && extracted.pcdHoles && extracted.pcdMm) {
+  if (
+    !exactMatches.length &&
+    extracted.diameter &&
+    extracted.width &&
+    extracted.pcdHoles &&
+    extracted.pcdMm
+  ) {
     const similar = await env.DB.prepare(
       "SELECT p.id FROM wheel_specs ws JOIN products p ON p.id = ws.product_id WHERE ws.diameter_in = ? AND ws.width_in = ? AND ws.pcd_holes = ? AND ws.pcd_mm = ? AND p.publication_status = 'published' ORDER BY ABS(COALESCE(ws.offset_mm, 0) - ?) ASC LIMIT 20",
     )
-      .bind(extracted.diameter, extracted.width, extracted.pcdHoles, extracted.pcdMm, extracted.offsetMm ?? 0)
+      .bind(
+        extracted.diameter,
+        extracted.width,
+        extracted.pcdHoles,
+        extracted.pcdMm,
+        extracted.offsetMm ?? 0,
+      )
       .all<{ id: string }>();
     for (const product of similar.results || []) {
       await env.DB.prepare(
         "INSERT OR IGNORE INTO discovery_matches (id, job_id, product_id, match_type, similarity_score, explanation) VALUES (?, ?, ?, 'specification_similar', NULL, ?)",
       )
-        .bind(crypto.randomUUID(), jobId, product.id, 'Wheel dimensions and PCD match the extracted reference. Offset should be checked before confirming fitment.')
+        .bind(
+          crypto.randomUUID(),
+          jobId,
+          product.id,
+          'Wheel dimensions and PCD match the extracted reference. Offset should be checked before confirming fitment.',
+        )
         .run();
     }
   }
@@ -661,26 +699,37 @@ async function confirmUrlDiscovery(request: Request, env: Env): Promise<Response
   if (!/^[0-9a-f-]{36}$/i.test(id)) return json({ error: 'INVALID_JOB_ID' }, 400);
   const job = await env.DB.prepare(
     "SELECT id, status FROM discovery_jobs WHERE id = ? AND input_type = 'url'",
-  ).bind(id).first<{ id: string; status: string }>();
+  )
+    .bind(id)
+    .first<{ id: string; status: string }>();
   if (!job) return json({ error: 'DISCOVERY_JOB_NOT_FOUND' }, 404);
   if (job.status !== 'completed') return json({ error: 'EXTRACTION_NOT_READY' }, 409);
   const reference = await env.DB.prepare(
     "SELECT id, confirmation_status FROM discovery_references WHERE job_id = ? AND source_type = 'url'",
-  ).bind(id).first<{ id: string; confirmation_status: string }>();
+  )
+    .bind(id)
+    .first<{ id: string; confirmation_status: string }>();
   if (!reference) return json({ error: 'DISCOVERY_REFERENCE_NOT_FOUND' }, 404);
-  if (reference.confirmation_status === 'confirmed') return json({ jobId: id, status: 'already_confirmed' }, 200);
+  if (reference.confirmation_status === 'confirmed')
+    return json({ jobId: id, status: 'already_confirmed' }, 200);
   await env.DB.prepare(
     "UPDATE discovery_references SET confirmation_status = 'confirmed' WHERE id = ? AND confirmation_status = 'pending'",
-  ).bind(reference.id).run();
+  )
+    .bind(reference.id)
+    .run();
   await env.DB.prepare(
     "UPDATE discovery_jobs SET status = 'queued', error_code = NULL, error_message = NULL, completed_at = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
-  ).bind(id).run();
+  )
+    .bind(id)
+    .run();
   try {
     await env.DISCOVERY_QUEUE.send({ jobId: id, type: 'url_matching' });
   } catch {
     await env.DB.prepare(
       "UPDATE discovery_jobs SET status = 'failed', error_code = 'MATCHING_QUEUE_FAILED', error_message = 'The confirmed reference could not be queued. Please retry.', updated_at = CURRENT_TIMESTAMP WHERE id = ?",
-    ).bind(id).run();
+    )
+      .bind(id)
+      .run();
     return json({ error: 'MATCHING_QUEUE_FAILED' }, 503);
   }
   return json({ jobId: id, status: 'queued' }, 202);
@@ -804,7 +853,9 @@ async function getDiscoveryJob(request: Request, env: Env): Promise<Response> {
   if (!job) return json({ error: 'DISCOVERY_JOB_NOT_FOUND' }, 404);
   const reference = await env.DB.prepare(
     'SELECT source_url, source_domain, extracted_title, extracted_brand, extracted_model, extracted_image_url, extracted_specs_json, confirmation_status FROM discovery_references WHERE job_id = ? LIMIT 1',
-  ).bind(id).first();
+  )
+    .bind(id)
+    .first();
   const matches = await env.DB.prepare(
     "SELECT m.id, m.match_type, m.similarity_score, m.explanation, p.id AS product_id, p.slug, p.product_name FROM discovery_matches m JOIN products p ON p.id = m.product_id WHERE m.job_id = ? ORDER BY CASE m.match_type WHEN 'exact' THEN 0 WHEN 'visual_similar' THEN 1 ELSE 2 END, m.similarity_score DESC",
   )
@@ -861,7 +912,8 @@ const handler = {
     const url = new URL(request.url);
     if (url.pathname === '/api/discover/image') return createImageDiscovery(request, env);
     if (url.pathname === '/api/discover/url') return createUrlDiscovery(request, env);
-    if (url.pathname.startsWith('/api/discover/jobs/') && url.pathname.endsWith('/confirm')) return confirmUrlDiscovery(request, env);
+    if (url.pathname.startsWith('/api/discover/jobs/') && url.pathname.endsWith('/confirm'))
+      return confirmUrlDiscovery(request, env);
     if (url.pathname === '/api/discover/index') return indexRequest(request, env);
     if (url.pathname.startsWith('/api/discover/jobs/')) return getDiscoveryJob(request, env);
     if (url.pathname.startsWith('/api/wheel-size/')) return wheelSizeRequest(request, env);
