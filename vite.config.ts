@@ -77,6 +77,7 @@ function sharedLayoutPartials() {
       const sidebar = readPartial('sidebar.html');
       const topbar = readPartial('topbar.html')
         .replace('<!-- OURANOS:SIDEBAR -->', sidebar)
+        .replace('class="ouranos-header"', `class="ouranos-header ${isOverlay ? 'scheme-dark' : 'scheme-light'}"`)
         .replace('data-header-variant="auto"', `data-header-variant="${isOverlay ? 'overlay' : 'stacked'}"`);
       const header = readPartial('header.html').replace('<!-- OURANOS:TOPBAR -->', topbar);
 
