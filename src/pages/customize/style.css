@@ -1479,6 +1479,27 @@ body {
   margin: 0 0 24px;
 }
 
+/* Keep each step's PDS icon and label on one line, including narrow viewports. */
+.step-navigation .stepper-item-content {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.step-navigation .stepper-item-content p-icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.step-navigation .stepper-item-label {
+  display: inline-block;
+  white-space: nowrap;
+}
+
 .model-list {
   display: grid;
   gap: 8px;
