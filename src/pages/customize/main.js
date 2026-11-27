@@ -1,6 +1,7 @@
 import './style.css';
 const $=s=>document.querySelector(s);
-const S={step:0,model:null,catalogueWheel:null,market:'',regions:[],makes:[],models:[],years:[],trims:[],fitments:[],selected:null,vehicle:null,color:'black',surface:'satin'};\nconst catalogueParams=new URLSearchParams(location.search);
+const S={step:0,model:null,catalogueWheel:null,market:'',regions:[],makes:[],models:[],years:[],trims:[],fitments:[],selected:null,vehicle:null,color:'black',surface:'satin'};
+const catalogueParams=new URLSearchParams(location.search);
 const COLORS={black:0x34383b,silver:0xd5d7d6,bronze:0x9b704d}, ROUGH={satin:.34,gloss:.16,brushed:.48};
 const NAMES={black:'Black',silver:'Silver',bronze:'Bronze'}, SURF={satin:'Satin',gloss:'Gloss',brushed:'Brushed'};
 let wheelScene;
