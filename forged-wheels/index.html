@@ -111,9 +111,11 @@
             <p-text size="xs" color="contrast-medium">CERTIFICATION & TESTING</p-text>
             <p-heading tag="h3" size="lg">Standards that can be verified.</p-heading>
           </div>
-          <div class="forged-certifications__list">
-            <span>JWL</span><span>VIA</span><span>TÜV</span><span>DOT</span><span>ISO 9001</span>
-          </div>
+          <p-scroller class="forged-certifications__scroller">
+            <div class="forged-certifications__list">
+              <span>JWL</span><span>VIA</span><span>TÜV</span><span>DOT</span><span>ISO 9001</span>
+            </div>
+          </p-scroller>
           <p-text size="xs" color="contrast-medium">Certification marks and test reports are displayed only for the applicable product, facility and market after documentary verification.</p-text>
         </div>
       </section>
@@ -148,6 +150,11 @@
             <div><p-text size="xs" color="contrast-medium">FLAGSHIP COMPOSITE</p-text><p-heading tag="h3" size="lg">Carbon Barrel</p-heading><p-text color="contrast-medium">A composite construction concept for flagship performance applications. Material architecture, load ratings and production availability require project-specific confirmation.</p-text><ul><li>Carbon composite barrel concept</li><li>Application-specific engineering</li><li>Availability confirmed per project</li></ul></div>
           </article>
         </div>
+        <p-carousel class="forged-reference-carousel" heading="Featured forged design references" slides-per-page="3" pagination="true" rewind="true" aria="{'aria-label': 'Featured forged wheel design references'}">
+          <div class="forged-carousel-card"><img src="https://variantwheels.com/cdn/shop/files/Zeno-Raw-Milled-ANGLE-vsf-opti-800x_b406506f-32ea-4088-b976-e25d79a06b63.png?v=1743773004" alt="Single-piece wheel design reference"><strong>Monoblock form</strong><span>One-piece architecture</span></div>
+          <div class="forged-carousel-card"><img src="https://gmrwheels.com/cdn/shop/products/fifty_4.jpg?v=1679528630" alt="Multi-piece wheel design reference"><strong>Multi-piece detail</strong><span>Deep-lip configuration</span></div>
+          <div class="forged-carousel-card"><img src="https://variantwheels.com/cdn/shop/files/Maxim-Gloss-Bronze-TILT-vsf-opti-800x_a90328c7-5024-43a3-a10f-5b7e1a5fc5c2.png?v=1743763630&width=800" alt="Bronze finish wheel design reference"><strong>Surface expression</strong><span>Machined and coated finish</span></div>
+        </p-carousel>
         <p-text class="forged-image-note" size="xs" color="contrast-medium">All wheel images on this page are third-party visual references, not confirmed OURANOS products. Final model availability and construction are subject to confirmation.</p-text>
 
         <div class="forged-customisation">
@@ -168,6 +175,7 @@
               <button type="button" class="forged-swatch" data-finish="Brushed Silver" aria-pressed="false"><span class="swatch swatch--silver"></span><span>Brushed Silver</span></button>
               <button type="button" class="forged-swatch" data-finish="Brushed Dark Grey" aria-pressed="false"><span class="swatch swatch--dark"></span><span>Brushed Dark Grey</span></button>
               <button type="button" class="forged-swatch" data-finish="Brushed Bronze" aria-pressed="false"><span class="swatch swatch--bronze"></span><span>Brushed Bronze</span></button>
+              <button type="button" class="forged-swatch" data-finish="Brushed Black" aria-pressed="false"><span class="swatch swatch--black"></span><span>Brushed Black</span></button>
             </div>
           </div>
           <div class="forged-customisation__options">
@@ -276,6 +284,23 @@
           </form>
         </div>
       </section>
+
+      <p-flyout id="fitment-flyout" position="end" aria="{'aria-label': 'Vehicle fitment data review'}">
+        <p-heading slot="header" tag="h2" size="lg" id="fitment-flyout-title">Vehicle fitment review</p-heading>
+        <p-text id="fitment-flyout-description">Provide the exact vehicle and brake configuration to begin a fitment review.</p-text>
+        <p-text color="contrast-medium">The current gallery contains vehicle categories and visual references only. Verified installation dimensions and customer feedback will be published when approved case records are available.</p-text>
+        <div slot="footer" class="forged-flyout-actions">
+          <p-button id="fitment-flyout-enquire" type="button" icon="arrow-right">Add details to enquiry</p-button>
+        </div>
+      </p-flyout>
+      <p-modal id="warranty-modal" aria="{'aria-label': 'Warranty information'}">
+        <p-heading slot="header" tag="h2" size="lg">Warranty information</p-heading>
+        <p-text>The programme brief specifies lifetime structural coverage and a two-year surface finish warranty.</p-text>
+        <p-text color="contrast-medium">The trust summary also lists a five-year structural warranty. The applicable duration, exclusions and market coverage must be confirmed in the written warranty agreement supplied with the quotation.</p-text>
+        <div slot="footer" class="forged-modal-actions">
+          <p-button id="warranty-modal-close" type="button" variant="secondary">Close</p-button>
+        </div>
+      </p-modal>
     </main>
     <!-- OURANOS:FOOTER -->
     <script type="module" src="/src/pages/forged-wheels/main.js"></script>

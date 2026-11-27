@@ -69,10 +69,10 @@ constructionTabs?.addEventListener('update', (event) => {
 });
 
 const finishOptions = {
-  brushed: ['Brushed Titanium', 'Brushed Silver', 'Brushed Dark Grey', 'Brushed Bronze'],
-  polished: ['Mirror Polish', 'Bright Silver', 'Polished Smoke', 'Polished Bronze'],
-  chrome: ['Bright Chrome', 'Dark Chrome', 'Satin Chrome', 'Black Chrome'],
-  paint: ['Gloss Black', 'Matte Black', 'Satin Graphite', 'Custom Colour']
+  brushed: ['Brushed Titanium', 'Brushed Silver', 'Brushed Dark Grey', 'Brushed Bronze', 'Brushed Black'],
+  polished: ['Mirror Polish', 'Bright Silver', 'Polished Smoke', 'Polished Bronze', 'Polished Black'],
+  chrome: ['Bright Chrome', 'Dark Chrome', 'Satin Chrome', 'Black Chrome', 'Shadow Chrome'],
+  paint: ['Gloss Black', 'Matte Black', 'Satin Graphite', 'Custom Colour', 'Gloss White']
 };
 const finishSwatches = document.querySelector('#finish-swatches');
 function renderFinishes(category) {
@@ -117,21 +117,42 @@ vehicleFilter?.addEventListener('change', (event) => {
 document.querySelectorAll('.forged-text-button[data-case]').forEach((button) => {
   button.addEventListener('click', () => {
     const vehicle = button.dataset.case;
-    const labels = {
-      porsche: 'Porsche: exact model year, generation, trim, brake package, front/rear wheel dimensions, PCD, centre bore, ET and tyre sizes.',
-      amg: 'Mercedes-AMG: exact model, generation, brake package, axle loads, front/rear dimensions, PCD, centre bore, ET and tyre sizes.',
-      bmw: 'BMW M: exact chassis code, model year, brake package, front/rear dimensions, PCD, centre bore, ET and tyre sizes.',
-      tesla: 'Tesla: exact model and year, wheel load rating, brake package, front/rear dimensions, PCD, centre bore, ET, tyre sizes and TPMS.',
-      offroad: 'Off-road: vehicle, axle load, suspension and brake setup, tyre envelope, PCD, centre bore, offset and intended terrain.'
+    const fitmentDetails = {
+      porsche: { title: 'Porsche fitment data', description: 'Exact model year, generation, trim, brake package, front and rear wheel dimensions, PCD, centre bore, ET and tyre sizes.' },
+      amg: { title: 'Mercedes-AMG fitment data', description: 'Exact model, generation, brake package, axle loads, front and rear dimensions, PCD, centre bore, ET and tyre sizes.' },
+      bmw: { title: 'BMW M fitment data', description: 'Exact chassis code, model year, brake package, front and rear dimensions, PCD, centre bore, ET and tyre sizes.' },
+      tesla: { title: 'Tesla fitment data', description: 'Exact model and year, wheel load rating, brake package, front and rear dimensions, PCD, centre bore, ET, tyre sizes and TPMS.' },
+      offroad: { title: 'Off-road fitment data', description: 'Vehicle, axle load, suspension and brake setup, tyre envelope, PCD, centre bore, offset and intended terrain.' }
     };
-    document.querySelector('#notes').value = labels[vehicle] || '';
-    document.querySelector('#enquiry').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const details = fitmentDetails[vehicle];
+    if (!details) return;
+    document.querySelector('#fitment-flyout-title').textContent = details.title;
+    document.querySelector('#fitment-flyout-description').textContent = details.description;
+    document.querySelector('#fitment-flyout').open = true;
+    document.querySelector('#fitment-flyout').dataset.vehicle = vehicle;
   });
 });
 
+const warrantyModal = document.querySelector('#warranty-modal');
 document.querySelector('#warranty-details')?.addEventListener('click', () => {
+  warrantyModal.open = true;
+});
+warrantyModal?.addEventListener('dismiss', () => {
+  warrantyModal.open = false;
+});
+document.querySelector('#warranty-modal-close')?.addEventListener('click', () => {
+  warrantyModal.open = false;
+});
+const fitmentFlyout = document.querySelector('#fitment-flyout');
+fitmentFlyout?.addEventListener('dismiss', () => {
+  fitmentFlyout.open = false;
+});
+document.querySelector('#fitment-flyout-enquire')?.addEventListener('click', () => {
+  const vehicle = fitmentFlyout.dataset.vehicle || '';
+  const notes = document.querySelector('#fitment-flyout-description').textContent || '';
+  document.querySelector('#notes').value = vehicle ? vehicle.toUpperCase() + ': ' + notes : notes;
+  fitmentFlyout.open = false;
   document.querySelector('#enquiry').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  document.querySelector('[name="notes"]').value = 'Please provide the written structural and finish warranty terms, including exclusions and market coverage.';
 });
 
 const customerType = document.querySelector('#customer-type');

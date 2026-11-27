@@ -34,6 +34,8 @@ test('forged wheels landing page follows the seven-section business brief', asyn
   await expect(page.locator('.forged-pain__list p-accordion')).toHaveCount(4);
   await expect(page.locator('p-stepper-horizontal-item')).toHaveCount(6);
   await expect(page.locator('.forged-construction-panel')).toHaveCount(4);
+  await expect(page.locator('p-carousel')).toBeVisible();
+  await expect(page.locator('p-scroller')).toBeVisible();
   await expect(page.locator('.forged-fitment-card')).toHaveCount(5);
   await expect(page.locator('.forged-aftercare__grid article')).toHaveCount(3);
   await expect(page.locator('#forged-enquiry-form')).toBeVisible();
@@ -51,6 +53,14 @@ test('forged wheels landing page follows the seven-section business brief', asyn
   await expect(page.locator('.forged-fitment-card[data-vehicle="bmw"]')).toBeHidden();
 
   await expect(page.locator('#reference-image')).toHaveAttribute('accept', 'image/jpeg,image/png,image/webp');
+  await page.locator('[data-case="porsche"]').click();
+  await expect(page.locator('#fitment-flyout')).toHaveJSProperty('open', true);
+  await page.locator('#fitment-flyout-enquire').click();
+  await expect(page.locator('#notes')).toHaveValue(/PORSCHE/);
+  await page.locator('#warranty-details').click();
+  await expect(page.locator('#warranty-modal')).toHaveJSProperty('open', true);
+  await page.locator('#warranty-modal-close').click();
+  await expect(page.locator('#warranty-modal')).toHaveJSProperty('open', false);
 });
 
 test('forged wheels enquiry supports a one-set private owner enquiry and responsive layout', async ({

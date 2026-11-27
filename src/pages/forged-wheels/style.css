@@ -167,7 +167,15 @@
 .forged-construction-panel img { width: 100%; aspect-ratio: 1.2; object-fit: contain; background: var(--color-surface); }
 .forged-construction-panel p-heading { margin: .6rem 0 .9rem; font-size: clamp(1.7rem, 3vw, 2.6rem); }
 .forged-construction-panel ul { display: grid; gap: .5rem; padding-left: 1.2rem; margin: 1.2rem 0 0; font-size: .85rem; }
+.forged-reference-carousel { display: block; margin: 2rem 0 0; }
+.forged-carousel-card { display: grid; gap: .7rem; min-width: 0; padding: .8rem; background: var(--color-canvas); }
+.forged-carousel-card img { display: block; width: 100%; aspect-ratio: 1.25; object-fit: contain; background: var(--color-surface); }
+.forged-carousel-card strong { font-size: .85rem; font-weight: 600; }
+.forged-carousel-card span { color: var(--color-contrast-medium); font-size: .72rem; }
 .forged-image-note { display: block; max-width: 100%; margin-top: 1rem; }
+.forged-certifications__scroller { display: block; min-width: 0; }
+.forged-flyout-actions, .forged-modal-actions { display: flex; justify-content: flex-end; gap: .75rem; }
+.forged-swatch .swatch--black { background: linear-gradient(135deg, #111315, #55595b 50%, #08090a); }
 .forged-customisation {
   display: grid;
   grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
@@ -180,7 +188,7 @@
 .forged-customisation__intro p-heading { margin: .6rem 0 .8rem; }
 .forged-finish-selector { min-width: 0; }
 .forged-finish-selector p-segmented-control { display: block; margin-bottom: 1.25rem; }
-.forged-finish-swatches { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .7rem; }
+.forged-finish-swatches { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .7rem; }
 .forged-swatch { display: grid; gap: .6rem; padding: .5rem; border: 1px solid transparent; background: transparent; color: inherit; text-align: left; cursor: pointer; }
 .forged-swatch.is-selected { border-color: var(--color-contrast-high); }
 .forged-swatch > span:last-child { font-size: .72rem; }
