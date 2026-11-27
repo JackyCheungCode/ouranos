@@ -9,7 +9,9 @@ test('forged wheels landing page is independent from the existing wheels catalog
   await expect(page.locator('.ouranos-header')).toHaveAttribute('data-header-variant', 'overlay');
   await expect(page.locator('#ouranos-ai-open')).toBeVisible();
   await expect(page.locator('#ouranos-language-trigger')).toBeVisible();
-  await expect(page.locator('#ouranos-theme-toggle')).toBeVisible();
+  await expect(page.locator('#ouranos-theme-toggle')).toHaveCount(0);
+  await expect(page.locator('#ouranos-search')).toHaveCount(0);
+  await expect(page.locator('html')).toHaveClass(/scheme-light/);
   await expect(page.locator('#ouranos-ai-panel')).toHaveAttribute('aria-hidden', 'true');
   await expect(page.locator('#ouranos-ai-panel')).toHaveCSS('position', 'fixed');
   await expect(page.locator('#ouranos-ai-panel')).toHaveCSS('visibility', 'hidden');
