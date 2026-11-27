@@ -4,7 +4,6 @@
 @import '../../components/layout/header.css';
 
 :root {
-  color-scheme: dark;
   --studio-bg: #101112;
   --studio-panel: #181a1c;
   --studio-line: #343638;
