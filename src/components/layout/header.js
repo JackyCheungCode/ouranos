@@ -108,41 +108,20 @@ if (header) {
       languageTrigger.setAttribute('title', label);
     }
 
-    languageOptions.forEach((option) => {
-      option.setAttribute('aria-pressed', String(option.dataset.locale === selected));
-    });
+    // Capture the composed click before PDS Popover handles dismissal/retargeting.
+  header.addEventListener(
+    'click',
+    (event) => {
+      const option = event
+        .composedPath()
+        .find((node) => node instanceof HTMLElement && node.matches('[data-locale]'));
+      if (!(option instanceof HTMLElement)) return;
 
-    if (persist) {
-      try {
-        localStorage.setItem('ouranos-locale', selected);
-      } catch {
-        // Locale remains active for this page even when storage is unavailable.
-      }
-    }
-
-    window.dispatchEvent(new CustomEvent('ouranos:locale-change', { detail: { locale: selected } }));
-  }
-
-  if (navDrilldown && navButton) {
-    navButton.addEventListener('click', () => {
-      navDrilldown.open = true;
-    });
-
-    navDrilldown.addEventListener('dismiss', (event) => {
-      event.target.open = false;
-    });
-
-    navDrilldown.addEventListener('update', (event) => {
-      event.target.activeIdentifier = event.detail.activeIdentifier;
-    });
-  }
-
-  languageOptions.forEach((option) => {
-    option.addEventListener('click', () => {
       applyLocale(option.dataset.locale, true);
       if (languagePopover) languagePopover.open = false;
-    });
-  });
+    },
+    true,
+  );
 
   let savedLocale = 'en';
   try {
