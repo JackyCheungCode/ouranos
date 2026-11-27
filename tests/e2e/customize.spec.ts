@@ -278,7 +278,11 @@ test('Configurator defaults to the first wheel model and supports Back and the p
   await page.locator('#next-button').click();
   await page.locator('#nav-button').click();
   await expect(page.locator('#nav-drilldown')).toHaveJSProperty('open', true);
-  await expect(page.locator('#nav-drilldown')).toContainText('Wheel Configurator');
+  await expect(page.locator('#nav-drilldown')).toContainText('Ouranos Wheels');
+  await expect(page.locator('#nav-drilldown')).toContainText('Wheels Catalogue');
+  await expect(page.locator('#nav-drilldown')).toContainText('Discover Wheels');
+  await expect(page.locator('#nav-drilldown')).toContainText('Wheel Design Studio');
+  await expect(page.locator('#nav-drilldown')).toContainText('BETA');
 });
 
 test('Missing rear axle API data is initialized from the front axle', async ({ page }) => {
