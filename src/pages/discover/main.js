@@ -32,7 +32,7 @@ function progressUI(prefix) {
 
 function intakeError(data, fallback) {
   if (data && data.error === 'DISCOVERY_INTAKE_FAILED') {
-    return '无法创建分析任务：服务端数据库尚未完成初始化，请稍后重试。';
+    return 'Unable to create the analysis job: the server database is not initialized. Please try again later.';
   }
   return (data && (data.message || data.error)) || fallback;
 }
@@ -75,8 +75,8 @@ async function pollDiscoveryJob(jobId) {
     if (!response.ok) throw new Error('Unable to retrieve discovery status.');
     const data = await response.json();
     if (data.job.status === 'completed') {
-      imageProgress.set(100, '匹配完成', 'success');
-      setImageStatus('分析完成，结果如下。', 'success');
+      imageProgress.set(100, 'Matching complete', 'success');
+      setImageStatus('Analysis complete. Results are shown below.', 'success');
       renderDiscoveryMatches(data.matches || []);
       return;
     }
@@ -86,14 +86,14 @@ async function pollDiscoveryJob(jobId) {
     if (data.job.status === 'processing') {
       const elapsed = (Date.now() - started) / 1000;
       imageProgress.set(Math.min(90, 35 + elapsed * 1.4), elapsed < 8 ? 'Analyzing wheel image' : elapsed < 24 ? 'Generating visual features' : 'Searching OURANOS catalogue');
-      setImageStatus('正在分析图片并查找相似轮毂。', 'info');
+      setImageStatus('Analyzing the image and finding similar wheels.', 'info');
     } else {
       imageProgress.set(15, 'Waiting for analysis to start');
-      setImageStatus('图片已接收，等待分析任务启动。', 'info');
+      setImageStatus('Image received. Waiting for the analysis job to start.', 'info');
     }
     await new Promise((resolve) => setTimeout(resolve, 1800));
   }
-  if (activeJobId === jobId) { imageProgress.set(90, '分析仍在进行'); setImageStatus('分析耗时较长，任务仍在处理中。', 'info'); }
+  if (activeJobId === jobId) { imageProgress.set(90, 'Still analyzing'); setImageStatus('This is taking longer than expected. The task is still processing.', 'info'); }
 }
 
 function setPdsDisabled(element, disabled) {
@@ -239,14 +239,14 @@ async function pollUrlDiscoveryJob(jobId, waitForMatching = false) {
     if (!response.ok) throw new Error(data.error || 'Unable to retrieve discovery status.');
     if (!waitForMatching && data.job.status === 'completed' && data.reference?.confirmation_status === 'pending') {
       urlProgress.set(100, 'Product details extracted', 'success');
-      urlStatus.textContent = '商品信息已提取。请核对图片和参数，确认后再搜索 OURANOS 商品库。';
+      urlStatus.textContent = 'Product details extracted. Review the image and specifications, then confirm to search the OURANOS catalogue.';
       urlStatus.dataset.state = 'success';
       renderExtractedProduct(data.reference);
       return;
     }
     if (waitForMatching && data.job.status === 'completed' && data.reference?.confirmation_status === 'confirmed') {
       urlProgress.set(100, 'Catalogue search complete', 'success');
-      urlStatus.textContent = 'OURANOS 商品库搜索完成。';
+      urlStatus.textContent = 'OURANOS catalogue search complete.';
       urlStatus.dataset.state = 'success';
       renderDiscoveryMatches(data.matches || [], urlPanel);
       return;
@@ -255,16 +255,16 @@ async function pollUrlDiscoveryJob(jobId, waitForMatching = false) {
     const elapsed = (Date.now() - started) / 1000;
     if (data.job.status === 'processing') {
       urlProgress.set(Math.min(90, 35 + elapsed * 1.4), waitForMatching ? 'Searching OURANOS catalogue' : 'Extracting product details');
-      urlStatus.textContent = waitForMatching ? '正在根据已确认的信息搜索 OURANOS 商品库。' : '正在读取商品图片、型号和轮毂参数。';
+      urlStatus.textContent = waitForMatching ? 'Searching the OURANOS catalogue using the confirmed details.' : 'Extracting the product image, model and wheel specifications.';
     } else {
       urlProgress.set(15, waitForMatching ? 'Waiting for catalogue search' : 'Waiting for page analysis');
-      urlStatus.textContent = waitForMatching ? '确认已提交，等待商品库搜索。' : '链接已接收，等待提取商品信息。';
+      urlStatus.textContent = waitForMatching ? 'Confirmation submitted. Waiting for the catalogue search.' : 'URL received. Waiting for product details to be extracted.';
     }
     urlStatus.dataset.state = 'info';
     await new Promise((resolve) => setTimeout(resolve, 1800));
   }
   urlProgress.set(90, 'Still processing');
-  urlStatus.textContent = '任务耗时较长，仍在处理中。';
+  urlStatus.textContent = 'This is taking longer than expected. The task is still processing.';
   urlStatus.dataset.state = 'info';
 }
 
@@ -293,7 +293,7 @@ urlSubmit.addEventListener('click', async () => {
   const existingResults = document.querySelector('#discovery-results');
   if (existingResults) existingResults.remove();
   urlProgress.set(8, 'Submitting product URL');
-  urlStatus.textContent = '正在提取商品信息，暂不会搜索 OURANOS 商品库。';
+  urlStatus.textContent = 'Extracting product details. The OURANOS catalogue will not be searched yet.';
   urlStatus.dataset.state = 'info';
   try {
     const response = await fetch('/api/discover/url', {
@@ -302,12 +302,12 @@ urlSubmit.addEventListener('click', async () => {
       body: JSON.stringify({ url: source.toString() }),
     });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(intakeError(data, '无法提交商品链接。'));
+    if (!response.ok) throw new Error(intakeError(data, 'Unable to submit the product URL.'));
     window.__ouranosDiscoveryJobId = data.jobId;
     await pollUrlDiscoveryJob(data.jobId, false);
   } catch (error) {
     urlProgress.set(0, 'Extraction failed', 'error');
-    urlStatus.textContent = error instanceof Error ? error.message : '链接分析失败。';
+    urlStatus.textContent = error instanceof Error ? error.message : 'Product page analysis failed.';
     urlStatus.dataset.state = 'error';
   } finally {
     setPdsDisabled(urlSubmit, !urlInput.value.trim());
@@ -320,7 +320,7 @@ document.querySelector('#url-confirm-search').addEventListener('click', async ()
   if (!jobId || button.disabled) return;
   setPdsDisabled(button, true);
   urlProgress.set(10, 'Submitting confirmation');
-  urlStatus.textContent = '已确认商品信息，正在启动 OURANOS 商品库搜索。';
+  urlStatus.textContent = 'Product details confirmed. Starting the OURANOS catalogue search.';
   urlStatus.dataset.state = 'info';
   try {
     const response = await fetch(`/api/discover/jobs/${encodeURIComponent(jobId)}/confirm`, {
@@ -328,12 +328,12 @@ document.querySelector('#url-confirm-search').addEventListener('click', async ()
       headers: { accept: 'application/json' },
     });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.message || data.error || '无法启动商品库搜索。');
+    if (!response.ok) throw new Error(data.message || data.error || 'Unable to start the catalogue search.');
     await pollUrlDiscoveryJob(jobId, true);
   } catch (error) {
     setPdsDisabled(button, false);
     urlProgress.set(0, 'Search could not start', 'error');
-    urlStatus.textContent = error instanceof Error ? error.message : '商品库搜索失败。';
+    urlStatus.textContent = error instanceof Error ? error.message : 'Catalogue search failed.';
     urlStatus.dataset.state = 'error';
   }
 });
@@ -342,20 +342,20 @@ imageSubmit.addEventListener('click', async () => {
   if (!selectedFile || imageSubmit.disabled) return;
   setPdsDisabled(imageSubmit, true);
   imageProgress.set(8, 'Uploading image');
-  setImageStatus('正在上传图片并创建分析任务。', 'info');
+  setImageStatus('Uploading the image and creating the analysis job.', 'info');
   try {
     const form = new FormData();
     form.append('image', selectedFile, selectedFile.name);
     const response = await fetch('/api/discover/image', { method: 'POST', body: form, headers: { accept: 'application/json' } });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(intakeError(data, '图片上传失败。'));
+    if (!response.ok) throw new Error(intakeError(data, 'Image upload failed.'));
     activeJobId = data.jobId;
     imageProgress.set(20, 'Image saved · waiting for analysis');
-    setImageStatus('图片已接收，等待视觉分析。', 'info');
+    setImageStatus('Image received. Waiting for visual analysis.', 'info');
     await pollDiscoveryJob(data.jobId);
   } catch (error) {
-    imageProgress.set(0, '分析失败', 'error');
-    setImageStatus(error instanceof Error ? error.message : '图片分析失败。', 'error');
+    imageProgress.set(0, 'Analysis failed', 'error');
+    setImageStatus(error instanceof Error ? error.message : '图片Analysis failed。', 'error');
   } finally {
     setPdsDisabled(imageSubmit, !selectedFile);
   }
