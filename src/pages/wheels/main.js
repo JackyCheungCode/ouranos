@@ -556,7 +556,9 @@ async function init() {
   restoreUrlFilters();
   const requestedSort = params.get('sort');
   if (['featured', 'newest', 'az'].includes(requestedSort || '')) setValue('#sort-products', requestedSort);
-  if (params.get('product') && await showPublishedProduct(params.get('product'))) {\n    // Published D1 product detail.\n  } else if (params.get('model') && showDetail(params.get('model'))) {
+  if (params.get('product') && await showPublishedProduct(params.get('product'))) {
+    // Published D1 product detail.
+  } else if (params.get('model') && showDetail(params.get('model'))) {
     // Detail state is rendered above.
   } else render();
   await loadRegions();
