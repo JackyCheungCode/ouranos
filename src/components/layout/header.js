@@ -137,24 +137,44 @@ if (header) {
     });
   }
 
-  // PDS upgrades and projects the popover's slotted content during custom-element
-  // initialization. Bind only after that lifecycle completes so handlers are not
-  // attached to pre-upgrade nodes that PDS may replace.
-  const bindLocaleOptions = () => {
-    requestAnimationFrame(() => {
-      getLanguageOptions().forEach((option) => {
-        option.addEventListener('click', () => {
-          applyLocale(option.dataset.locale, true);
-          if (languagePopover) languagePopover.open = false;
-        });
-      });
+  // Use PDS Popover's controlled mode, matching the official pattern. The host
+  // receives composed click events from its slotted content, while the component
+  // owns focus, positioning, Escape and outside-click behavior.
+  const initializeLanguagePopover = () => {
+    if (!languagePopover || !languageTrigger) return;
+
+    let isLanguageOpen = false;
+    const setLanguageOpen = (open) => {
+      isLanguageOpen = open;
+      languagePopover.open = open;
+      languageTrigger.setAttribute('aria-expanded', String(open));
+    };
+
+    setLanguageOpen(false);
+
+    languageTrigger.addEventListener('click', () => {
+      setLanguageOpen(!isLanguageOpen);
+    });
+
+    languagePopover.addEventListener('dismiss', () => {
+      setLanguageOpen(false);
+    });
+
+    languagePopover.addEventListener('click', (event) => {
+      const option = event
+        .composedPath()
+        .find((node) => node instanceof HTMLElement && node.matches('[data-locale]'));
+      if (!(option instanceof HTMLElement)) return;
+
+      applyLocale(option.dataset.locale, true);
+      setLanguageOpen(false);
     });
   };
 
   if (customElements.get('p-popover')) {
-    bindLocaleOptions();
+    initializeLanguagePopover();
   } else {
-    customElements.whenDefined('p-popover').then(bindLocaleOptions);
+    customElements.whenDefined('p-popover').then(initializeLanguagePopover);
   }
 
   let savedLocale = 'en';
