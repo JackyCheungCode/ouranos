@@ -150,7 +150,6 @@ test('Vehicle step can be skipped and manual wheel dimensions remain available',
   await page.locator('#next-button').click();
   await chooseMarket(page);
   await expect(page.locator('#api-status')).toContainText('WHEEL SIZE KEY NOT CONFIGURED');
-  await page.locator('#next-button').click();
   await page.locator('#skip-vehicle').click();
   await expect(page.locator('[data-panel="2"]')).toBeVisible();
   await expect(page.locator('#front-diameter')).toBeVisible();
@@ -210,7 +209,7 @@ test('Configurator prepares a downloadable engineering specification', async ({ 
   await choose(page, '#year', '2024');
   await expect(page.locator('#fitment-table-wrap')).toBeVisible();
   await page.getByRole('button', { name: 'SELECT', exact: true }).click();
-  await page.locator('#next-button').click();
+  await expect(page.locator('#fitment-selection')).toBeVisible();
   await page.locator('#next-button').click();
   await page.locator('#next-button').click();
   await page.locator('#next-button').click();
