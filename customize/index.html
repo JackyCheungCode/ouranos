@@ -76,10 +76,10 @@
               <div class="step-skip-row"><button type="button" id="skip-vehicle" class="skip-vehicle-button">SKIP VEHICLE SELECTION <span aria-hidden="true">→</span></button></div>
               <p class="step-kicker">02 — VEHICLE & FACTORY FITMENT</p>
               <h3>Find your vehicle.</h3>
-              <p class="step-description">Select your vehicle to retrieve factory and alternative wheel specifications from Wheel Size. Choose a vehicle market to load the manufacturers and fitment data available for that region.</p>
+              <p class="step-description">Select your vehicle to retrieve factory and alternative wheel specifications. Choose a vehicle market to load the manufacturers and fitment data available for that region.</p>
               <div class="market-row">
                 <div class="field-block market-select"><p-select id="market" name="market" label="Vehicle market" value="" disabled><p-select-option value="">Loading vehicle markets…</p-select-option></p-select></div>
-                <div class="api-status" id="api-status" role="status">CONNECTING TO WHEEL SIZE</div>
+                <div class="api-status" id="api-status" role="status"></div>
               </div>
               <div class="vehicle-fields">
                 <div class="field-block manufacturer-field"><p-select id="make" name="make" label="MANUFACTURER" value="" disabled><p-select-option value="">Select manufacturer</p-select-option></p-select></div>
@@ -88,7 +88,7 @@
                 <div class="field-block"><p-select id="variant" name="variant" label="TRIM / MODIFICATION" value="" disabled><p-select-option value="">Select trim</p-select-option></p-select></div>
               </div>
               <div class="fitment-heading">
-                <div><span class="micro-label">WHEEL SIZE DATABASE</span><strong>Available wheel specifications</strong></div>
+                <div><span class="micro-label">VEHICLE FITMENT</span><strong>Available wheel specifications</strong></div>
                 <span id="fitment-count" class="fitment-count">0 RESULTS</span>
               </div>
               <div id="fitment-empty" class="fitment-empty">Select a manufacturer, model and year to search vehicle fitment data.</div>
@@ -101,13 +101,13 @@
               <div class="fitment-selection" id="fitment-selection" hidden>
                 <span class="hint-dot"></span><span id="fitment-selection-text">A fitment set is selected.</span>
               </div>
-              <div class="engineering-note"><span>i</span><p>Wheel Size data is a reference, not an engineering approval. Confirm brake clearance, load rating and vehicle modifications before production.</p></div>
+              <div class="engineering-note"><span>i</span><p>Vehicle specifications are a reference, not an engineering approval. Confirm brake clearance, load rating and vehicle modifications before production.</p></div>
             </section>
 
             <section class="config-step" data-panel="2">
               <p class="step-kicker">03 — ENGINEERING PARAMETERS</p>
               <h3>Refine the dimensions.</h3>
-              <p class="step-description">Values returned by Wheel Size are prefilled below. Edit any field as required. Front and rear specifications are independent for staggered fitments.</p>
+              <p class="step-description">Available vehicle specifications are prefilled below. Edit any field as required. Front and rear specifications are independent for staggered fitments.</p>
               <div class="axle-spec-grid">
                 <section class="axle-spec">
                   <div class="axle-heading"><span>01</span><strong>FRONT AXLE</strong><small>FRONT</small></div>
