@@ -596,7 +596,8 @@ const handler = {
         await env.DB.prepare(
           "UPDATE discovery_jobs SET status = 'processing', updated_at = CURRENT_TIMESTAMP WHERE id = ? AND status = 'queued'"
         ).bind(jobId).run();
-        if (message.body.type === 'url_discovery') await runUrlDiscovery(env, jobId);\n        else await runImageMatching(env, jobId);
+        if (message.body.type === 'url_discovery') await runUrlDiscovery(env, jobId);
+        else await runImageMatching(env, jobId);
         message.ack();
       } catch {
         if ((message.attempts || 1) >= 3) {
@@ -616,7 +617,8 @@ const handler = {
   },
   async fetch(request: Request, env: Env) {
     const url = new URL(request.url);
-    if (url.pathname === '/api/discover/image') return createImageDiscovery(request, env);\n    if (url.pathname === '/api/discover/url') return createUrlDiscovery(request, env);
+    if (url.pathname === '/api/discover/image') return createImageDiscovery(request, env);
+    if (url.pathname === '/api/discover/url') return createUrlDiscovery(request, env);
     if (url.pathname === '/api/discover/index') return indexRequest(request, env);
     if (url.pathname.startsWith('/api/discover/jobs/')) return getDiscoveryJob(request, env);
     if (url.pathname.startsWith('/api/wheel-size/')) return wheelSizeRequest(request, env);
