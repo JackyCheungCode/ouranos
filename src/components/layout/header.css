@@ -101,7 +101,7 @@
 .ouranos-language-option:focus-visible {
   background: #f2f2f2;
 }
-.ouranos-language-option[aria-pressed="true"] {
+.ouranos-language-option[aria-current="true"] {
   font-weight: 700;
 }
 .ouranos-header[data-header-variant="overlay"] {
