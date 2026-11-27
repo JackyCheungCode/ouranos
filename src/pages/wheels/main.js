@@ -83,7 +83,7 @@ function setStatus(message, state = '') {
   }
 }
 async function wheelSize(path, query = {}) {
-  const search = new URLSearchParams({ ...query, ...(vehicleState.region ? { region: vehicleState.region } : {}) });
+  const search = new URLSearchParams({ ...query, ...(path === 'regions' || !vehicleState.region ? {} : { region: vehicleState.region }) });
   const response = await fetch('/api/wheel-size/' + path + '?' + search.toString(), { headers: { accept: 'application/json' } });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(data?.details?.detail || data?.details?.message || data?.message || data?.error || 'Wheel Size API error ' + response.status);
