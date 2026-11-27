@@ -71,12 +71,13 @@ function sharedLayoutPartials() {
       if (isAdmin || html.includes('<!-- OURANOS:NO-SHARED-HEADER -->')) return html;
 
       const isHome = resolve(context.filename) === resolve(rootDir, 'index.html');
+      const isOverlay = isHome || context.filename.includes(`${sep}customize${sep}`);
       const readPartial = (name: string) =>
         readFileSync(resolve(rootDir, 'src/components/layout', name), 'utf8');
       const sidebar = readPartial('sidebar.html');
       const topbar = readPartial('topbar.html')
         .replace('<!-- OURANOS:SIDEBAR -->', sidebar)
-        .replace('data-header-variant="auto"', `data-header-variant="${isHome ? 'overlay' : 'stacked'}"`);
+        .replace('data-header-variant="auto"', `data-header-variant="${isOverlay ? 'overlay' : 'stacked'}"`);
       const header = readPartial('header.html').replace('<!-- OURANOS:TOPBAR -->', topbar);
 
       let transformed = html;
