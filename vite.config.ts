@@ -158,7 +158,7 @@ function templatePartials() {
                 : isWheels
                   ? 'Ouranos | Wheels'
                   : isLeadTime
-                    ? 'Ouranos | Lead Time Estimator'
+                    ? 'Ouranos | Production Lead Time'
                     : 'Ouranos Admin Panel',
         }),
       ].join('');
