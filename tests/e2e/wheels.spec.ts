@@ -15,7 +15,7 @@ test('Wheels catalogue uses the PDS Vehicle Listing pattern with multi-parameter
   await expect(page.locator('[data-product]').first()).not.toContainText('Enquire about this wheel');
   await expect(page.locator('[data-product]').first()).toContainText('Discover');
   await expect(page.locator('[data-product]').first()).toContainText('Configure');
-  await expect(page.locator('[data-product]').first().locator('a[href^="/configure/"]')).toHaveCount(1);
+  await expect(page.locator('[data-product]').first().locator('p-button[href^="/configure/"]')).toHaveCount(1);
   await expect(page.locator('.wheels-demo-note')).toContainText('TEMPORARY APEX TEST DATA');
   await expect(page.locator('body')).not.toContainText('Add to cart');
 });
@@ -98,7 +98,7 @@ test('Wheels catalogue filters, clears and sorts demo products', async ({ page }
     element.dispatchEvent(new Event('change', { bubbles: true }));
   });
   await expect(page.locator('[data-product]')).toHaveCount(1);
-  await expect(page.locator('[data-product] p-heading')).toHaveText('SM-8RS');
+  await expect(page.locator('[data-product] .wheel-card__title')).toHaveText('SM-8RS');
   await expect(page).toHaveURL(/construction=forged/);
   await page.locator('#clear-filters').click();
   await expect(page.locator('[data-product]')).toHaveCount(10);
