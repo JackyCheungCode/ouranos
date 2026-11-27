@@ -66,8 +66,9 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
   await expect(page.locator('#market')).toContainText('USA+');
   await expect(page.locator('#market')).toContainText('Canada');
   await expect(page.locator('#market')).not.toContainText('Europe');
-  await expect(page.locator('#make p-select-option[value="porsche"]')).toHaveCount(1);
   await expect(page.locator('#make')).toBeVisible();
+  await expect(page.locator('#make p-select-option')).toContainText('Porsche');
+  await expect(page.locator('#make')).toBeEnabled();
 
   await choose(page, '#make', 'porsche');
   await expect(page.locator('#model')).toBeEnabled();
@@ -171,13 +172,14 @@ test('Manufacturer uses the native PDS select without oversized option logos', a
   await page.goto('/customize/');
   await page.locator('#model-list .model-card').click();
   await page.locator('#next-button').click();
-  await chooseMarket(page);
   const make = page.locator('#make');
   await expect(make).toBeVisible();
-  await expect(make).toBeDisabled();
   await expect(make).toHaveJSProperty('tagName', 'P-SELECT');
-  await expect(make.locator('p-select-option')).toContainText('Porsche');
+  await expect(make).toHaveJSProperty('disabled', true);
   await expect(make.locator('img')).toHaveCount(0);
+  await chooseMarket(page);
+  await expect(make.locator('p-select-option')).toContainText('Porsche');
+  await expect(make).toHaveJSProperty('disabled', false);
   await expect(make).toBeEnabled();
   await choose(page, '#make', 'porsche');
   await expect(page.locator('#model')).toBeEnabled();
