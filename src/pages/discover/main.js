@@ -140,7 +140,7 @@ document.querySelectorAll('[data-method]').forEach((button) => {
 
 urlInput.addEventListener('input', () => {
   setPdsDisabled(urlSubmit, !urlInput.value.trim());
-  urlStatus.textContent = 'Check the URL before continuing. No page content is fetched at this stage.';
+  urlStatus.textContent = 'Paste a public product page URL. Page extraction runs in an isolated, hostname-restricted browser session after submission.';
   urlStatus.dataset.state = '';
 });
 
