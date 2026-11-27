@@ -240,6 +240,11 @@ test('Configure opens a product-specific form and submits an enquiry to the Work
   await expect(page).toHaveURL(/\/configure\//);
   await expect(page.locator('#wheel-model')).toHaveText('VS-5RS');
   await expect(page.locator('#wheel-image')).toHaveAttribute('src', /cdn\.sanity\.io/);
+  await page.locator('[name="front_diameter"]').fill('18');
+  await page.locator('[name="front_width"]').fill('10');
+  await page.locator('[name="front_offset"]').fill('25');
+  await page.locator('[name="front_pcd"]').fill('5x120');
+  await page.locator('[name="front_cb"]').fill('72.56');
   await page.locator('[name="customer_name"]').fill('Test Customer');
   await page.locator('[name="customer_email"]').fill('test@example.com');
   await page.locator('[name="quantity"]').fill('4');
