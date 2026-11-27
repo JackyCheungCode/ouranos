@@ -10,7 +10,7 @@ let modelLibrary=[];
 let modelPage=0;
 const MODELS_PER_PAGE=5;
 const ids=['front-diameter','front-width','front-offset','front-pcd','front-bore','front-load','rear-diameter','rear-width','rear-offset','rear-pcd','rear-bore','rear-load','wheel-color','wheel-surface','finish-notes','vehicle-mods','special-requests','customer-name','customer-email'];
-const val=id=>$('#'+id)?.value||'', put=(id,v)=>{if($('#'+id))$('#'+id).value=v==null?'':String(v);};
+const val=id=>$('#'+id)?.value||'', put=(id,v)=>{const el=$('#'+id);if(!el)return;const value=v==null?'':String(v);if(el.localName.startsWith('p-'))el.setAttribute('value',value);el.value=value;};
 const list=x=>Array.isArray(x)?x:Array.isArray(x?.data)?x.data:Array.isArray(x?.results)?x.results:[];
 const name=x=>typeof x==='string'?x:x?.name||x?.title||x?.label||x?.slug||x?.code||'';
 const slug=x=>typeof x==='string'?x.toLowerCase().replace(/\s+/g,'-'):x?.slug||x?.id||x?.code||name(x).toLowerCase().replace(/\s+/g,'-');
