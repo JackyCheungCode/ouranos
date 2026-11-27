@@ -119,6 +119,29 @@ finishSwatches?.addEventListener('click', (event) => {
   });
 });
 
+const brandWall = document.querySelector('.forged-brand-wall');
+if (brandWall) {
+  const originalLogos = Array.from(brandWall.children);
+  const groups = [originalLogos.slice(0, 15), originalLogos.slice(15)];
+  brandWall.replaceChildren();
+  groups.forEach((group, index) => {
+    if (!group.length) return;
+    const marquee = document.createElement('div');
+    marquee.className = 'forged-brand-marquee' + (index === 1 ? ' forged-brand-marquee--reverse' : '');
+    const track = document.createElement('div');
+    track.className = 'forged-brand-track';
+    group.forEach((logo) => track.append(logo));
+    group.forEach((logo) => {
+      const clone = logo.cloneNode(true);
+      clone.setAttribute('aria-hidden', 'true');
+      clone.querySelectorAll('img').forEach((image) => image.setAttribute('alt', ''));
+      track.append(clone);
+    });
+    marquee.append(track);
+    brandWall.append(marquee);
+  });
+}
+
 const vehicleFilter = document.querySelector('#vehicle-filter');
 vehicleFilter?.addEventListener('change', (event) => {
   vehicleFilter.value = event.detail.value;
@@ -173,17 +196,6 @@ document.querySelector('#fitment-flyout-enquire')?.addEventListener('click', () 
   document.querySelector('#enquiry').scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
-const customerType = document.querySelector('#customer-type');
-const tradeFields = Array.from(document.querySelectorAll('.forged-trade-field, .forged-quantity-field'));
-function syncCustomerType(value) {
-  tradeFields.forEach((field) => { field.hidden = value !== 'trade'; });
-}
-customerType?.addEventListener('change', (event) => {
-  customerType.value = event.detail.value;
-  syncCustomerType(event.detail.value);
-});
-syncCustomerType(customerType?.value || 'owner');
-
 const form = document.querySelector('#forged-enquiry-form');
 const submitButton = document.querySelector('#forged-submit');
 const feedback = document.querySelector('#forged-form-feedback');
@@ -224,9 +236,6 @@ form?.addEventListener('submit', async (event) => {
       customer_name: data.get('customer_name'),
       customer_email: data.get('customer_email'),
       customer_phone: data.get('customer_phone'),
-      customer_company: data.get('customer_company'),
-      customer_type: customerType.value,
-      business_type: data.get('business_type'),
       quantity,
       finish: data.get('finish') || document.querySelector('.forged-swatch.is-selected')?.dataset.finish || '',
       finish_details: 'Requested construction: ' + constructionChoice,
@@ -244,7 +253,6 @@ form?.addEventListener('submit', async (event) => {
     if (!response.ok || !result.ok) throw new Error(result.message || 'Your enquiry could not be submitted. Please try again.');
     showFeedback('success', 'Your enquiry has been received. Reference: ' + result.reference + '. Our team will review your brief.');
     form.reset();
-    syncCustomerType('owner');
     renderFinishes('brushed');
   } catch (error) {
     showFeedback('error', error instanceof Error ? error.message : 'Your enquiry could not be submitted. Please try again.');
