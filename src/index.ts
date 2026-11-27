@@ -51,7 +51,7 @@ export interface Env {
   AI: AiBinding;
   WHEEL_INDEX: VectorizeBinding;
   DISCOVERY_ADMIN_TOKEN?: string;
-  BROWSER: Fetcher;
+  BROWSER: Parameters<typeof puppeteer.launch>[0];
 }
 
 const API_BASE = 'https://api.wheel-size.com/v2';
