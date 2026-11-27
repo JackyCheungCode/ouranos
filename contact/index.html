@@ -57,6 +57,50 @@
         </div>
       </section>
 
+      <section class="contact-enquiry" aria-labelledby="enquiry-title">
+        <div class="contact-enquiry__intro">
+          <p-text size="xs" color="contrast-medium">TELL US WHAT YOU NEED</p-text>
+          <p-heading id="enquiry-title" tag="h2" size="xl">Send an enquiry.</p-heading>
+          <p-text color="contrast-medium">Share a few details and our team can help you find the right direction.</p-text>
+        </div>
+        <form id="contact-enquiry-form" class="contact-form">
+          <div class="contact-form__grid">
+            <label class="contact-field"><span>Full name <b>*</b></span><input name="name" autocomplete="name" required placeholder="Your name"></label>
+            <label class="contact-field"><span>Email address <b>*</b></span><input name="email" type="email" autocomplete="email" required placeholder="name@example.com"></label>
+            <label class="contact-field"><span>Phone number</span><input name="phone" type="tel" autocomplete="tel" placeholder="+1 000 000 0000"></label>
+            <label class="contact-field"><span>Vehicle</span><input name="vehicle" placeholder="Make, model and year"></label>
+            <label class="contact-field contact-field--wide"><span>What are you interested in?</span>
+              <select name="interest">
+                <option value="Wheel enquiry">Wheel enquiry</option>
+                <option value="Vehicle fitment">Vehicle fitment</option>
+                <option value="Custom wheel design">Custom wheel design</option>
+                <option value="Dealer or partnership">Dealer or partnership</option>
+                <option value="Other">Other</option>
+              </select>
+            </label>
+            <label class="contact-field contact-field--wide"><span>Message <b>*</b></span><textarea name="message" rows="5" required placeholder="Tell us about your requirements..."></textarea></label>
+          </div>
+          <div class="contact-form__footer">
+            <p-text size="xs" color="contrast-medium">Your email app will open with your enquiry prepared for review and sending.</p-text>
+            <button class="contact-form__submit" type="submit">Prepare enquiry <span aria-hidden="true">↗</span></button>
+          </div>
+          <p id="contact-form-status" class="contact-form__status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="contact-social" aria-labelledby="social-title">
+        <div>
+          <p-text size="xs" color="contrast-medium">FOLLOW OURANOS</p-text>
+          <p-heading id="social-title" tag="h2" size="xl">Stay connected.</p-heading>
+          <p-text color="contrast-medium">Follow our latest designs, projects and stories.</p-text>
+        </div>
+        <div class="contact-social__links" aria-label="Ouranos social media">
+          <div class="contact-social__item"><span class="contact-social__mark">ig</span><span>Instagram</span><small>Coming soon</small></div>
+          <div class="contact-social__item"><span class="contact-social__mark">f</span><span>Facebook</span><small>Coming soon</small></div>
+          <div class="contact-social__item"><span class="contact-social__mark">in</span><span>LinkedIn</span><small>Coming soon</small></div>
+        </div>
+      </section>
+
       <section class="contact-location" aria-labelledby="location-title">
         <div class="contact-location__copy">
           <p-text size="xs" color="contrast-medium">OUR LOCATION</p-text>
@@ -80,6 +124,7 @@
       </section>
     </main>
     <!-- OURANOS:FOOTER -->
+    <script type="module" src="/src/pages/contact/main.js"></script>
     <script type="module" src="/src/components/ai-assistant.js"></script>
   </body>
 </html>
