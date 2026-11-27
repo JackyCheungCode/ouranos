@@ -55,7 +55,7 @@ test('Discover Wheels submits a public product URL and displays catalogue matche
   await page.locator('[data-method="url"]').click();
   await page.locator('#product-url').fill('https://example.com/product/wheel');
   await page.locator('#url-submit').click();
-  await expect(page.locator('#url-status')).toContainText('Product page analysed.');
+  await expect(page.locator('#url-status')).toContainText('已提取商品信息，并完成商品库检索。');
   await expect(page.locator('#url-panel')).toContainText('OURANOS Test Wheel');
   await expect(page.locator('#url-panel')).toContainText('specification similar');
 });
