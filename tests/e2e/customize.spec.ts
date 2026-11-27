@@ -348,3 +348,23 @@ test('Configurator prepares a downloadable engineering specification', async ({ 
   await expect(page.locator('#submission-message')).toContainText('has not been transmitted');
   await expect(page.locator('#submission-message')).toContainText('DOWNLOAD CONFIGURATION');
 });
+
+
+test('Configurator preloads wheel dimensions and source wheel from the catalogue URL', async ({ page }) => {
+  await mockWheelSize(page);
+  await page.goto('/customize/?source=wheels-catalogue&wheel=vs-5rs&wheelName=VS-5RS&diameter=20&width=9.5&pcd=5x120&offset=ET25&bore=72.6');
+  await expect(page.locator('#summary-wheel')).toHaveText('VS-5RS');
+  await expect(page.locator('#front-diameter')).toHaveJSProperty('value', '20');
+  await expect(page.locator('#front-width')).toHaveJSProperty('value', '9.5');
+  await expect(page.locator('#front-offset')).toHaveJSProperty('value', '25');
+  await expect(page.locator('#front-pcd')).toHaveJSProperty('value', '5x120');
+  await expect(page.locator('#front-bore')).toHaveJSProperty('value', '72.6');
+  await expect(page.locator('#rear-diameter')).toHaveJSProperty('value', '20');
+  await expect(page.locator('#rear-width')).toHaveJSProperty('value', '9.5');
+  await expect(page.locator('#rear-offset')).toHaveJSProperty('value', '25');
+  await expect(page.locator('#front-source')).toContainText('CATALOGUE REFERENCE');
+  await page.locator('#next-button').click();
+  await page.locator('#next-button').click();
+  await page.locator('#next-button').click();
+  await expect(page.locator('#review-summary')).toContainText('VS-5RS');
+});
