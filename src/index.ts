@@ -1,3 +1,5 @@
+import puppeteer from '@cloudflare/puppeteer';
+
 interface ModelsBucketObject {
   key: string;
   size: number;
@@ -49,6 +51,7 @@ export interface Env {
   AI: AiBinding;
   WHEEL_INDEX: VectorizeBinding;
   DISCOVERY_ADMIN_TOKEN?: string;
+  BROWSER: Fetcher;
 }
 
 const API_BASE = 'https://api.wheel-size.com/v2';
@@ -336,6 +339,173 @@ async function indexRequest(request: Request, env: Env): Promise<Response> {
   return json(result);
 }
 
+
+const MAX_SOURCE_URL_LENGTH = 2048;
+
+function validateSourceUrl(raw: string): URL | null {
+  if (!raw || raw.length > MAX_SOURCE_URL_LENGTH) return null;
+  try {
+    const url = new URL(raw);
+    const host = url.hostname.toLowerCase().replace(/\\.$/, '');
+    const ipv4 = /^(?:\\d{1,3}\\.){3}\\d{1,3}$/.test(host);
+    const ipv6 = host.startsWith('[') || host.includes(':');
+    if (!['http:', 'https:'].includes(url.protocol) || !host.includes('.') ||
+      ipv4 || ipv6 || url.username || url.password ||
+      (url.port && !['80', '443'].includes(url.port)) ||
+      host === 'localhost' || host.endsWith('.localhost') ||
+      host.endsWith('.local') || host.endsWith('.internal') ||
+      host.endsWith('.test') || host.endsWith('.invalid') ||
+      host === 'metadata.google.internal') return null;
+    return url;
+  } catch {
+    return null;
+  }
+}
+
+interface ExtractedWheelReference {
+  title: string;
+  brand: string;
+  model: string;
+  sku: string;
+  diameter: number | null;
+  width: number | null;
+  pcdHoles: number | null;
+  pcdMm: number | null;
+  offsetMm: number | null;
+}
+
+async function extractWheelReference(env: Env, sourceUrl: URL): Promise<ExtractedWheelReference> {
+  const browser = await puppeteer.launch(env.BROWSER, {
+    guardrails: { allowedDomains: [sourceUrl.hostname] },
+  });
+  try {
+    const page = await browser.newPage();
+    page.setDefaultNavigationTimeout(20000);
+    const response = await page.goto(sourceUrl.toString(), { waitUntil: 'domcontentloaded', timeout: 20000 });
+    if (!response || !response.ok()) throw new Error('SOURCE_PAGE_UNAVAILABLE');
+    const current = new URL(page.url());
+    if (current.hostname.toLowerCase() !== sourceUrl.hostname.toLowerCase()) {
+      throw new Error('CROSS_DOMAIN_REDIRECT_BLOCKED');
+    }
+    const raw = await page.evaluate(() => JSON.stringify((() => {
+      const meta = (name: string) =>
+        document.querySelector(`meta[property="${name}"], meta[name="${name}"]`)?.getAttribute('content') || '';
+      const scripts = [...document.querySelectorAll('script[type="application/ld+json"]')];
+      const nodes: any[] = [];
+      for (const script of scripts) {
+        try {
+          const parsed = JSON.parse(script.textContent || 'null');
+          const visit = (value: any) => {
+            if (!value || typeof value !== 'object') return;
+            if (Array.isArray(value)) return value.forEach(visit);
+            if (value['@type'] === 'Product' || (Array.isArray(value['@type']) && value['@type'].includes('Product'))) nodes.push(value);
+            if (value['@graph']) visit(value['@graph']);
+            if (value['itemListElement']) visit(value['itemListElement']);
+          };
+          visit(parsed);
+        } catch { /* Ignore invalid structured data. */ }
+      }
+      const product = nodes[0] || {};
+      const brand = typeof product.brand === 'string' ? product.brand : product.brand?.name || '';
+      const text = (document.body?.innerText || '').slice(0, 12000);
+      return {
+        title: product.name || meta('og:title') || document.title || '',
+        brand: brand || meta('product:brand') || '',
+        model: product.model || product.mpn || '',
+        sku: product.sku || product.productID || '',
+        text,
+      };
+    })()));
+    const data = JSON.parse(raw) as { title?: string; brand?: string; model?: string; sku?: string; text?: string };
+    const text = data.text || '';
+    const dimension = text.match(/(?:^|\\s)(\\d{2})\\s*[x×]\\s*(\\d+(?:\\.\\d+)?)\\s*(?:J)?/i);
+    const pcd = text.match(/(?:PCD\\s*[:：]?\\s*)?(\\d{1,2})\\s*[x×]\\s*(\\d{2,3}(?:\\.\\d+)?)/i);
+    const offset = text.match(/(?:ET|OFFSET)\\s*[:：]?\\s*(-?\\d{1,3})/i);
+    return {
+      title: String(data.title || '').slice(0, 300),
+      brand: String(data.brand || '').slice(0, 120),
+      model: String(data.model || '').slice(0, 120),
+      sku: String(data.sku || '').slice(0, 120),
+      diameter: dimension ? Number(dimension[1]) : null,
+      width: dimension ? Number(dimension[2]) : null,
+      pcdHoles: pcd ? Number(pcd[1]) : null,
+      pcdMm: pcd ? Number(pcd[2]) : null,
+      offsetMm: offset ? Number(offset[1]) : null,
+    };
+  } finally {
+    await browser.close();
+  }
+}
+
+async function runUrlDiscovery(env: Env, jobId: string): Promise<void> {
+  const job = await env.DB.prepare(
+    "SELECT source_url FROM discovery_jobs WHERE id = ? AND input_type = 'url' AND status IN ('queued', 'processing')"
+  ).bind(jobId).first<{ source_url: string }>();
+  const sourceUrl = job?.source_url ? validateSourceUrl(job.source_url) : null;
+  if (!sourceUrl) throw new Error('INVALID_SOURCE_URL');
+  const extracted = await extractWheelReference(env, sourceUrl);
+  await env.DB.prepare(
+    'UPDATE discovery_references SET source_domain = ?, extracted_title = ?, extracted_brand = ?, extracted_model = ?, extracted_specs_json = ? WHERE job_id = ?'
+  ).bind(sourceUrl.hostname, extracted.title, extracted.brand, extracted.model,
+    JSON.stringify({ sku: extracted.sku, diameter: extracted.diameter, width: extracted.width,
+      pcdHoles: extracted.pcdHoles, pcdMm: extracted.pcdMm, offsetMm: extracted.offsetMm }), jobId).run();
+
+  let matches: Array<{ id: string; slug: string; product_name: string }> = [];
+  if (extracted.sku) {
+    const exact = await env.DB.prepare(
+      "SELECT p.id, p.slug, p.product_name FROM wheel_specs ws JOIN products p ON p.id = ws.product_id WHERE ws.sku = ? AND ws.record_status = 'active' AND p.publication_status = 'published' LIMIT 10"
+    ).bind(extracted.sku).all<{ id: string; slug: string; product_name: string }>();
+    matches = exact.results || [];
+    for (const product of matches) {
+      await env.DB.prepare(
+        "INSERT OR IGNORE INTO discovery_matches (id, job_id, product_id, match_type, similarity_score, explanation) VALUES (?, ?, ?, 'exact', 1, ?)"
+      ).bind(crypto.randomUUID(), jobId, product.id,
+        'Exact SKU match found in the OURANOS catalogue.').run();
+    }
+  }
+  if (!matches.length && extracted.diameter && extracted.width && extracted.pcdHoles && extracted.pcdMm) {
+    const similar = await env.DB.prepare(
+      "SELECT p.id, p.slug, p.product_name FROM wheel_specs ws JOIN products p ON p.id = ws.product_id WHERE ws.diameter_in = ? AND ws.width_in = ? AND ws.pcd_holes = ? AND ws.pcd_mm = ? AND p.publication_status = 'published' ORDER BY ABS(COALESCE(ws.offset_mm, 0) - ?) ASC LIMIT 20"
+    ).bind(extracted.diameter, extracted.width, extracted.pcdHoles, extracted.pcdMm,
+      extracted.offsetMm ?? 0).all<{ id: string; slug: string; product_name: string }>();
+    for (const product of similar.results || []) {
+      await env.DB.prepare(
+        "INSERT OR IGNORE INTO discovery_matches (id, job_id, product_id, match_type, similarity_score, explanation) VALUES (?, ?, ?, 'specification_similar', NULL, ?)"
+      ).bind(crypto.randomUUID(), jobId, product.id,
+        'Wheel dimensions and PCD match the extracted reference. Offset should be checked before confirming fitment.').run();
+    }
+  }
+  await env.DB.prepare(
+    "UPDATE discovery_jobs SET status = 'completed', updated_at = CURRENT_TIMESTAMP, completed_at = CURRENT_TIMESTAMP WHERE id = ?"
+  ).bind(jobId).run();
+}
+
+async function createUrlDiscovery(request: Request, env: Env): Promise<Response> {
+  if (request.method !== 'POST') return json({ error: 'METHOD_NOT_ALLOWED' }, 405);
+  let body: { url?: unknown };
+  try { body = await request.json() as { url?: unknown }; }
+  catch { return json({ error: 'INVALID_JSON' }, 400); }
+  if (typeof body.url !== 'string') return json({ error: 'URL_REQUIRED' }, 400);
+  const sourceUrl = validateSourceUrl(body.url.trim());
+  if (!sourceUrl) return json({ error: 'UNSUPPORTED_SOURCE_URL', message: 'Use a public HTTP or HTTPS product page on the standard web ports.' }, 400);
+  const id = crypto.randomUUID();
+  try {
+    await env.DB.prepare(
+      'INSERT INTO discovery_jobs (id, input_type, status, source_url) VALUES (?, ?, ?, ?)'
+    ).bind(id, 'url', 'queued', sourceUrl.toString()).run();
+    await env.DB.prepare(
+      'INSERT INTO discovery_references (id, job_id, source_type, source_url) VALUES (?, ?, ?, ?)'
+    ).bind(crypto.randomUUID(), id, 'url', sourceUrl.toString()).run();
+    await env.DISCOVERY_QUEUE.send({ jobId: id, type: 'url_discovery' });
+    return json({ jobId: id, status: 'queued' }, 202);
+  } catch {
+    await env.DB.prepare(
+      "UPDATE discovery_jobs SET status = 'failed', error_code = 'DISCOVERY_INTAKE_INCOMPLETE', error_message = 'The URL could not be queued. Please retry.', updated_at = CURRENT_TIMESTAMP WHERE id = ? AND status = 'queued'"
+    ).bind(id).run().catch(() => undefined);
+    return json({ error: 'DISCOVERY_INTAKE_FAILED' }, 500);
+  }
+}
+
 async function createImageDiscovery(request: Request, env: Env): Promise<Response> {
   if (request.method !== 'POST') return json({ error: 'METHOD_NOT_ALLOWED' }, 405);
   const contentType = request.headers.get('content-type') || '';
@@ -422,7 +592,7 @@ const handler = {
         await env.DB.prepare(
           "UPDATE discovery_jobs SET status = 'processing', updated_at = CURRENT_TIMESTAMP WHERE id = ? AND status = 'queued'"
         ).bind(jobId).run();
-        await runImageMatching(env, jobId);
+        if (message.body.type === 'url_discovery') await runUrlDiscovery(env, jobId);\n        else await runImageMatching(env, jobId);
         message.ack();
       } catch {
         if ((message.attempts || 1) >= 3) {
@@ -442,7 +612,7 @@ const handler = {
   },
   async fetch(request: Request, env: Env) {
     const url = new URL(request.url);
-    if (url.pathname === '/api/discover/image') return createImageDiscovery(request, env);
+    if (url.pathname === '/api/discover/image') return createImageDiscovery(request, env);\n    if (url.pathname === '/api/discover/url') return createUrlDiscovery(request, env);
     if (url.pathname === '/api/discover/index') return indexRequest(request, env);
     if (url.pathname.startsWith('/api/discover/jobs/')) return getDiscoveryJob(request, env);
     if (url.pathname.startsWith('/api/wheel-size/')) return wheelSizeRequest(request, env);
