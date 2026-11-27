@@ -16,7 +16,6 @@ const urlPanel = document.querySelector('#url-panel');
 let selectedFile = null;
 let previewUrl = null;
 let activeJobId = null;
-let pollHandle = null;
 
 function renderDiscoveryMatches(matches) {
   const old = document.querySelector('#discovery-results');
@@ -166,9 +165,24 @@ urlSubmit.addEventListener('click', () => {
   urlStatus.dataset.state = 'success';
 });
 
-imageSubmit.addEventListener('click', () => {
-  if (!selectedFile) return;
-  setImageStatus('Reference captured locally. Product matching is not yet connected to a populated OURANOS catalogue.', 'info');
+imageSubmit.addEventListener('click', async () => {
+  if (!selectedFile || imageSubmit.disabled) return;
+  setPdsDisabled(imageSubmit, true);
+  setImageStatus('Uploading your reference image securely…', 'info');
+  try {
+    const form = new FormData();
+    form.append('image', selectedFile, selectedFile.name);
+    const response = await fetch('/api/discover/image', { method: 'POST', body: form, headers: { accept: 'application/json' } });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.message || data.error || 'Image upload failed.');
+    activeJobId = data.jobId;
+    setImageStatus('Image received. Checking processing status…', 'info');
+    await pollDiscoveryJob(data.jobId);
+  } catch (error) {
+    setImageStatus(error instanceof Error ? error.message : 'Unable to process this reference image.', 'error');
+  } finally {
+    setPdsDisabled(imageSubmit, !selectedFile);
+  }
 });
 
 const navDrilldown = document.getElementById('nav-drilldown');
