@@ -134,6 +134,8 @@
 .ouranos-header[data-header-variant="overlay"] p-button-pure {
   color: #fff !important;
   color-scheme: dark !important;
+  --pds-theme-light-primary: #fff;
+  --pds-theme-dark-primary: #fff;
 }
 @media (max-width: 900px) {
   .ouranos-header__main-inner {
