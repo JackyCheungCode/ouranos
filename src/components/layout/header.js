@@ -138,14 +138,25 @@ if (header) {
   }
 
   if (languagePopover && languageTrigger) {
+    let popoverReady = false;
+    let pendingOpen = false;
+
+    languageTrigger.addEventListener('click', () => {
+      if (!popoverReady) {
+        pendingOpen = !pendingOpen;
+        return;
+      }
+      languagePopover.open = !languagePopover.open;
+    });
+
+    languagePopover.addEventListener('dismiss', () => {
+      pendingOpen = false;
+      if (popoverReady) languagePopover.open = false;
+    });
+
     customElements.whenDefined('p-popover').then(() => {
-      languagePopover.open = false;
-      languageTrigger.addEventListener('click', () => {
-        languagePopover.open = !languagePopover.open;
-      });
-      languagePopover.addEventListener('dismiss', () => {
-        languagePopover.open = false;
-      });
+      languagePopover.open = pendingOpen;
+      popoverReady = true;
     });
   }
 
