@@ -43,7 +43,7 @@ test('Wheels catalogue fills the viewport and cards form aligned, equal-height r
         const rect = card.getBoundingClientRect();
         return { left: rect.left, top: rect.top, right: rect.right, height: rect.height };
       });
-      const tracks = getComputedStyle(grid).gridTemplateColumns.trim().split(/\\s+/);
+      const tracks = getComputedStyle(grid).gridTemplateColumns.trim().split(/\s+/);
       const rows = new Map<number, number[]>();
       for (const rect of cardRects) {
         const row = Math.round(rect.top);
