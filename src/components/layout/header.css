@@ -117,6 +117,9 @@
 }
 .ouranos-header[data-header-variant="overlay"] .ouranos-header__primary-nav {
 }
+.ouranos-header[data-header-variant="overlay"] p-popover {
+  color-scheme: light;
+}
 .ouranos-header[data-header-variant="overlay"] p-button-pure {
   color: #fff;
   color-scheme: dark;
