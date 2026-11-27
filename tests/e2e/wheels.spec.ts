@@ -18,6 +18,45 @@ test('Wheels catalogue uses the PDS Vehicle Listing pattern with multi-parameter
   await expect(page.locator('body')).not.toContainText('Add to cart');
 });
 
+
+test('Wheels catalogue cards follow the responsive catalogue grid at desktop, tablet and mobile widths', async ({
+  page,
+}) => {
+  const cases = [
+    { width: 1440, columns: 4 },
+    { width: 1024, columns: 3 },
+    { width: 600, columns: 2 },
+    { width: 390, columns: 1 },
+  ];
+
+  for (const { width, columns } of cases) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/wheels/', { waitUntil: 'domcontentloaded' });
+    const grid = page.locator('#wheels-grid');
+    const cards = page.locator('#wheels-grid [data-product]');
+    await expect(cards).toHaveCount(10);
+    const layout = await grid.evaluate((element) => {
+      const tracks = getComputedStyle(element).gridTemplateColumns.trim().split(/\\s+/);
+      const cardElements = [...element.querySelectorAll('[data-product]')];
+      const first = cardElements[0].getBoundingClientRect();
+      const second = cardElements[1].getBoundingClientRect();
+      return {
+        columns: tracks.length,
+        firstCardWidth: first.width,
+        secondCardLeft: second.left,
+        firstCardLeft: first.left,
+        hasPdsColumnSpan: cardElements.some((card) => card.classList.contains('col-basic')),
+      };
+    });
+    expect(layout.columns, `unexpected grid columns at viewport width ${width}`).toBe(columns);
+    expect(layout.hasPdsColumnSpan).toBe(false);
+    if (columns > 1) {
+      expect(layout.secondCardLeft).toBeGreaterThan(layout.firstCardLeft);
+      expect(layout.firstCardWidth).toBeLessThan((await grid.boundingBox())!.width / 1.5);
+    }
+  }
+});
+
 test('Wheels catalogue filters, clears and sorts demo products', async ({ page }) => {
   await page.goto('/wheels/', { waitUntil: 'domcontentloaded' });
   await page.locator('#filter-construction').evaluate((element) => {
