@@ -9,12 +9,12 @@ const messagesElement = document.getElementById('ouranos-ai-messages');
 
 if (openButton && closeButton && panel && form && input && messagesElement) {
   const history = [];
-  const setOpen = (open) => {
+  const setOpen = (open, { restoreFocus = true } = {}) => {
     panel.classList.toggle('is-open', open);
     panel.setAttribute('aria-hidden', String(!open));
     document.body.classList.toggle('ouranos-ai-is-open', open);
     if (open) input.focus();
-    else openButton.focus();
+    else if (restoreFocus) openButton.focus();
   };
 
   const element = (tag, className, text) => {
@@ -232,6 +232,7 @@ if (openButton && closeButton && panel && form && input && messagesElement) {
 
   openButton.addEventListener('click', () => setOpen(true));
   closeButton.addEventListener('click', () => setOpen(false));
+  window.addEventListener('ouranos:ai-close', () => setOpen(false, { restoreFocus: false }));
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && panel.classList.contains('is-open')) setOpen(false);
   });
