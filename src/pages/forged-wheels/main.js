@@ -2,7 +2,6 @@ import './style.css';
 
 const video = document.querySelector('.forged-hero__video');
 const toggle = document.querySelector('#forged-video-toggle');
-const label = document.querySelector('#forged-video-label');
 if (video instanceof HTMLVideoElement && toggle instanceof HTMLElement) {
   const syncVideoControl = () => {
     const paused = video.paused;
