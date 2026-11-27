@@ -108,7 +108,7 @@ test('URL discovery shows extracted product details and waits for explicit confi
   );
   await expect(page.locator('#url-product-fields')).toContainText('Example Wheels');
   await expect(page.locator('#url-product-fields')).toContainText('5 × 112');
-  await expect(page.locator('#url-status')).toContainText('请核对图片和参数');
+  await expect(page.locator('#url-status')).toContainText('Review the image and specifications');
   await expect(page.locator('#discovery-results')).toHaveCount(0);
   await page.locator('#url-confirm-search').click();
   await expect.poll(() => confirmed).toBe(true);
