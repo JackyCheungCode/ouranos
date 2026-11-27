@@ -7,6 +7,9 @@ test('shared header switches between overlay and stacked patterns and preserves 
 
   const header = page.locator('.ouranos-header');
   await expect(header).toHaveAttribute('data-header-variant', 'overlay');
+  await expect(header).toHaveAttribute('data-locale', 'en');
+  await expect(header).toHaveAttribute('data-shared-header-ready', 'true');
+  await expect(header).toHaveAttribute('data-language-controller-ready', 'true');
   await expect(page.locator('#ouranos-ai-open')).toBeVisible();
 
   await page.locator('#ouranos-language-trigger').click();
