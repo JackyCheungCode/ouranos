@@ -1052,6 +1052,7 @@ async function leadTimeSimulationRequest(request: Request): Promise<Response> {
   if (requested < earliest) requested = earliest;
   while (isWeekend(requested)) requested.setUTCDate(requested.getUTCDate() + 1);
   const start = requested;
+  const duration = process === 'casting' ? 8 : 7;
   return json({
     source: 'simulated',
     process,
