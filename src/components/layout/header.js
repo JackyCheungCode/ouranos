@@ -142,20 +142,14 @@ if (header) {
     if (languagePopover) languagePopover.open = false;
   };
 
-  // Capture the composed click before PDS Popover handles dismissal/retargeting.
-  document.addEventListener(
-    'click',
-    (event) => {
-      const option = event
-        .composedPath()
-        .find((node) => node instanceof HTMLElement && node.matches('[data-locale]'));
-      if (!(option instanceof HTMLElement)) return;
-
+  // Bind directly to each light-DOM option. PDS Popover may retarget or
+  // contain click propagation while dismissing; direct handlers remain reliable.
+  languageOptions.forEach((option) => {
+    option.addEventListener('click', () => {
       applyLocale(option.dataset.locale, true);
       if (languagePopover) languagePopover.open = false;
-    },
-    true,
-  );
+    });
+  });
 
   let savedLocale = 'en';
   try {
