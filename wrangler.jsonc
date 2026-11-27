@@ -23,6 +23,10 @@
     {
       "binding": "MODELS_BUCKET",
       "bucket_name": "ouranos-media"
+    },
+    {
+      "binding": "INQUIRY_UPLOADS",
+      "bucket_name": "ouranos-inquiry-uploads"
     }
   ],
   "d1_databases": [

@@ -1,91 +1,86 @@
 import { expect, test } from '@playwright/test';
 
-test('OURANOS forged wheels page presents its brand-led specification story', async ({ page }) => {
+test('forged wheels landing page follows the seven-section business brief', async ({ page }) => {
   await page.goto('/forged-wheels/', { waitUntil: 'domcontentloaded' });
 
-  await expect(page).toHaveTitle(/OURANOS \| Forged Wheels/);
+  await expect(page).toHaveTitle(/OURANOS \| Forged Wheel Engineering/);
   await expect(page.locator('.ouranos-header')).toHaveAttribute('data-header-variant', 'overlay');
   await expect(page.locator('#ouranos-ai-open')).toBeVisible();
   await expect(page.locator('#ouranos-language-trigger')).toBeVisible();
-  await expect(page.locator('#ouranos-theme-toggle')).toHaveCount(0);
-  await expect(page.locator('#ouranos-search')).toHaveCount(0);
   await expect(page.locator('html')).toHaveClass(/scheme-light/);
-  await expect(page.locator('#ouranos-ai-panel')).toHaveAttribute('aria-hidden', 'true');
-  await expect(page.locator('#ouranos-ai-panel')).toHaveCSS('position', 'fixed');
-  await expect(page.locator('#ouranos-ai-panel')).toHaveCSS('visibility', 'hidden');
 
-  const firstPaintGeometry = await page.evaluate(() => ({
-    headerTop: document.querySelector('.ouranos-header')?.getBoundingClientRect().top,
-    heroTop: document.querySelector('.forged-hero')?.getBoundingClientRect().top,
+  const headerGeometry = await page.locator('.ouranos-header').evaluate((element) => ({
+    top: element.getBoundingClientRect().top,
+    position: getComputedStyle(element).position,
   }));
-  expect(firstPaintGeometry.headerTop).toBe(0);
-  expect(firstPaintGeometry.heroTop).toBe(0);
+  expect(headerGeometry.top).toBe(0);
+  expect(headerGeometry.position).toBe('absolute');
 
-  await page.locator('#ouranos-ai-panel').evaluate((panel) => panel.classList.add('is-open'));
-  await expect(page.locator('#ouranos-ai-panel')).toHaveCSS('visibility', 'visible');
-  await page.locator('#ouranos-ai-panel').evaluate((panel) => panel.classList.remove('is-open'));
-  await expect(page.locator('#ouranos-ai-panel')).toHaveCSS('visibility', 'hidden');
-
-  await expect(page.locator('#forged-hero-title')).toContainText('ENGINEERED');
-  await expect(page.locator('.forged-hero__video source')).toHaveAttribute(
-    'src',
-    '/videos/mood-porsche-gts.mp4',
+  const sectionIds = await page.locator('main.forged-page > section').evaluateAll((items) =>
+    items.map((item) => item.id),
   );
-  await expect(page.locator('#approach-title')).toContainText('Not simply made to fit.');
-  await expect(page.locator('#architecture-title')).toBeVisible();
-  await expect(page.locator('#specification-title')).toBeVisible();
-  await expect(page.locator('#individualization-title')).toBeVisible();
-  await expect(page.locator('#fitment-title')).toBeVisible();
-  await expect(page.locator('#commissioning-title')).toBeVisible();
-  await expect(page.locator('#faq-title')).toBeVisible();
-
-  const sectionOrder = await page
-    .locator('main.forged-page > section')
-    .evaluateAll((sections) => sections.map((section) => section.classList[0]));
-  expect(sectionOrder).toEqual([
-    'forged-hero',
-    'forged-approach',
-    'forged-architecture',
-    'forged-specification',
-    'forged-individualization',
-    'forged-fitment',
-    'forged-commissioning',
-    'forged-faq',
-    'forged-final',
+  expect(sectionIds).toEqual([
+    '',
+    'solutions',
+    'manufacturing',
+    'product-lineup',
+    'fitment-gallery',
+    'aftercare',
+    'enquiry',
   ]);
 
-  await expect(page.locator('.forged-specification__matrix > div')).toHaveCount(6);
-  await expect(page.locator('.forged-detail')).toHaveCount(4);
-  await expect(
-    page.locator('.forged-hero .forged-hero__content .forged-hero__actions p-link'),
-  ).toHaveCount(2);
-  await expect(page.locator('.forged-final__content p-link')).toHaveCount(2);
-  await expect(page.locator('.forged-image-note').first()).toContainText('visual references');
-  await expect(page.locator('#forged-video-toggle')).toBeVisible();
+  await expect(page.locator('#forged-hero-title')).toContainText('Forged to perform.');
+  await expect(page.locator('.forged-trustbar > div')).toHaveCount(4);
+  await expect(page.locator('.forged-pain__list p-accordion')).toHaveCount(4);
+  await expect(page.locator('p-stepper-horizontal-item')).toHaveCount(6);
+  await expect(page.locator('.forged-construction-panel')).toHaveCount(4);
+  await expect(page.locator('p-carousel')).toBeVisible();
+  await expect(page.locator('.forged-certifications__scroller')).toBeVisible();
+  await expect(page.locator('.forged-fitment-card')).toHaveCount(5);
+  await expect(page.locator('.forged-aftercare__grid article')).toHaveCount(3);
+  await expect(page.locator('#forged-enquiry-form')).toBeVisible();
 
-  await page.goto('/wheels/', { waitUntil: 'domcontentloaded' });
-  await expect(page.locator('#wheels-grid')).toBeVisible();
-  await expect(page.locator('#catalogue-title')).toBeVisible();
+  await page.locator('#construction-tabs').evaluate((element) => {
+    element.dispatchEvent(new CustomEvent('update', { detail: { activeTabIndex: 2 } }));
+  });
+  await expect(page.locator('.forged-construction-panel[data-panel="2"]')).toBeVisible();
+  await expect(page.locator('.forged-construction-panel[data-panel="0"]')).toBeHidden();
+
+  await page.locator('#vehicle-filter').evaluate((element) => {
+    element.dispatchEvent(new CustomEvent('change', { detail: { value: 'porsche' } }));
+  });
+  await expect(page.locator('.forged-fitment-card[data-vehicle="porsche"]')).toBeVisible();
+  await expect(page.locator('.forged-fitment-card[data-vehicle="bmw"]')).toBeHidden();
+
+  await expect(page.locator('#reference-image')).toHaveAttribute('accept', 'image/jpeg,image/png,image/webp');
+  await page.locator('[data-case="porsche"]').click();
+  await expect(page.locator('#fitment-flyout')).toHaveJSProperty('open', true);
+  await page.locator('#fitment-flyout-enquire').click();
+  const fitmentNote = await page.locator('#notes').evaluate((element) => (element as HTMLTextAreaElement).value);
+  expect(fitmentNote).toContain('PORSCHE');
+  await page.locator('#warranty-details').click();
+  await expect(page.locator('#warranty-modal')).toHaveJSProperty('open', true);
+  await page.locator('#warranty-modal-close').click();
+  await expect(page.locator('#warranty-modal')).toHaveJSProperty('open', false);
 });
 
-test('forged wheels page remains responsive and navigation exposes the destination', async ({
+test('forged wheels enquiry supports a one-set private owner enquiry and responsive layout', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/forged-wheels/', { waitUntil: 'domcontentloaded' });
 
   await expect(page.locator('#ouranos-ai-open')).toBeVisible();
-  await expect(page.locator('#nav-button')).toBeVisible();
-  await page.locator('#nav-button').click();
-  await expect(page.locator('#nav-drilldown')).toHaveJSProperty('open', true);
-  await expect(
-    page.locator(
-      '#nav-drilldown p-drilldown-item[identifier="ouranos-wheels"] a[href="/forged-wheels/"]',
-    ),
-  ).toHaveCount(1);
+  await page.locator('#customer-type').evaluate((element) => {
+    element.dispatchEvent(new CustomEvent('change', { detail: { value: 'trade' } }));
+  });
+  await expect(page.locator('.forged-trade-field').first()).toBeVisible();
+  await expect(page.locator('.forged-quantity-field')).toBeVisible();
 
-  await expect(page.locator('.forged-detail-grid')).toBeVisible();
-  const pageWidth = await page.locator('body').evaluate((element) => element.scrollWidth);
-  const viewportWidth = await page.evaluate(() => window.innerWidth);
-  expect(pageWidth).toBeLessThanOrEqual(viewportWidth);
+  const dimensions = await page.evaluate(() => ({
+    body: document.body.scrollWidth,
+    viewport: window.innerWidth,
+  }));
+  expect(dimensions.body).toBeLessThanOrEqual(dimensions.viewport);
+  await expect(page.locator('#forged-submit')).toBeVisible();
 });
