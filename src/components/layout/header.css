@@ -1,0 +1,35 @@
+/* Shared topbar contrast contract: all header controls and branding stay white. */
+header[aria-label],
+header {
+  color: #fff !important;
+  color-scheme: dark !important;
+}
+header a,
+header a:visited,
+header a:hover,
+header a:focus-visible,
+header .ouranos-wordmark {
+  color: #fff !important;
+  text-decoration-color: #fff;
+}
+header p-button-pure {
+  color: #fff !important;
+  color-scheme: dark !important;
+  --p-button-pure-color: #fff;
+  --p-button-pure-color-hover: #fff;
+}
+header p-button-pure::part(button),
+header p-button-pure::part(icon),
+header p-button-pure::part(label) {
+  color: #fff !important;
+}
+header p-button-pure svg,
+header p-button-pure [part~="icon"] {
+  color: #fff !important;
+  fill: currentColor;
+}
+header .ouranos-wordmark {
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-decoration: none;
+}
