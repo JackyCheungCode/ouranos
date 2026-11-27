@@ -1052,59 +1052,13 @@ async function leadTimeSimulationRequest(request: Request): Promise<Response> {
   if (requested < earliest) requested = earliest;
   while (isWeekend(requested)) requested.setUTCDate(requested.getUTCDate() + 1);
   const start = requested;
-  const stages =
-    process === 'casting'
-      ? [
-          'MATERIAL PREP',
-          'MELTING',
-          'CASTING',
-          'COOLING',
-          'HEAT TREAT',
-          'CNC MACHINING',
-          'SURFACE & QC',
-        ]
-      : [
-          'BILLET PREP',
-          'BILLET HEATING',
-          'FORGING',
-          'HEAT TREAT',
-          'CNC MACHINING',
-          'SURFACE FINISH',
-          'FINAL QC',
-        ];
-  const duration = process === 'casting' ? 8 : 7;
-  const lines = Array.from({ length: 36 }, (_, index) => {
-    const startOffset = index === 0 ? 1 : -22 + Math.floor(Math.random() * 22);
-    const stageDurations = Array.from({ length: 7 }, () => 1);
-    if (duration === 8) stageDurations[5] = 2;
-    const segments = stages.map((name, stageIndex) => ({
-      name,
-      offset: stageDurations.slice(0, stageIndex).reduce((sum, value) => sum + value, 0),
-      duration: stageDurations[stageIndex],
-      category: stageIndex < 2 ? 'prep' : stageIndex < 5 ? 'process' : 'finish',
-    }));
-    return {
-      id: 'LINE-' + String(index + 1).padStart(2, '0'),
-      product: 'Production order ' + String(index + 1).padStart(3, '0'),
-      process,
-      orderColor: `hsl(${(index * 137.508) % 360} 27% 43%)`,
-      phase: stages[0],
-      startOffset,
-      duration,
-      segments,
-    };
-  });
-  lines[0].product = body.productId.toUpperCase();
-  lines[0].phase = 'SELECTED ORDER ROUTE';
   return json({
     source: 'simulated',
     process,
     quantity,
     productId: body.productId,
-    selectedLine: lines[0].id,
     startDate: start.toISOString().slice(0, 10),
     targetWorkingDays: duration,
-    lines,
   });
 }
 
