@@ -6,6 +6,7 @@
     <div class="flex flex-wrap gap-static-md items-center justify-start">
       <nav aria-label="Main">
         <p-button-pure id="nav-button" class="p-static-xs -m-static-xs" type="button" icon="menu-lines" hide-label="{base: true, s: false}" aria="{'aria-haspopup': 'dialog'}">Menu</p-button-pure>
+        <p-button-pure id="ouranos-search-mobile" class="p-static-xs -m-static-xs sm:hidden" title="Search" type="button" icon="search" hide-label="true">Search</p-button-pure>
         <p-drilldown id="nav-drilldown">
   <p-drilldown-item identifier="ouranos-wheels" label="Wheels">
     <p-drilldown-link><a href="/wheels/">Wheels catalogue</a></p-drilldown-link>
@@ -32,7 +33,7 @@
         </div>
       </p-popover>
       <p-button-pure id="ouranos-ai-open" class="p-static-xs -m-static-xs" type="button" icon="ai-chat" hide-label="true" title="OURANOS AI Assistant" aria-label="OURANOS AI Assistant">AI Assistant</p-button-pure>
-      <p-button-pure id="ouranos-search" class="p-static-xs -m-static-xs" title="Search" type="button" icon="search" hide-label="true">Search</p-button-pure>
+      <p-button-pure id="ouranos-search" class="p-static-xs -m-static-xs max-sm:hidden" title="Search" type="button" icon="search" hide-label="true">Search</p-button-pure>
       <p-button-pure id="ouranos-account" class="p-static-xs -m-static-xs" title="Account" type="button" icon="user" hide-label="true">Account</p-button-pure>
       <p-button-pure id="ouranos-theme-toggle" class="p-static-xs -m-static-xs" title="Switch to dark mode" type="button" icon="moon" hide-label="true" aria-pressed="false">Switch theme</p-button-pure>
     </div>
