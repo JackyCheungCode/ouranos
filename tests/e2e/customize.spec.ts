@@ -86,6 +86,9 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
 
   await page.locator('#next-button').click();
   await expect(page.locator('[data-panel="2"]')).toBeVisible();
+  await expect(page.locator('[data-panel="2"]')).not.toContainText(/Wheel Size|API/i);
+  await expect(page.locator('.axle-spec')).toHaveCSS('color-scheme', 'light');
+  await expect(page.locator('.axle-spec')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(page.locator('#front-diameter')).toHaveJSProperty('value', '20');
   await expect(page.locator('#front-width')).toHaveJSProperty('value', '8.5');
   await expect(page.locator('#front-offset')).toHaveJSProperty('value', '50');
@@ -104,7 +107,7 @@ test('Configurator retrieves USDM fitment and maps staggered front/rear specific
   expect(errors).toEqual([]);
 });
 
-test('Selecting a manufacturer from the logo menu loads its models', async ({ page }) => {
+test('Selecting a manufacturer with the native PDS select loads its models', async ({ page }) => {
   await mockWheelSize(page);
   await page.goto('/customize/');
   await page.locator('#model-list .model-card').click();
@@ -149,7 +152,8 @@ test('Vehicle step can be skipped and manual wheel dimensions remain available',
   await page.locator('#model-list .model-card').click();
   await page.locator('#next-button').click();
   await chooseMarket(page);
-  await expect(page.locator('#api-status')).toContainText('WHEEL SIZE KEY NOT CONFIGURED');
+  await expect(page.locator('#api-status')).toHaveText('VEHICLE LOOKUP UNAVAILABLE');
+  await expect(page.locator('body')).not.toContainText(/Wheel Size|API key|API source/i);
   await page.locator('#skip-vehicle').click();
   await expect(page.locator('[data-panel="2"]')).toBeVisible();
   await expect(page.locator('#front-diameter')).toBeVisible();
