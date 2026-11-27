@@ -70,16 +70,16 @@ function sharedLayoutPartials() {
       const isAdmin = context.filename.includes(`${sep}admin-panel${sep}`);
       if (isAdmin || html.includes('<!-- OURANOS:NO-SHARED-HEADER -->')) return html;
 
-      const isHome = resolve(context.filename) === resolve(rootDir, 'index.html');
-      const isForgedWheels = context.filename.includes(`${sep}forged-wheels${sep}`);
-      const isOverlay =
-        isHome || isForgedWheels || context.filename.includes(`${sep}customize${sep}`);
+      // Every public OURANOS page uses the exact Home overlay header.
+      // The admin-panel directory is a standalone PDS administration template,
+      // not part of the public brand website.
       const readPartial = (name: string) =>
         readFileSync(resolve(rootDir, 'src/components/layout', name), 'utf8');
       const sidebar = readPartial('sidebar.html');
-      const pattern = readPartial(
-        isOverlay ? 'header-overlay.html' : 'header-stacked.html',
-      ).replace('<!-- OURANOS:SIDEBAR -->', sidebar);
+      const pattern = readPartial('header-overlay.html').replace(
+        '<!-- OURANOS:SIDEBAR -->',
+        sidebar,
+      );
       const header = readPartial('header.html').replace('<!-- OURANOS:TOPBAR -->', pattern);
 
       let transformed = html;
