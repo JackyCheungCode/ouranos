@@ -151,8 +151,8 @@ function templatePartials() {
             : isCustomizer
               ? 'Ouranos | Wheel Atelier'
               : isDiscover
-              ? 'Ouranos | Discover Wheels'
-              : 'Ouranos Admin Panel',
+                ? 'Ouranos | Discover Wheels'
+                : 'Ouranos Admin Panel',
         }),
       ].join('');
       return html
