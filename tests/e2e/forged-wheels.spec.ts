@@ -35,7 +35,7 @@ test('forged wheels page remains responsive and navigation exposes the new desti
   await expect(page.locator('#nav-button')).toBeVisible();
   await page.locator('#nav-button').click();
   await expect(page.locator('#nav-drilldown')).toHaveJSProperty('open', true);
-  await expect(page.locator('#nav-drilldown a[href="/forged-wheels/"]')).toBeVisible();
+  await expect(page.locator('#nav-drilldown p-drilldown-item[identifier="ouranos-wheels"] a[href="/forged-wheels/"]')).toHaveCount(1);
 
   const pageWidth = await page.locator('body').evaluate((element) => element.scrollWidth);
   const viewportWidth = await page.evaluate(() => window.innerWidth);
