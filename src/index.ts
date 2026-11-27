@@ -573,7 +573,7 @@ async function getDiscoveryJob(request: Request, env: Env): Promise<Response> {
   if (!job) return json({ error: 'DISCOVERY_JOB_NOT_FOUND' }, 404);
   const matches = await env.DB.prepare(
     'SELECT m.id, m.match_type, m.similarity_score, m.explanation, p.id AS product_id, p.slug, p.product_name FROM discovery_matches m JOIN products p ON p.id = m.product_id WHERE m.job_id = ? ORDER BY CASE m.match_type WHEN \'exact\' THEN 0 WHEN \'visual_similar\' THEN 1 ELSE 2 END, m.similarity_score DESC'
-  ).bind(id).run();
+  ).bind(id).all();
   return json({ job, matches: matches.results || [] });
 }
 
