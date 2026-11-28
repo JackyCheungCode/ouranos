@@ -83,12 +83,13 @@ test('Home header uses the white OURANOS script brand over the light page theme'
   );
 
   const headerButtons = header.locator(
-    'p-button-pure#nav-button, p-button-pure#ouranos-language-trigger, p-button-pure#ouranos-ai-open, p-button-pure#ouranos-account',
+    'p-button-pure#nav-button, p-button-pure#ouranos-ai-open, p-button-pure#ouranos-account',
   );
-  await expect(headerButtons).toHaveCount(4);
+  await expect(headerButtons).toHaveCount(3);
   for (let index = 0; index < (await headerButtons.count()); index += 1) {
     await expect(headerButtons.nth(index)).toHaveCSS('color', 'rgb(255, 255, 255)');
   }
+  await expect(header.locator('#ouranos-language-trigger')).toHaveCount(0);
 
   for (const tile of [
     page.locator('p-link-tile[label="Find Wheels for Your Vehicle"]'),

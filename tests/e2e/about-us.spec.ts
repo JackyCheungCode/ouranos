@@ -19,7 +19,7 @@ test('About Us presents OURANOS engineering story with the shared PDS layout', a
   await expect(page.locator('p-button[href="/cast-wheel-collection/"]')).toHaveCount(4);
 
   await expect(page.locator('.ouranos-header')).toHaveAttribute('data-header-variant', 'overlay');
-  await expect(page.locator('#nav-drilldown')).toContainText('About Us');
+  await expect(page.locator('#nav-drilldown')).toContainText('About Ouranos');
   await expect(page.locator('footer')).toContainText('About Us');
   expect(await page.locator('p-heading').count()).toBeGreaterThan(10);
   expect(await page.locator('p-text').count()).toBeGreaterThan(20);

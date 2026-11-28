@@ -8,7 +8,7 @@ test('forged wheel collection renders 20 BBS visual references with one shared c
   await expect(page).toHaveTitle('OURANOS | Forged Wheel Collection');
   await expect(page.locator('.ouranos-header')).toHaveAttribute('data-header-variant', 'overlay');
   await expect(page.locator('#ouranos-ai-open')).toBeVisible();
-  await expect(page.locator('#ouranos-language-trigger')).toBeVisible();
+  await expect(page.locator('#ouranos-language-trigger')).toHaveCount(0);
   await expect(page.locator('.ouranos-header__video')).toBeVisible();
   await expect(page.locator('.ouranos-header__video source')).toHaveAttribute(
     'src',

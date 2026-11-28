@@ -1,69 +1,22 @@
-.ouranos-language-menu {
-  display: grid;
-  min-width: 176px;
-  gap: 4px;
-  padding: 8px;
-  color: #010205;
-  color-scheme: only light;
-  background: #fff;
-}
-.ouranos-language-option {
-  display: block;
-  width: 100%;
-  min-height: 40px;
-  padding: 8px 12px;
-  border: 0;
-  border-radius: 2px;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-.ouranos-language-option:hover,
-.ouranos-language-option:focus-visible {
-  background: #f2f2f2;
-}
-.ouranos-language-option[aria-pressed='true'] {
-  font-weight: 700;
-}
-
-/* Critical first-paint AI drawer styles: never let the panel enter document flow. */
-#ouranos-ai-panel {
-  position: fixed;
-  z-index: 50;
-  inset: 80px 0 0 auto;
-  display: flex;
-  flex-direction: column;
-  width: min(480px, 100vw);
-  height: calc(100dvh - 80px);
-  overflow: hidden;
-  background: #fff;
-  border-left: 1px solid #e5e5e5;
-  box-shadow: -16px 0 48px rgb(0 0 0 / 10%);
-  transform: translateX(105%);
-  visibility: hidden;
-  pointer-events: none;
-}
-#ouranos-ai-panel.is-open {
-  transform: translateX(0);
-  visibility: visible;
-  pointer-events: auto;
-}
-
-/* The shared overlay header is video-free by default; Forged Wheels opts in explicitly. */
-.ouranos-header__video {
-  display: none;
-}
-
-/* Brand header: one Home-identical overlay pattern on every public page. */
+/* Keep the shared overlay header above page heroes and media layers. */
 .ouranos-header {
+  z-index: 1000;
+  isolation: isolate;
   color: #fff;
 }
 .ouranos-header.ouranos-header::before {
+  z-index: 1;
   content: '';
   height: 132px;
+  pointer-events: none;
   background: linear-gradient(180deg, rgb(0 0 0 / 48%) 0%, rgb(0 0 0 / 24%) 52%, transparent 100%);
+}
+.ouranos-header > div {
+  position: relative;
+  z-index: 2;
+}
+.ouranos-header__video {
+  pointer-events: none;
 }
 .ouranos-header__brand {
   display: block;
@@ -81,9 +34,6 @@
   color: #fff;
 }
 .ouranos-header p-button-pure::part(button) {
-  color: #fff;
-}
-.ouranos-header p-popover {
   color: #fff;
 }
 .ouranos-header :is(p-button-pure, p-popover):focus-visible {

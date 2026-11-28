@@ -12,8 +12,8 @@ body.forged-collection-page {
   color: var(--color-contrast-high, #111);
 }
 body.forged-collection-page .ouranos-header {
-  z-index: auto;
-  isolation: auto;
+  z-index: 1000;
+  isolation: isolate;
 }
 body.forged-collection-page .ouranos-header__video {
   display: block;
