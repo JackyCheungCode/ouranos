@@ -52,9 +52,15 @@ async function mockVehicleCatalogue(page: Page) {
 
 async function choose(page: Page, selector: string, value: string) {
   await page.locator(selector).evaluate((element, nextValue) => {
-    const select = element as HTMLSelectElement;
+    const select = element as HTMLElement & { value: string; name: string };
     select.value = nextValue;
-    select.dispatchEvent(new Event('change', { bubbles: true }));
+    select.dispatchEvent(
+      new CustomEvent('change', {
+        bubbles: true,
+        composed: true,
+        detail: { name: select.name, value: nextValue },
+      }),
+    );
   }, value);
 }
 
@@ -70,6 +76,9 @@ test('Fitment Guide retrieves factory wheel data from the vehicle catalogue', as
   await expect(page.locator('footer')).toBeVisible();
   await expect(page.locator('#market')).toBeEnabled();
   await expect(page.locator('#market')).toHaveJSProperty('value', 'usdm');
+  await choose(page, '#market', 'eudm');
+  await expect(page.locator('#market')).toHaveJSProperty('value', 'eudm');
+  await choose(page, '#market', 'usdm');
   await choose(page, '#make', 'porsche');
   await expect(page.locator('#model')).toBeEnabled();
   await choose(page, '#model', '911');
