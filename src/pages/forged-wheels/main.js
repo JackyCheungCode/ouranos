@@ -170,10 +170,6 @@ document.querySelectorAll('.forged-text-button[data-case]').forEach((button) => 
   });
 });
 
-document.querySelector('#catalogue-request')?.addEventListener('click', () => {
-  document.querySelector('#notes').value = 'Please send the latest OURANOS forged wheel catalogue (PDF).';
-});
-
 const warrantyModal = document.querySelector('#warranty-modal');
 document.querySelector('#warranty-details')?.addEventListener('click', () => {
   warrantyModal.open = true;
@@ -229,7 +225,10 @@ form?.addEventListener('submit', async (event) => {
   try {
     const data = new FormData(form);
     const image = await readReferenceImage(referenceInput.files[0]);
-    const quantity = Number(data.get('quantity') || 1);
+    const quantity = Number(data.get('quantity') || 4);
+    if (!Number.isInteger(quantity) || quantity < 4) {
+      throw new Error('The minimum order quantity for forged wheels is four wheels.');
+    }
     const constructionChoice = String(data.get('construction_choice') || 'Monoblock');
     const payload = {
       product: { id: 'ouranos-forged-custom', model: 'Custom forged wheel specification', construction: 'Forged' },
