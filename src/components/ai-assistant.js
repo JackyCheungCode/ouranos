@@ -233,16 +233,19 @@ function initOuranosAI() {
     }
   }
 
-  // PDS custom elements can retarget composed click events through their shadow
-  // roots. Delegate at document level so the shared AI trigger works uniformly
-  // on every page and does not depend on the custom element's upgrade timing.
-  document.addEventListener('click', (event) => {
-    const path = typeof event.composedPath === 'function' ? event.composedPath() : [];
-    const clickedOpen = path.includes(openButton) || event.target?.closest?.('#ouranos-ai-open') === openButton;
-    const clickedClose = path.includes(closeButton) || event.target?.closest?.('#ouranos-ai-close') === closeButton;
-    if (clickedOpen) setOpen(true);
-    if (clickedClose) setOpen(false);
-  }, true);
+  // Bind directly to the PDS custom-element hosts. The browser dispatches
+  // composed click events from their shadow controls to these host elements.
+  // This avoids relying on document-level event retargeting across PDS pages.
+  if (panel.dataset.controllerReady === 'true') return true;
+  panel.dataset.controllerReady = 'true';
+  openButton.addEventListener('click', (event) => {
+    event.preventDefault();
+    setOpen(true);
+  });
+  closeButton.addEventListener('click', (event) => {
+    event.preventDefault();
+    setOpen(false);
+  });
   const header = document.querySelector('.ouranos-header');
   if (header) header.dataset.aiControllerReady = 'true';
   window.addEventListener('ouranos:ai-close', () => setOpen(false, { restoreFocus: false }));
