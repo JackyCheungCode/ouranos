@@ -101,11 +101,14 @@ body.forged-wheels-page .ouranos-header__video {
   padding: clamp(8rem, 15vh, 11rem) var(--forged-gutter) 2.5rem;
   background: transparent;
 }
-.forged-hero__copy {
-  color: #fff;
+.forged-hero__copy,
+.forged-hero__copy p-text,
+.forged-hero__copy p-display {
+  color: #fff !important;
 }
-.forged-hero__copy p-text {
-  color: rgb(255 255 255 / 84%) !important;
+.forged-hero__copy p-text::part(base),
+.forged-hero__copy p-display::part(base) {
+  color: #fff !important;
 }
 .forged-hero__grid {
   display: grid;
