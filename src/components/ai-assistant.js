@@ -232,8 +232,18 @@ if (openButton && closeButton && panel && form && input && messagesElement) {
     }
   }
 
-  openButton.addEventListener('click', () => setOpen(true));
-  closeButton.addEventListener('click', () => setOpen(false));
+  // PDS custom elements can retarget composed click events through their shadow
+  // roots. Delegate at document level so the shared AI trigger works uniformly
+  // on every page and does not depend on the custom element's upgrade timing.
+  document.addEventListener('click', (event) => {
+    const path = typeof event.composedPath === 'function' ? event.composedPath() : [];
+    const clickedOpen = path.includes(openButton) || event.target?.closest?.('#ouranos-ai-open') === openButton;
+    const clickedClose = path.includes(closeButton) || event.target?.closest?.('#ouranos-ai-close') === closeButton;
+    if (clickedOpen) setOpen(true);
+    if (clickedClose) setOpen(false);
+  }, true);
+  const header = document.querySelector('.ouranos-header');
+  if (header) header.dataset.aiControllerReady = 'true';
   window.addEventListener('ouranos:ai-close', () => setOpen(false, { restoreFocus: false }));
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && panel.classList.contains('is-open')) setOpen(false);
