@@ -16,7 +16,7 @@
             <p-text size="xs" color="inherit">OURANOS / FORGED WHEELS</p-text>
             <p-display id="forged-hero-title" tag="h1" size="large">Forged to perform.<br>Made to be yours.</p-display>
             <p-text class="forged-hero__lead" size="md" color="inherit">A bespoke forged wheel programme built around vehicle-specific data, considered construction and individual detail.</p-text>
-            <p-text class="forged-hero__subline" size="sm" color="inherit">6061-T6 aluminium · 10,000-tonne-class forging · JWL / VIA testing framework</p-text>
+            <p-text class="forged-hero__subline" size="sm" color="inherit">6061-T6 aluminium · 10,000-tonne-class forging · JWL / VIA requirements assessed per application</p-text>
             <div class="forged-actions">
               <p-link id="hero-enquiry" href="#enquiry" variant="primary" icon="arrow-right">Request a bespoke quotation</p-link>
               <p-link id="catalogue-request" href="/forged-wheels/collection/" variant="secondary" icon="arrow-right">Explore the collection</p-link>
@@ -42,8 +42,8 @@
           <div class="forged-pain__list" aria-label="Common concerns and OURANOS responses">
             <p-accordion open="true" data-solution="fitment">
               <p-heading slot="summary" tag="h3" size="sm">Fitment uncertainty</p-heading>
-              <p-text>Vehicle, brake and wheel data are reviewed together. A 1:1 3D assembly and interference review is specified for approval before machining, with a target machining tolerance of ±0.02 mm where applicable.</p-text>
-              <p-tag variant="info">Target tolerance ±0.02 mm</p-tag>
+              <p-text>Vehicle, brake and wheel data are reviewed together. A 1:1 3D assembly and interference review is specified for approval before machining, with critical dimensions controlled against the approved engineering drawing.</p-text>
+              <p-tag variant="info">Drawing-led dimensional control</p-tag>
             </p-accordion>
             <p-accordion data-solution="strength">
               <p-heading slot="summary" tag="h3" size="sm">Strength and durability</p-heading>
@@ -52,13 +52,13 @@
             </p-accordion>
             <p-accordion data-solution="leadtime">
               <p-heading slot="summary" tag="h3" size="sm">Lead time and communication</p-heading>
-              <p-text>A dedicated specification review keeps design approval, production planning and delivery expectations visible. The document target is a 3D proposal within 24 hours and dispatch in 7–12 days after drawing approval, subject to confirmation.</p-text>
-              <p-tag variant="info">3D proposal target: 24 hours</p-tag>
+              <p-text>A dedicated specification review keeps design approval, production planning and delivery expectations visible. A project schedule is established after specification review and drawing approval. Production and dispatch timing depend on construction, finish, order quantity and destination.</p-text>
+              <p-tag variant="info">Schedule confirmed per project</p-tag>
             </p-accordion>
             <p-accordion data-solution="custom">
               <p-heading slot="summary" tag="h3" size="sm">Minimum order and personalisation</p-heading>
-              <p-text>Enquiries are accepted from one set. Options include custom drawings, centre-cap branding, engraving and a broad range of surface treatments, subject to model compatibility.</p-text>
-              <p-tag variant="info">MOQ: 1 set</p-tag>
+              <p-text>Forged wheel orders start at a minimum of four wheels. Options include custom drawings, centre-cap branding, engraving and selected surface treatments, subject to model compatibility.</p-text>
+              <p-tag variant="info">MOQ: 4 wheels</p-tag>
             </p-accordion>
           </div>
           <aside class="forged-solution-card" aria-live="polite">
@@ -69,7 +69,7 @@
               <p-text size="xs" color="contrast-medium" id="solution-kicker">FITMENT REVIEW</p-text>
               <p-heading tag="h3" size="lg" id="solution-heading">Vehicle-first specification</p-heading>
               <p-text color="contrast-medium" id="solution-description">A fitment decision begins with the exact vehicle, brake package and intended setup.</p-text>
-              <p-inline-notification state="success">Final fitment requires approval against the exact vehicle configuration.</p-inline-notification>
+              <p-inline-notification state="info">Final fitment requires approval against the exact vehicle configuration.</p-inline-notification>
             </div>
           </aside>
         </div>
@@ -185,9 +185,9 @@
             </div>
           </div>
           <div class="forged-customisation__options">
-            <div><p-icon name="tire" size="lg"></p-icon><strong>17–24 inch</strong><span>Diameter range</span></div>
+            <div><p-icon name="tire" size="lg"></p-icon><strong>Vehicle-specific</strong><span>Diameter & width</span></div>
             <div><p-icon name="configurate" size="lg"></p-icon><strong>PCD / CB / ET</strong><span>Custom dimensions</span></div>
-            <div><p-icon name="car-battery" size="lg"></p-icon><strong>TPMS ready</strong><span>OEM sensor compatibility check</span></div>
+            <div><p-icon name="car-battery" size="lg"></p-icon><strong>TPMS compatibility</strong><span>OEM sensor review</span></div>
             <div><p-icon name="edit" size="lg"></p-icon><strong>Personal details</strong><span>Engraving & centre-cap logo</span></div>
           </div>
           <p-text size="xs" color="contrast-medium">The available finish catalogue includes brushed, polished, chrome, gloss, matte, satin and two-tone machined options. PCD, centre bore and offset are specified for the vehicle and wheel design.</p-text>
@@ -334,7 +334,7 @@
         <div class="forged-aftercare__grid">
           <article><p-icon name="lock" size="lg"></p-icon><p-heading tag="h3" size="lg">Protective packaging</p-heading><p-text color="contrast-medium">Rim protectors, high-density foam, dust covers and reinforced export cartons or crated pallet packaging. Transit damage procedures are confirmed before dispatch.</p-text></article>
           <article><p-icon name="globe" size="lg"></p-icon><p-heading tag="h3" size="lg">Worldwide logistics</p-heading><p-text color="contrast-medium">Air freight and sea freight options, including consolidated and full-container shipments. DDP availability depends on destination, customs rules and carrier coverage.</p-text></article>
-          <article><p-icon name="check" size="lg"></p-icon><p-heading tag="h3" size="lg">Warranty support</p-heading><p-text color="contrast-medium">The programme document specifies lifetime structural coverage and a two-year finish warranty. The applicable written warranty, exclusions and market terms must be supplied with the quotation.</p-text><button type="button" class="forged-text-button" id="warranty-details">Review warranty terms <span aria-hidden="true">→</span></button></article>
+          <article><p-icon name="check" size="lg"></p-icon><p-heading tag="h3" size="lg">Warranty support</p-heading><p-text color="contrast-medium">Written structural and finish warranty terms, exclusions and market coverage are confirmed in the quotation for the selected product.</p-text><button type="button" class="forged-text-button" id="warranty-details">Review warranty terms <span aria-hidden="true">→</span></button></article>
         </div>
         
       </section>
@@ -343,11 +343,11 @@
         <div class="forged-enquiry__faq">
           <p-text size="xs" color="contrast-medium">06 / FREQUENTLY ASKED QUESTIONS</p-text>
           <p-heading id="enquiry-title" tag="h2" size="xl">Start with a clear brief.</p-heading>
-          <p-accordion open="true"><p-heading slot="summary" tag="h3" size="sm">What is the minimum order quantity?</p-heading><p-text>The programme brief specifies one set as the minimum for a bespoke enquiry. Final order conditions are confirmed in the quotation.</p-text></p-accordion>
+          <p-accordion open="true"><p-heading slot="summary" tag="h3" size="sm">What is the minimum order quantity?</p-heading><p-text>The minimum order quantity for forged wheels is four wheels. Final order conditions are confirmed in the quotation.</p-text></p-accordion>
           <p-accordion><p-heading slot="summary" tag="h3" size="sm">Can you support wholesale and OEM / ODM projects?</p-heading><p-text>Yes. The enquiry process is intended for individual vehicle owners, tuning workshops, distributors and OEM / ODM project discussions. Commercial terms are confirmed case by case.</p-text></p-accordion>
           <p-accordion><p-heading slot="summary" tag="h3" size="sm">Can you calculate J, ET and centre bore?</p-heading><p-text>Provide the exact vehicle year, model, trim and brake package. The engineering review can then assess the required front and rear dimensions. Final clearance must be approved before production.</p-text></p-accordion>
           <p-accordion><p-heading slot="summary" tag="h3" size="sm">Can I customise the centre cap and engraving?</p-heading><p-text>Centre-cap branding, wheel engraving and selected edge details can be requested. Available processes depend on the wheel design and construction.</p-text></p-accordion>
-          <p-accordion><p-heading slot="summary" tag="h3" size="sm">How long does production take?</p-heading><p-text>The source brief lists a 7–15 day delivery target and a 7–12 day dispatch target after drawing approval. The confirmed production and shipping schedule will be provided with the quotation.</p-text></p-accordion>
+          <p-accordion><p-heading slot="summary" tag="h3" size="sm">How long does production take?</p-heading><p-text>Production and shipping schedules depend on the selected construction, finish, order quantity and destination. The confirmed schedule is provided with the quotation.</p-text></p-accordion>
         </div>
         <div class="forged-enquiry__form-wrap">
           <div class="forged-enquiry__form-heading">
@@ -361,6 +361,7 @@
               <label><p-input-email label="Email" name="customer_email" required="true" autocomplete="email" placeholder="name@example.com"></p-input-email></label>
               <label><p-input-tel label="WhatsApp / Phone" name="customer_phone" autocomplete="tel" placeholder="+ country code"></p-input-tel></label>
               <label><p-select label="Wheel construction" name="construction_choice" value="Monoblock" aria-label="Wheel construction"><p-select-option value="Monoblock">Monoblock</p-select-option><p-select-option value="Two-Piece">Two-Piece</p-select-option><p-select-option value="Three-Piece">Three-Piece</p-select-option><p-select-option value="Off-Road / Beadlock">Off-Road / Beadlock</p-select-option><p-select-option value="Carbon Barrel">Carbon Barrel</p-select-option><p-select-option value="Not sure yet">Not sure yet</p-select-option></p-select></label>
+              <label><p-input-number label="Quantity (wheels)" name="quantity" min="4" value="4" required="true"></p-input-number><p-text class="forged-quantity-note" size="xs" color="contrast-medium">Minimum order: 4 wheels</p-text></label>
               <label><p-input-text label="Vehicle make" name="vehicle_make" placeholder="e.g. Porsche"></p-input-text></label>
               <label><p-input-text label="Vehicle model / year" name="vehicle_model" placeholder="Model, generation and year"></p-input-text></label>
               <label class="forged-form-grid__full"><p-textarea id="notes" label="Wheel specification / project brief" name="notes" rows="4" placeholder="Front and rear dimensions, PCD, centre bore, ET, finish, logo or other requirements"></p-textarea></label>
@@ -383,8 +384,8 @@
       </p-flyout>
       <p-modal id="warranty-modal" aria="{'aria-label': 'Warranty information'}">
         <p-heading slot="header" tag="h2" size="lg">Warranty information</p-heading>
-        <p-text>The programme brief specifies lifetime structural coverage and a two-year surface finish warranty.</p-text>
-        <p-text color="contrast-medium">The trust summary also lists a five-year structural warranty. The applicable duration, exclusions and market coverage must be confirmed in the written warranty agreement supplied with the quotation.</p-text>
+        <p-text>Warranty coverage is defined in writing for the selected product and destination market.</p-text>
+        <p-text color="contrast-medium">The quotation and order documentation specify the applicable structural and finish coverage, exclusions, claim process and market terms. No warranty duration is implied by this page.</p-text>
         <div slot="footer" class="forged-modal-actions">
           <p-button id="warranty-modal-close" type="button" variant="secondary">Close</p-button>
         </div>
