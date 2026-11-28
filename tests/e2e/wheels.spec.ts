@@ -13,12 +13,20 @@ test('Cast wheel collection presents 20 cast references with product and enquiry
   await expect(page.locator('#wheels-grid p-button')).toHaveCount(40);
   await expect(page.locator('#wheels-grid')).toContainText('ENQUIRE');
   await expect(page.locator('#wheels-grid .wheel-card__image img')).toHaveCount(20);
-  await expect(page.locator('#wheels-grid .wheel-card__image img').first()).toHaveAttribute('src', /^https:\/\//);
+  await expect(
+    page.locator('#wheels-grid .wheel-card__image img').first(),
+  ).toHaveAttribute('src', /^https:\/\//);
   await expect(page.locator('#filter-model')).toHaveJSProperty('tagName', 'P-SELECT');
   await expect(page.locator('#filter-diameter')).toHaveJSProperty('tagName', 'P-SELECT');
-  await expect(page.locator('#wheels-grid .wheels-product-card').first()).toHaveCSS('background-color', 'rgb(255, 255, 255)');
-  await expect(page.locator('#wheels-grid .wheel-card__image').first()).toHaveCSS('background-color', 'rgb(255, 255, 255)');
-  await expect(page.locator('#wheels-grid .wheel-card__body').first()).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  await expect(
+    page.locator('#wheels-grid .wheels-product-card').first(),
+  ).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  await expect(
+    page.locator('#wheels-grid .wheel-card__image').first(),
+  ).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  await expect(
+    page.locator('#wheels-grid .wheel-card__body').first(),
+  ).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(page.locator('#wheels-grid .wheel-card__stock')).toHaveCount(20);
   await expect(page.locator('.wheels-oem')).toContainText('OEM');
   await expect(page.locator('.wheels-oem')).toContainText('ODM');
