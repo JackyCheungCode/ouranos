@@ -556,3 +556,28 @@
     linear-gradient(90deg, rgba(255,255,255,.97) 0%, rgba(255,255,255,.88) 38%, rgba(255,255,255,.08) 78%),
     url('https://hips.hearstapps.com/mtg-prod/uploads/sites/25/2015/07/Wheel-Fitment-Offset-Sizing-Brake-Caliper-Clearance.jpg?format=webp&q=80&w=1800');
 }
+
+.fitment-reference-images {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 18px;
+  margin: 0 0 34px;
+}
+.fitment-reference-images figure { margin: 0; min-width: 0; }
+.fitment-reference-images img {
+  display: block;
+  width: 100%;
+  height: clamp(210px, 26vw, 340px);
+  object-fit: cover;
+  background: #e8e8e6;
+}
+.fitment-reference-images figcaption {
+  padding-top: 10px;
+  color: #666;
+  font-size: 10px;
+  letter-spacing: .14em;
+}
+@media (max-width: 600px) {
+  .fitment-reference-images { grid-template-columns: 1fr; }
+  .fitment-reference-images img { height: 240px; }
+}
