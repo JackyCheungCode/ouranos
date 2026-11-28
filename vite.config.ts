@@ -121,7 +121,7 @@ function sharedLayoutPartials() {
         'utf8',
       ).replace(/^import ['"]\.\/ai-assistant\.css['"];?\s*/m, '');
       transformed = transformed.replace(
-        /<script[^>]+src=["'][^"']*\\/src\\/components\\/ai-assistant\\.js["'][^>]*><\\/script>/g,
+        /<script[^>]+src=["'][^"']*\/src\/components\/ai-assistant\.js["'][^>]*><\/script>/g,
         '',
       );
       if (!transformed.includes('ouranos-ai-controller-inline')) {
@@ -131,7 +131,7 @@ function sharedLayoutPartials() {
         );
         transformed = transformed.replace(
           '</body>',
-          `<script id="ouranos-ai-controller-inline">\\n${aiController}\\n</script>\\n</body>`,
+          `<script id="ouranos-ai-controller-inline">\n${aiController}\n</script>\n</body>`,
         );
       }
       return transformed;
