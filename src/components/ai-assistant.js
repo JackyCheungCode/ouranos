@@ -245,7 +245,6 @@ function initOuranosAI() {
   }, true);
   const header = document.querySelector('.ouranos-header');
   if (header) header.dataset.aiControllerReady = 'true';
-  return true;
   window.addEventListener('ouranos:ai-close', () => setOpen(false, { restoreFocus: false }));
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && panel.classList.contains('is-open')) setOpen(false);
@@ -257,6 +256,7 @@ function initOuranosAI() {
     input.value = '';
     sendMessage(content);
   });
+  return true;
 }
 
 if (!initOuranosAI()) {
