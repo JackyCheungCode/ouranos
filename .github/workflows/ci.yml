@@ -57,7 +57,7 @@ jobs:
             git commit -m "chore: sync npm dependency lockfile"
             git push origin HEAD:"${PR_BRANCH}"
           fi
-          git checkout -
+          git checkout --force -
           cp /tmp/ouranos-package-lock.json package-lock.json
 
       - name: Install locked dependencies
