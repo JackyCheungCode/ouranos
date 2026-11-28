@@ -26,7 +26,7 @@ body.forged-wheels-page .ouranos-header {
 body.forged-wheels-page .ouranos-header__video {
   display: block;
 }
-.ouranos-header.ouranos-header::before {
+body.forged-wheels-page .ouranos-header.ouranos-header::before {
   z-index: 1;
   inset: 0 0 auto;
   height: min(720px, 100svh);
