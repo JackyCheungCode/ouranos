@@ -119,7 +119,7 @@ test('Fitment Guide decodes VIN and resolves the matching vehicle through the ca
   await mockVehicleCatalogue(page);
   await page.goto('/fitment-guide/', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#market')).toBeEnabled();
-  await expect(page.locator('#make p-select-option img')).toHaveAttribute(
+  await expect(page.locator('#make p-select-option img.fitment-make-logo')).toHaveAttribute(
     'src',
     'https://cdn.example.test/porsche.png',
   );

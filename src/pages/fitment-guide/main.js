@@ -50,9 +50,7 @@ async function setOptions(element, items, placeholder) {
       image.referrerPolicy = 'no-referrer';
       option.append(image);
     }
-    const name = document.createElement('span');
-    name.textContent = label(item);
-    option.append(name);
+    option.append(document.createTextNode(label(item)));
     fragment.append(option);
   });
   element.replaceChildren(fragment);
