@@ -4,6 +4,8 @@ if (header) {
   const navDrilldown = header.querySelector('#nav-drilldown');
   const navButton = header.querySelector('#nav-button');
   const categoryTabs = header.querySelector('#ouranos-category-tabs');
+  const aiOpenButton = header.querySelector('#ouranos-ai-open');
+  const aiPanel = document.getElementById('ouranos-ai-panel');
 
   if (navDrilldown && navButton) {
     navButton.addEventListener('click', () => {
@@ -16,6 +18,19 @@ if (header) {
     navDrilldown.addEventListener('update', (event) => {
       event.target.activeIdentifier = event.detail.activeIdentifier;
     });
+  }
+
+  if (aiOpenButton && aiPanel) {
+    const setAiPanelOpen = (open) => {
+      aiPanel.classList.toggle('is-open', open);
+      aiPanel.setAttribute('aria-hidden', String(!open));
+      aiOpenButton.setAttribute('aria-expanded', String(open));
+      document.body.classList.toggle('ouranos-ai-is-open', open);
+    };
+
+    aiOpenButton.addEventListener('click', () => setAiPanelOpen(true));
+    window.addEventListener('ouranos:ai-close', () => setAiPanelOpen(false));
+    header.dataset.aiControllerReady = 'true';
   }
 
   if (categoryTabs) {
