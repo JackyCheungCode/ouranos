@@ -42,7 +42,10 @@ test('forged wheels landing page follows the seven-section business brief', asyn
   await expect(page.locator('.forged-certification-mark img')).toHaveCount(2);
   const headerVideo = page.locator('.ouranos-header__video');
   await expect(headerVideo).toBeAttached();
-  await expect(headerVideo.locator('source')).toHaveAttribute('src', '/videos/mood-porsche-gts.mp4');
+  await expect(headerVideo.locator('source')).toHaveAttribute(
+    'src',
+    '/videos/mood-porsche-gts.mp4',
+  );
   await expect(headerVideo).toHaveAttribute('autoplay', '');
   await expect(headerVideo).toHaveAttribute('muted', '');
   await expect(headerVideo).toHaveAttribute('loop', '');
