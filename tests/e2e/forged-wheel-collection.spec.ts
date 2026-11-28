@@ -35,7 +35,7 @@ test('forged wheel collection renders 20 BBS visual references with one shared c
 
   await expect(
     page.locator('.forged-product-card').first().locator('p-button').first(),
-  ).toHaveAttribute('href', /^https:\/\/bbs-japan\.co\.jp\/en\/products\//);
+  ).toHaveAttribute('href', /^\/wheel-product\/\?type=forged&id=/);
   await expect(
     page.locator('.forged-product-card').first().locator('p-button').nth(1),
   ).toHaveAttribute('href', /reference=BBS%20FL/);
