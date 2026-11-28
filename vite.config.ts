@@ -119,7 +119,7 @@ function sharedLayoutPartials() {
       const aiController = readFileSync(
         resolve(rootDir, 'src/components/ai-assistant.js'),
         'utf8',
-      ).replace(/^import ['"]\.\/ai-assistant\.css['"];?\\s*/m, '');
+      ).replace(/^import ['"]\.\/ai-assistant\.css['"];?\s*/m, '');
       transformed = transformed.replace(
         /<script[^>]+src=["'][^"']*\\/src\\/components\\/ai-assistant\\.js["'][^>]*><\\/script>/g,
         '',
@@ -127,7 +127,7 @@ function sharedLayoutPartials() {
       if (!transformed.includes('ouranos-ai-controller-inline')) {
         transformed = transformed.replace(
           '</head>',
-          '<link rel="stylesheet" href="/src/components/ai-assistant.css">\\n</head>',
+          '<link rel="stylesheet" href="/src/components/ai-assistant.css">\n</head>',
         );
         transformed = transformed.replace(
           '</body>',
