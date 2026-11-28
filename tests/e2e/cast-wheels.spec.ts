@@ -18,11 +18,11 @@ test('Cast Wheels capability page follows the five-module brief and shared navig
   await expect(page.locator('#nav-drilldown')).toContainText('Cast Wheels');
 
   await expect(page.locator('#cast-hero-title')).toContainText(
-    'Cast Wheels, Engineered to OEM Standards.',
+    'Cast wheels. Engineered with intent.',
   );
   await expect(page.locator('.cast-proof > div')).toHaveCount(3);
   await expect(page.locator('.cast-risk')).toHaveCount(3);
-  await expect(page.locator('.cast-table tbody tr')).toHaveCount(5);
+  await expect(page.locator('.cast-table p-table-row')).toHaveCount(5);
   await expect(page.locator('.cast-assurance__accordions p-accordion')).toHaveCount(4);
   await expect(page.locator('#cast-inquiry-form')).toBeVisible();
 
