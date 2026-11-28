@@ -22,7 +22,9 @@ function card(product){
     +'<div class="wheel-card__actions"><p-button href="'+escapeHtml(product.source)+'" target="_blank" variant="primary">EXPLORE MODEL ↗</p-button><p-button href="'+escapeHtml(enquiryUrl)+'" variant="secondary">ENQUIRE</p-button></div></div></article>';
 }
 function render(){
-  const model=modelFilter.value,diameter=diameterFilter.value,sort=sortSelect.value;
+  const model=modelFilter.value || 'all';
+  const diameter=diameterFilter.value || 'all';
+  const sort=sortSelect.value || 'featured';
   let items=castProducts.filter(p=>(model==='all'||p.model===model)&&(diameter==='all'||p.diameter===diameter));
   if(sort==='az')items.sort((a,b)=>(a.model+' '+a.part).localeCompare(b.model+' '+b.part));
   if(sort==='stock')items.sort((a,b)=>b.stock-a.stock);
