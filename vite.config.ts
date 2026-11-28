@@ -132,9 +132,9 @@ function templatePartials() {
       const isAdmin = context.filename.includes('/admin-panel/');
       const isCustomizer = context.filename.includes('/customize/');
       const isDiscover = context.filename.includes('/discover/');
-      const isWheels = context.filename.includes('/wheels/');
+      const isCastWheelCollection = context.filename.includes('/cast-wheel-collection/');
       const isForgedWheels = context.filename.includes('/forged-wheels/');
-      const isCastWheels = context.filename.includes('/cast-wheels/');
+      
       const isContact = context.filename.includes('/contact/');
       const validChunks = new Set([
         'accordion',
@@ -218,11 +218,9 @@ function templatePartials() {
             ? 'Ouranos | Discover Wheels'
             : isForgedWheels
               ? 'OURANOS | Forged Wheels'
-              : isCastWheels
-                ? 'OURANOS | Cast Wheels'
-                : isWheels
-                  ? 'Ouranos | Wheels'
-                  : isContact
+              : isCastWheelCollection
+                ? 'OURANOS | Cast wheel Collection'
+                : isContact
                     ? 'Ouranos | Contact Us'
                     : isAdmin
                       ? 'Ouranos Admin Panel'
