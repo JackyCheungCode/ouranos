@@ -1,0 +1,135 @@
+@import '@porsche-design-system/components-js';
+@import 'tailwindcss';
+@import '@porsche-design-system/components-js/tailwindcss';
+@import '../../components/layout/header.css';
+
+:root { color-scheme: light; }
+body.about-page { color-scheme: light; background: var(--pds-theme-light-background-base, #fff); }
+.about-shell { display: grid; gap: clamp(76px, 10vw, 148px); padding-bottom: clamp(56px, 8vw, 112px); }
+.about-container { width: min(100% - 48px, 1360px); margin-inline: auto; }
+.about-hero { min-height: clamp(620px, 82vh, 900px); position: relative; display: grid; align-items: end; overflow: hidden; color: #fff; background: #17191b; }
+.about-hero__visual { position: absolute; inset: 0; background: linear-gradient(90deg, rgb(0 0 0 / 76%) 0%, rgb(0 0 0 / 46%) 43%, rgb(0 0 0 / 8%) 100%), linear-gradient(0deg, rgb(0 0 0 / 34%), transparent 50%), url('https://cdn.shopify.com/s/files/1/0448/1407/4011/files/V901_Gloss_Dark_Anthracite_27.jpg?v=1741981670') center 54% / cover no-repeat; }
+.about-hero__content { position: relative; z-index: 1; width: min(100% - 48px, 1360px); margin-inline: auto; padding: 150px 0 clamp(76px, 10vw, 128px); display: grid; justify-items: start; gap: 20px; }
+.about-hero__content p-heading { color: #fff; max-width: 850px; line-height: .9; letter-spacing: -.055em; }
+.about-hero__content p-text { max-width: 610px; }
+.about-hero__statement { margin: 0; font-size: clamp(15px, 1.6vw, 21px); line-height: 1.5; font-weight: 600; letter-spacing: .09em; }
+.about-hero__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; }
+.about-hero__index { position: absolute; right: max(24px, calc((100% - 1360px) / 2)); bottom: 30px; z-index: 1; color: rgb(255 255 255 / 78%); font-size: 10px; letter-spacing: .18em; }
+.about-intro { display: grid; grid-template-columns: .55fr 1.3fr 1fr; gap: clamp(24px, 4vw, 64px); align-items: start; }
+.about-intro__index { padding-top: 8px; color: var(--pds-theme-light-primary, #555); font-size: 10px; letter-spacing: .14em; }
+.about-intro__copy p-heading { display: block; margin-top: 18px; }
+.about-intro__body { display: grid; gap: 18px; padding-top: 44px; max-width: 440px; }
+.about-section-heading { display: grid; grid-template-columns: 1.15fr .85fr; gap: 48px; align-items: end; margin-bottom: 44px; }
+.about-section-heading > div { display: grid; gap: 14px; }
+.about-section-heading p-heading { max-width: 760px; }
+.about-section-heading > p-text { max-width: 520px; padding-bottom: 6px; }
+.about-philosophy { padding: clamp(64px, 8vw, 112px) 0; background: var(--pds-theme-light-background-surface, #f3f3f3); }
+.about-principles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); border-bottom: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); }
+.about-principles article { display: grid; align-content: start; gap: 15px; padding: 26px 24px 32px 0; }
+.about-principles article + article { border-left: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); padding-left: 24px; }
+.about-principles span, .about-technical__list article > span { font-size: 10px; letter-spacing: .14em; color: var(--pds-theme-light-primary, #555); }
+.about-principles p-heading, .about-technical__list p-heading, .about-route p-heading, .about-challenge-grid p-heading, .about-quality__flow p-heading, .about-partner-grid p-heading { margin: 0; }
+.about-principles p-text, .about-technical__list p-text, .about-challenge-grid p-text, .about-quality__flow p-text, .about-partner-grid p-text { margin: 0; }
+.about-manufacturing { display: grid; }
+.about-routes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.about-route { display: grid; grid-template-rows: auto 1fr; background: var(--pds-theme-light-background-surface, #f3f3f3); }
+.about-route__image { aspect-ratio: 16 / 9; background-position: center; background-size: cover; }
+.about-route__image--forged { background-image: url('https://www.koya.com.au/media/wysiwyg/Gallery/one-piece-forged/KF103/KF103-wheelrim-raw-02.jpg'); }
+.about-route__image--cast { background-image: url('https://www.borbet.de/medien/img/produktion/technologie/niederdruckguss/borbet_niederdruckguss_alufelgen_6429_2000_1300.webp'); }
+.about-route__body { display: grid; justify-items: start; align-content: start; gap: 16px; padding: clamp(24px, 3.5vw, 48px); }
+.about-route__body p-heading { margin-top: -4px; }
+.about-route__body > p-text { max-width: 540px; }
+.about-route__body ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 24px; width: 100%; margin: 8px 0 12px; padding: 18px 0; list-style: none; border-top: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); border-bottom: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); }
+.about-route__body li { font-size: 13px; line-height: 1.55; color: var(--pds-theme-light-contrast-medium, #626262); }
+.about-route__body li::before { content: '—'; margin-right: 8px; color: var(--pds-theme-light-primary, #555); }
+.about-image-note, .about-source-note { margin: 18px 0 0; color: var(--pds-theme-light-contrast-medium, #626262); font-size: 11px; line-height: 1.7; }
+.about-technical { display: grid; grid-template-columns: 1fr 1fr; min-height: 760px; background: var(--pds-theme-light-background-surface, #f3f3f3); }
+.about-technical__visual { min-height: 600px; background: url('https://caliberxcel.com/img/factory/process-quality-inspection.webp') center / cover no-repeat; }
+.about-technical__content { display: grid; align-content: center; padding: clamp(32px, 6vw, 88px); }
+.about-technical__content p-heading { margin: 14px 0; }
+.about-technical__content > p-text { max-width: 560px; }
+.about-technical__list { display: grid; margin-top: 32px; border-top: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); }
+.about-technical__list article { display: grid; grid-template-columns: 36px 1fr; gap: 16px; padding: 17px 0; border-bottom: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); }
+.about-technical__list article > div { display: grid; gap: 6px; }
+.about-challenge-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); border-bottom: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); }
+.about-challenge-grid article { min-height: 250px; display: grid; align-content: start; gap: 14px; padding: 26px 28px 30px 0; }
+.about-challenge-grid article:nth-child(3n + 2), .about-challenge-grid article:nth-child(3n) { border-left: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); padding-left: 28px; }
+.about-challenge-grid article:nth-child(n + 4) { border-top: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); }
+.about-challenge-grid span, .about-partner-grid article > div:last-child > span { color: var(--pds-theme-light-primary, #555); font-size: 10px; letter-spacing: .13em; }
+.about-quality { padding: clamp(64px, 8vw, 112px) 0; background: var(--pds-theme-light-background-surface, #f3f3f3); }
+.about-quality__flow { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); border-bottom: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); }
+.about-quality__flow article { display: grid; align-content: start; gap: 14px; padding: 24px 18px 28px 0; }
+.about-quality__flow article + article { padding-left: 18px; border-left: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); }
+.about-quality__flow span { font-size: 11px; letter-spacing: .14em; color: var(--pds-theme-light-primary, #555); }
+.about-quality__note { display: grid; grid-template-columns: 180px 1fr; gap: 24px; margin-top: 30px; padding: 24px; background: var(--pds-theme-light-background-base, #fff); }
+.about-quality__note strong { font-size: 14px; }
+.about-quality__note p { margin: 0; max-width: 900px; color: var(--pds-theme-light-contrast-medium, #626262); font-size: 13px; line-height: 1.7; }
+.about-development__steps { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); border-top: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); border-bottom: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); }
+.about-development__steps article { display: grid; align-content: start; gap: 14px; padding: 24px 16px 28px 0; }
+.about-development__steps article + article { padding-left: 16px; border-left: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); }
+.about-development__steps span { color: var(--pds-theme-light-primary, #555); font-size: 11px; letter-spacing: .14em; }
+.about-development__steps p-heading, .about-development__steps p-text { margin: 0; }
+.about-development__steps p-text { line-height: 1.7; }
+.about-partner-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.about-partner-grid article { display: grid; grid-template-rows: auto 1fr; background: var(--pds-theme-light-background-surface, #f3f3f3); }
+.about-partner-grid__image { aspect-ratio: 5 / 4; background-position: center; background-size: cover; }
+.about-partner-grid__image--owners { background-image: url('https://cdn.sanity.io/images/c8ihu5xk/production/590d943606b38e22443193de2bfc803dced2ff64-7008x4672.jpg'); }
+.about-partner-grid__image--trade { background-image: url('https://felgeo.pl/data/include/cms/Felgeo_podstrony/Metody-produkcji/kontrola-i-testy-w-fabryce-felg.webp'); }
+.about-partner-grid__image--oem { background-image: url('https://www.koya.com.au/media/wysiwyg/Gallery/one-piece-forged/KF103/KF103-wheelrim-raw-02.jpg'); }
+.about-partner-grid article > div:last-child { display: grid; justify-items: start; align-content: start; gap: 14px; padding: 26px; }
+.about-partner-grid article > div:last-child p { min-height: 72px; }
+.about-closing { position: relative; min-height: 560px; display: grid; align-items: center; overflow: hidden; color: #fff; background: #151515; }
+.about-closing__visual { position: absolute; inset: 0; background: linear-gradient(90deg, rgb(0 0 0 / 78%), rgb(0 0 0 / 28%) 72%, rgb(0 0 0 / 12%)), url('https://cdn.sanity.io/images/c8ihu5xk/production/590d943606b38e22443193de2bfc803dced2ff64-7008x4672.jpg') center 48% / cover no-repeat; }
+.about-closing__content { position: relative; width: min(100% - 48px, 1360px); margin-inline: auto; padding: 88px 0; display: grid; justify-items: start; gap: 18px; }
+.about-closing__content p-heading { color: #fff; max-width: 760px; }
+.about-closing__content > p-text { max-width: 580px; }
+.about-source-note { margin-top: -50px; }
+.about-source-note a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 900px) {
+  .about-intro { grid-template-columns: 1fr 2fr; }
+  .about-intro__index { grid-column: 1 / -1; }
+  .about-intro__body { grid-column: 2; padding-top: 0; }
+  .about-principles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .about-principles article:nth-child(3) { border-left: 0; padding-left: 0; border-top: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); }
+  .about-principles article:nth-child(4) { border-top: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); }
+  .about-technical { grid-template-columns: 1fr; }
+  .about-technical__visual { min-height: 440px; }
+  .about-quality__flow { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .about-quality__flow article:nth-child(4) { border-left: 0; padding-left: 0; border-top: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); }
+  .about-quality__flow article:nth-child(n + 4) { border-top: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); }
+  .about-partner-grid { grid-template-columns: 1fr 1fr; }
+  .about-development__steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .about-development__steps article:nth-child(4) { border-left: 0; padding-left: 0; border-top: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); }
+  .about-development__steps article:nth-child(n + 4) { border-top: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); }
+}
+@media (max-width: 680px) {
+  .about-shell { gap: 76px; }
+  .about-container, .about-hero__content, .about-closing__content { width: calc(100% - 40px); }
+  .about-hero { min-height: 680px; }
+  .about-hero__visual { background-position: 58% center; }
+  .about-hero__content { padding: 140px 0 88px; }
+  .about-hero__index { right: 20px; }
+  .about-intro { grid-template-columns: 1fr; gap: 20px; }
+  .about-intro__copy, .about-intro__body { grid-column: 1; padding-top: 0; }
+  .about-section-heading { grid-template-columns: 1fr; gap: 18px; margin-bottom: 28px; }
+  .about-principles, .about-routes, .about-challenge-grid, .about-partner-grid { grid-template-columns: 1fr; }
+  .about-principles article, .about-principles article + article, .about-principles article:nth-child(3), .about-principles article:nth-child(4) { padding: 22px 0; border-left: 0; }
+  .about-principles article + article { border-top: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); }
+  .about-route__body { padding: 24px 20px; }
+  .about-route__body ul { grid-template-columns: 1fr 1fr; }
+  .about-technical__visual { min-height: 320px; }
+  .about-technical__content { padding: 36px 20px; }
+  .about-challenge-grid article, .about-challenge-grid article:nth-child(3n + 2), .about-challenge-grid article:nth-child(3n) { min-height: auto; padding: 24px 0; border-left: 0; }
+  .about-challenge-grid article + article { border-top: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); }
+  .about-quality__flow { grid-template-columns: 1fr; }
+  .about-quality__flow article, .about-quality__flow article + article, .about-quality__flow article:nth-child(4) { padding: 20px 0; border-left: 0; }
+  .about-quality__flow article + article { border-top: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); }
+  .about-quality__note { grid-template-columns: 1fr; gap: 10px; padding: 20px; }
+  .about-partner-grid article > div:last-child p { min-height: 0; }
+  .about-development__steps { grid-template-columns: 1fr; }
+  .about-development__steps article, .about-development__steps article + article, .about-development__steps article:nth-child(4) { padding: 20px 0; border-left: 0; }
+  .about-development__steps article + article { border-top: 1px solid var(--pds-theme-light-contrast-low, #d7d7d7); }
+  .about-closing { min-height: 520px; }
+  .about-source-note { margin-top: -42px; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
