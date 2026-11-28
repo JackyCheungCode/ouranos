@@ -3,160 +3,78 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Explore the OURANOS wheel catalogue.">
-    <title>OURANOS | Wheels</title>
+    <meta name="description" content="Explore the OURANOS cast wheel collection, stock availability and OEM / ODM programmes.">
+    <title>OURANOS | Cast Wheel Collection</title>
   </head>
   <body class="scheme-light wheels-page">
     <!-- OURANOS:HEADER -->
     <main id="wheels-app" class="wheels-shell">
       <section class="wheels-hero" aria-labelledby="wheels-hero-title">
-        <div class="wheels-hero__image" role="img" aria-label="Precision forged wheel product editorial"></div>
+        <div class="wheels-hero__image" role="img" aria-label="Cast alloy wheel product detail"></div>
         <div class="wheels-hero__content">
-          <p-text size="xs" color="contrast-medium">OURANOS / THE WHEEL COLLECTION</p-text>
-          <p-heading id="wheels-hero-title" tag="h1" size="2xl">ENGINEERED TO DEFINE.</p-heading>
-          <p-text size="lg">A considered collection of performance wheel designs, shaped by material, proportion and precision.</p-text>
-          <p-button href="#catalogue" variant="primary">Explore all wheels</p-button>
+          <p-text size="xs" color="contrast-medium">OURANOS / CAST COLLECTION</p-text>
+          <p-heading id="wheels-hero-title" tag="h1" size="2xl">CAST TO MOVE YOU.</p-heading>
+          <p-text size="lg">A focused collection of single-piece cast alloy wheels, selected for everyday performance, considered design and dependable supply.</p-text>
+          <p-button href="#catalogue" variant="primary">Explore the collection</p-button>
         </div>
       </section>
 
       <section id="catalogue" class="wheels-catalogue" aria-labelledby="catalogue-title">
         <div class="wheels-catalogue__intro">
           <div>
-            <p-text size="xs" color="contrast-medium">THE COLLECTION</p-text>
-            <p-heading id="catalogue-title" tag="h2" size="xl">OUR WHEELS</p-heading>
-            <p-text color="contrast-medium">Explore the collection by construction, design and specification.</p-text>
+            <p-text size="xs" color="contrast-medium">THE CAST COLLECTION</p-text>
+            <p-heading id="catalogue-title" tag="h2" size="xl">ONE-PIECE CAST WHEELS</p-heading>
+            <p-text color="contrast-medium">Explore selected designs, available sizes and current stock positions.</p-text>
           </div>
-          <p-text id="product-count" size="sm" color="contrast-medium" aria-live="polite">10 products</p-text>
+          <p-text id="product-count" size="sm" color="contrast-medium" aria-live="polite">20 products</p-text>
         </div>
-
         <div class="wheels-toolbar">
-          <div class="wheels-filter-controls" id="filter-controls">
-            <div class="wheels-filter-mode">
-              <p-text size="xs" color="contrast-medium">FILTER BY</p-text>
-              <p-segmented-control id="filter-mode" value="vehicle" aria-label="Choose filter method">
-                <p-segmented-control-item value="vehicle">BY VEHICLE</p-segmented-control-item>
-                <p-segmented-control-item value="specification">BY SPECIFICATION</p-segmented-control-item>
-              </p-segmented-control>
-            </div>
-            <section id="vehicle-filter-panel" class="filter-panel" aria-label="Filter by vehicle">
-              <div class="filter-panel__heading">
-                <p-icon name="car" size="sm"></p-icon>
-                <p-heading tag="h3" size="sm">Select your vehicle</p-heading>
-                <p-text size="xs" color="contrast-medium">Wheel Size vehicle data</p-text>
-              </div>
-              <div class="filter-field-grid filter-field-grid--vehicle">
-                <label class="filter-field"><p-icon name="globe" size="sm"></p-icon><span class="sr-only">Vehicle market</span><p-select id="filter-region" label="Market" compact="true"><p-select-option value="">Select market</p-select-option></p-select></label>
-                <label class="filter-field"><p-icon name="car" size="sm"></p-icon><span class="sr-only">Manufacturer</span><p-select id="filter-make" label="Manufacturer" compact="true" disabled><p-select-option value="">Select manufacturer</p-select-option></p-select></label>
-                <label class="filter-field"><p-icon name="steering-wheel" size="sm"></p-icon><span class="sr-only">Vehicle model</span><p-select id="filter-model" label="Model" compact="true" disabled><p-select-option value="">Select model</p-select-option></p-select></label>
-                <label class="filter-field"><p-icon name="calendar" size="sm"></p-icon><span class="sr-only">Model year</span><p-select id="filter-year" label="Year" compact="true" disabled><p-select-option value="">Select year</p-select-option></p-select></label>
-                <label class="filter-field"><p-icon name="configurate" size="sm"></p-icon><span class="sr-only">Modification</span><p-select id="filter-modification" label="Modification" compact="true" disabled><p-select-option value="">All modifications</p-select></p-select></label>
-                <label class="filter-field"><p-icon name="tire" size="sm"></p-icon><span class="sr-only">Vehicle fitment</span><p-select id="filter-fitment" label="Wheel specification" compact="true" disabled><p-select-option value="">Select specification</p-select></p-select></label>
-              </div>
-              <p-text id="vehicle-filter-status" size="xs" color="contrast-medium" aria-live="polite">Choose a market to begin.</p-text>
-            </section>
-            <section id="specification-filter-panel" class="filter-panel" aria-label="Filter by wheel specification" hidden>
-              <div class="filter-panel__heading">
-                <p-icon name="tire" size="sm"></p-icon>
-                <p-heading tag="h3" size="sm">Choose wheel specifications</p-heading>
-                <p-text size="xs" color="contrast-medium">Combine any available attributes</p-text>
-              </div>
-              <div class="filter-field-grid filter-field-grid--specs">
-                <label class="filter-field"><p-icon name="tire" size="sm"></p-icon><span class="sr-only">Construction</span><p-select id="filter-construction" label="Construction" compact="true"><p-select-option value="">All constructions</p-select-option><p-select-option value="Forged">Forged</p-select-option><p-select-option value="Flow Formed">Flow Formed</p-select-option></p-select></label>
-                <label class="filter-field"><p-icon name="configurate" size="sm"></p-icon><span class="sr-only">Design</span><p-select id="filter-design" label="Design" compact="true"><p-select-option value="">All designs</p-select-option><p-select-option value="Split-Spoke">Split-Spoke</p-select-option><p-select-option value="Multi-Spoke">Multi-Spoke</p-select-option><p-select-option value="Mesh">Mesh</p-select-option><p-select-option value="Eight-Spoke">Eight-Spoke</p-select-option></p-select></label>
-                <label class="filter-field"><p-icon name="tire" size="sm"></p-icon><span class="sr-only">Diameter</span><p-select id="filter-diameter" label="Diameter" compact="true"><p-select-option value="">All diameters</p-select-option><p-select-option value="17">17″</p-select-option><p-select-option value="18">18″</p-select-option><p-select-option value="19">19″</p-select-option><p-select-option value="20">20″</p-select-option></p-select></label>
-                <label class="filter-field"><p-icon name="adjust" size="sm"></p-icon><span class="sr-only">Width</span><p-select id="filter-width" label="Width" compact="true"><p-select-option value="">All widths</p-select-option><p-select-option value="8">8J</p-select-option><p-select-option value="9">9J</p-select-option><p-select-option value="10">10J</p-select-option><p-select-option value="11">11J</p-select-option></p-select></label>
-                <label class="filter-field"><p-icon name="grip" size="sm"></p-icon><span class="sr-only">PCD</span><p-select id="filter-pcd" label="PCD" compact="true"><p-select-option value="">All PCD</p-select-option></p-select></label>
-                <label class="filter-field"><p-icon name="adjust" size="sm"></p-icon><span class="sr-only">Offset</span><p-select id="filter-offset" label="Offset" compact="true"><p-select-option value="">All offsets</p-select-option></p-select></label>
-                <label class="filter-field"><p-icon name="tire" size="sm"></p-icon><span class="sr-only">Centre bore</span><p-select id="filter-bore" label="Centre bore" compact="true"><p-select-option value="">All centre bores</p-select-option></p-select></label>
-                <label class="filter-field"><p-icon name="color-picker" size="sm"></p-icon><span class="sr-only">Finish</span><p-select id="filter-finish" label="Finish" compact="true"><p-select-option value="">All finishes</p-select-option><p-select-option value="Anthracite">Anthracite</p-select-option><p-select-option value="Machined Lip Anthracite">Machined Lip Anthracite</p-select-option></p-select></label>
-                <label class="filter-field"><p-icon name="grid" size="sm"></p-icon><span class="sr-only">Collection</span><p-select id="filter-collection" label="Collection" compact="true"><p-select-option value="">All collections</p-select-option><p-select-option value="Performance">Performance</p-select-option><p-select-option value="Luxury">Luxury</p-select-option><p-select-option value="Street">Street</p-select-option><p-select-option value="Off-Road">Off-Road</p-select-option><p-select-option value="Heritage">Heritage</p-select></label>
-              </div>
-            </section>
+          <div class="wheels-filters">
+            <label><span>Model</span><p-select id="filter-model" compact="true" value="all"><p-select-option value="all">All models</p-select-option><p-select-option value="SR">SR</p-select-option><p-select-option value="SX">SX</p-select-option><p-select-option value="XR">XR</p-select-option><p-select-option value="TL-A">TL-A</p-select-option></p-select></label>
+            <label><span>Diameter</span><p-select id="filter-diameter" compact="true" value="all"><p-select-option value="all">All sizes</p-select-option><p-select-option value="16">16 inch</p-select-option><p-select-option value="17">17 inch</p-select-option><p-select-option value="18">18 inch</p-select-option><p-select-option value="19">19 inch</p-select-option><p-select-option value="20">20 inch</p-select-option></p-select></label>
           </div>
-          <div class="wheels-toolbar__actions">
-            <p-button id="mobile-filter-open" variant="secondary" icon="filter" compact="true">Filter</p-button>
-            <label class="wheels-sort">
-              <span>Sort by</span>
-              <p-select id="sort-products" name="sort" compact="true" value="featured">
-                <p-select-option value="featured">Featured</p-select-option>
-                <p-select-option value="newest">Newest</p-select-option>
-                <p-select-option value="az">Model A–Z</p-select-option>
-              </p-select>
-            </label>
-          </div>
-        </div>
-
-        <div class="wheels-active-filters" id="active-filters" hidden>
-          <div id="active-filter-chips"></div>
-          <button id="clear-filters" type="button">Clear all</button>
+          <label class="wheels-sort"><span>Sort by</span><p-select id="sort-products" compact="true" value="featured"><p-select-option value="featured">Featured</p-select-option><p-select-option value="az">Model A–Z</p-select-option><p-select-option value="stock">Stock quantity</p-select-option></p-select></label>
         </div>
         <div id="wheels-grid" class="wheels-grid" aria-live="polite"></div>
-        <div id="wheels-empty" class="wheels-empty" hidden>
-          <p-heading tag="h3" size="lg">No wheels found.</p-heading>
-          <p-text color="contrast-medium">Try changing or clearing your filters.</p-text>
-          <p-button id="empty-clear" variant="secondary">Clear filters</p-button>
-        </div>
+        <div id="wheels-empty" class="wheels-empty" hidden><p-heading tag="h3" size="lg">No wheels found.</p-heading><p-text color="contrast-medium">Choose another model or size.</p-text></div>
       </section>
 
       <section class="wheels-engineering" aria-labelledby="engineering-title">
-        <div class="wheels-engineering__image" role="img" aria-label="Precision wheel manufacturing detail"></div>
+        <div class="wheels-engineering__image" role="img" aria-label="Cast alloy wheel spoke and finish detail"></div>
         <div class="wheels-engineering__copy">
           <p-text size="xs" color="contrast-medium">MATERIAL / PROCESS / FORM</p-text>
-          <p-heading id="engineering-title" tag="h2" size="xl">Engineering in every detail.</p-heading>
-          <p-text>Distinct manufacturing processes shape the character of a wheel. Explore the relationship between material, construction and design.</p-text>
-          <p-text size="xs" color="contrast-medium">FORGED · FLOW FORMED · PRECISION FINISHING</p-text>
+          <p-heading id="engineering-title" tag="h2" size="xl">A clear focus on cast construction.</p-heading>
+          <p-text>Single-piece cast wheel programmes balance design flexibility, repeatable production and practical supply planning across a broad range of vehicle applications.</p-text>
+          <p-text size="xs" color="contrast-medium">SINGLE-PIECE · CAST ALLOY · OEM-READY PROGRAMMES</p-text>
         </div>
       </section>
 
-      <section class="wheels-fitment" aria-labelledby="fitment-title">
-        <div>
-          <p-text size="xs" color="contrast-medium">THE RIGHT CONFIGURATION</p-text>
-          <p-heading id="fitment-title" tag="h2" size="xl">Find your fit.</p-heading>
-          <p-text color="contrast-medium">Explore wheel options around your vehicle and its technical requirements.</p-text>
+      <section class="wheels-stock" aria-labelledby="stock-title">
+        <div class="wheels-stock__intro">
+          <p-text size="xs" color="contrast-medium">SUPPLY & AVAILABILITY</p-text>
+          <p-heading id="stock-title" tag="h2" size="xl">Stock-led. Production-ready.</p-heading>
+          <p-text color="contrast-medium">A practical supply model for distributors, retailers and vehicle programmes.</p-text>
         </div>
-        <p-button href="/fitment" variant="primary">Check vehicle fitment</p-button>
+        <div class="wheels-stock__grid">
+          <article><span class="wheels-stock__index">01</span><h3>In-stock supply</h3><p>Selected references are available for smaller replenishment quantities, subject to confirmed stock at order review.</p></article>
+          <article><span class="wheels-stock__index">02</span><h3>Production orders</h3><p>Out-of-stock references can be assessed for production planning, with a 100-piece minimum order quantity.</p></article>
+          <article><span class="wheels-stock__index">03</span><h3>Inventory visibility</h3><p>Stock positions are shown by reference to support initial selection and supply discussions.</p></article>
+        </div>
       </section>
-      <footer class="wheels-demo-note">DEMO CATALOGUE · TEMPORARY APEX TEST DATA · NOT OURANOS PRODUCTS</footer>
+
+      <section class="wheels-oem" aria-labelledby="oem-title">
+        <div class="wheels-oem__visual">
+          <p-text size="xs" color="inherit">OURANOS / PARTNERSHIPS</p-text>
+          <p-heading id="oem-title" tag="h2" size="2xl">Built around your programme.</p-heading>
+        </div>
+        <div class="wheels-oem__content">
+          <article><span>01 / OEM</span><h3>Original Equipment Manufacturing</h3><p>Production support for vehicle brands and established manufacturers, aligned to agreed technical requirements, validation plans and programme volumes.</p></article>
+          <article><span>02 / ODM</span><h3>Original Design Manufacturing</h3><p>Product development support spanning design direction, engineering coordination, finish selection and scalable manufacturing execution.</p></article>
+          <p-button href="/contact/" variant="primary">Discuss an OEM / ODM programme</p-button>
+        </div>
+      </section>
     </main>
-
-    <aside id="filter-drawer" class="filter-drawer" aria-hidden="true" aria-labelledby="drawer-title">
-      <button class="filter-drawer__backdrop" type="button" data-close-drawer aria-label="Close filters"></button>
-      <section class="filter-drawer__panel" role="dialog" aria-modal="true">
-        <header class="filter-drawer__header">
-          <p-heading id="drawer-title" tag="h2" size="lg">Filter wheels</p-heading>
-          <p-button-pure type="button" icon="close" hide-label="true" data-close-drawer>Close</p-button-pure>
-        </header>
-        <div class="filter-drawer__fields"><div id="filter-controls-mobile"></div></div>
-        <div class="filter-drawer__footer">
-          <p-button id="mobile-filter-clear" variant="secondary">Clear all</p-button>
-          <p-button id="mobile-filter-apply">Show results</p-button>
-        </div>
-      </section>
-    </aside>
-
-    <section id="wheel-detail" class="wheel-detail" hidden aria-labelledby="detail-title">
-      <div class="wheel-detail__top"><a href="/wheels/">← Back to all wheels</a><span class="wheel-detail__demo">DEMO PRODUCT</span></div>
-      <div class="wheel-detail__layout">
-        <div class="wheel-detail__gallery">
-          <div class="wheel-detail__main-image"><img id="detail-image" alt=""></div>
-          <p-text size="xs" color="contrast-medium">WHITE BACKGROUND PRODUCT IMAGE</p-text>
-        </div>
-        <div class="wheel-detail__content">
-          <p-text id="detail-collection" size="xs" color="contrast-medium"></p-text>
-          <p-heading id="detail-title" tag="h1" size="2xl"></p-heading>
-          <p-text id="detail-description" size="md" color="contrast-medium"></p-text>
-          <div id="detail-specs" class="wheel-detail__specs"></div>
-          <section class="wheel-detail__viewer">
-            <div><p-heading tag="h2" size="lg">3D wheel viewer</p-heading><p-text color="contrast-medium">No GLB model is supplied with this temporary source record. The product image remains available.</p-text></div>
-            <p-text size="xs" color="contrast-medium">3D MODEL NOT AVAILABLE</p-text>
-          </section>
-          <div class="wheel-detail__actions" id="detail-actions"></div>
-          <p-button href="/fitment" variant="primary">Check vehicle fitment</p-button>
-          <p-text size="xs" color="contrast-medium">Temporary reference data. This product is not part of the OURANOS collection.</p-text>
-        </div>
-      </div>
-    </section>
+    <!-- OURANOS:FOOTER -->
     <script type="module" src="/src/pages/wheels/main.js"></script>
-    <script type="module" src="/src/components/ai-assistant.js"></script>
   </body>
 </html>
