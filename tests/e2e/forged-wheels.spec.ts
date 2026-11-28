@@ -53,6 +53,8 @@ test('forged wheels landing page follows the seven-section business brief', asyn
   ]);
 
   await expect(page.locator('#forged-hero-title')).toContainText('Forged to perform.');
+  await expect(page.locator('.forged-chapter-nav a')).toHaveCount(6);
+  await expect(page.locator('.forged-chapter-nav a[href="#manufacturing"]')).toBeVisible();
   await expect(page.locator('.forged-trustbar > div')).toHaveCount(4);
   await expect(page.locator('.forged-pain__list p-accordion')).toHaveCount(4);
   await expect(page.locator('#manufacturing-stepper button[role="tab"]')).toHaveCount(6);
@@ -131,6 +133,7 @@ test('forged wheels enquiry enforces the four-wheel MOQ and responsive layout', 
     viewport: window.innerWidth,
   }));
   expect(dimensions.body).toBeLessThanOrEqual(dimensions.viewport);
+  await expect(page.locator('.forged-chapter-nav')).toBeVisible();
   await expect(page.locator('#forged-submit')).toBeVisible();
   await expect(page.locator('p-input-number[name="quantity"]')).toHaveAttribute('min', '4');
   await expect(page.locator('.forged-quantity-note')).toHaveText('Minimum order: 4 wheels');
