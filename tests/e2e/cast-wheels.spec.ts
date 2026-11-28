@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 test('Cast Wheels capability page follows the five-module brief and shared navigation', async ({ page }) => {
   await page.goto('/cast-wheels/', { waitUntil: 'domcontentloaded' });
 
-  await expect(page).toHaveTitle(/OURANOS \| Cast Wheels/);
+  await expect(page).toHaveTitle(/OURANOS \| Cast Wheel Engineering/);
   await expect(page.locator('.ouranos-header')).toHaveAttribute('data-header-variant', 'overlay');
   await expect(page.locator('#ouranos-ai-open')).toBeVisible();
   await expect(page.locator('#ouranos-language-trigger')).toBeVisible();
