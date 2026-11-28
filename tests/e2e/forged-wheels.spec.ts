@@ -40,7 +40,13 @@ test('forged wheels landing page follows the seven-section business brief', asyn
     .evaluateAll((images) => images.map((image) => getComputedStyle(image).filter));
   expect(logoFilters.every((filter) => filter !== 'grayscale(1)')).toBe(true);
   await expect(page.locator('.forged-certification-mark img')).toHaveCount(2);
-  await expect(page.locator('.forged-header__video, .ouranos-header__video')).toBeAttached();
+  const headerVideo = page.locator('.ouranos-header__video-embed');
+  await expect(headerVideo).toBeAttached();
+  await expect(headerVideo).toHaveAttribute(
+    'src',
+    /youtube-nocookie\.com\/embed\/mGJGwe1cPo0/,
+  );
+  await expect(headerVideo).toHaveAttribute('title', 'FLEXIFORGED forged wheel CNC milling process');
   await expect(page.locator('.forged-construction-panel')).toHaveCount(4);
   await expect(page.locator('p-carousel')).toBeVisible();
   await expect(page.locator('.forged-certifications__list')).toBeVisible();
