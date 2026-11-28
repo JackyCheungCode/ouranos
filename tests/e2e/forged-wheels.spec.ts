@@ -34,7 +34,8 @@ test('forged wheels landing page follows the seven-section business brief', asyn
   const heroCta = page.locator('#hero-enquiry');
   const ctaHitTarget = await heroCta.evaluate((element) => {
     const rect = element.getBoundingClientRect();
-    return document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2)?.tagName;
+    return document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2)
+      ?.tagName;
   });
   expect(ctaHitTarget).toBe('P-LINK');
 
