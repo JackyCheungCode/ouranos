@@ -113,10 +113,25 @@ function sharedLayoutPartials() {
           `<script id="ouranos-header-controller-inline">\n${controller}\n</script>\n</body>`,
         );
       }
-      if (!transformed.includes('/src/components/ai-assistant.js')) {
+      // Inline the AI controller after the shared markup is present. The Worker
+      // asset smoke-test server can serve injected module scripts before their
+      // dependencies are ready; a synchronous inline controller avoids that race.
+      const aiController = readFileSync(
+        resolve(rootDir, 'src/components/ai-assistant.js'),
+        'utf8',
+      ).replace(/^import ['"]\.\/ai-assistant\.css['"];?\\s*/m, '');
+      transformed = transformed.replace(
+        /<script[^>]+src=["'][^"']*\\/src\\/components\\/ai-assistant\\.js["'][^>]*><\\/script>/g,
+        '',
+      );
+      if (!transformed.includes('ouranos-ai-controller-inline')) {
+        transformed = transformed.replace(
+          '</head>',
+          '<link rel="stylesheet" href="/src/components/ai-assistant.css">\\n</head>',
+        );
         transformed = transformed.replace(
           '</body>',
-          '<script type="module" src="/src/components/ai-assistant.js"></script>\n</body>',
+          `<script id="ouranos-ai-controller-inline">\\n${aiController}\\n</script>\\n</body>`,
         );
       }
       return transformed;
