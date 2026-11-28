@@ -121,7 +121,7 @@ function sharedLayoutPartials() {
         'utf8',
       ).replace(/^import ['"]\.\/ai-assistant\.css['"];?\s*/m, '');
       transformed = transformed.replace(
-        /<script[^>]+src=["'][^"']*\/src\/components\/ai-assistant\.js["'][^>]*><\/script>/g,
+        /<script[^>]+ai-assistant\.js[^>]*><\/script>/g,
         '',
       );
       if (!transformed.includes('ouranos-ai-controller-inline')) {
