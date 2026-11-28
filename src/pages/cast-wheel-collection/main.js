@@ -19,7 +19,7 @@ function card(product){
     +'<div class="wheel-card__body"><div><p class="wheel-card__eyebrow">'+escapeHtml(product.family)+'</p><h3 class="wheel-card__title">'+escapeHtml(product.model)+' <span>'+escapeHtml(product.part)+'</span></h3><p class="wheel-card__design">'+escapeHtml(product.finish)+'</p></div>'
     +'<div class="wheel-card__specs">'+specs+'</div>'
     +'<div class="wheel-card__stock"><span>Available stock</span><strong>'+escapeHtml(product.stock)+' pcs</strong></div>'
-    +'<div class="wheel-card__actions"><p-button href="'+escapeHtml(product.source)+'" target="_blank" variant="primary">EXPLORE MODEL ↗</p-button><p-button href="'+escapeHtml(enquiryUrl)+'" variant="secondary">ENQUIRE</p-button></div></div></article>';
+    +'<div class="wheel-card__actions"><p-button href="/wheel-product/?type=cast&id='+encodeURIComponent(product.id)+'" variant="primary">DISCOVER</p-button><p-button href="/wheel-enquiry/?type=cast&id='+encodeURIComponent(product.id)+'&model='+encodeURIComponent(product.part)+'&stock='+encodeURIComponent(product.stock)+'" variant="secondary">ENQUIRE</p-button></div></div></article>';
 }
 function render(){
   const model=modelFilter.value || 'all';
