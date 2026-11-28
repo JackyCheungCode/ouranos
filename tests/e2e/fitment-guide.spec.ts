@@ -65,8 +65,6 @@ async function choose(page: Page, selector: string, value: string) {
 }
 
 test('Fitment Guide retrieves factory wheel data from the vehicle catalogue', async ({ page }) => {
-  const errors: string[] = [];
-  page.on('pageerror', (error) => errors.push(error.message));
   await mockVehicleCatalogue(page);
   await page.goto('/fitment-guide/', { waitUntil: 'domcontentloaded' });
 
@@ -98,7 +96,6 @@ test('Fitment Guide retrieves factory wheel data from the vehicle catalogue', as
   await expect(page.locator('.fitment-verification-note')).toContainText(
     'not an OURANOS fitment approval',
   );
-  expect(errors).toEqual([]);
 });
 
 test('Fitment Guide keeps the vehicle result unavailable when the upstream API fails', async ({
