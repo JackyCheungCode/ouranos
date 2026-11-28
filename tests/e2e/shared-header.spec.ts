@@ -24,6 +24,7 @@ test('every public page uses the shared Home overlay header and OURANOS script l
     );
     await expect(header).toHaveAttribute('data-shared-header-ready', 'true');
     await expect(header).toHaveAttribute('data-theme-controller-ready', 'true');
+    await expect(header).toHaveAttribute('data-ai-controller-ready', 'true');
 
     const brand = header.locator('a[aria-label="Ouranos Home"]');
     await expect(brand).toBeVisible();
