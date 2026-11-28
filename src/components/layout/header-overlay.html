@@ -7,7 +7,7 @@
     <source src="/videos/mood-porsche-gts.mp4" type="video/mp4">
   </video>
   <div class="col-wide grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-fluid-md items-center min-h-[80px]">
-    <div class="flex flex-wrap gap-static-md items-center justify-start" style="color: #fff">
+    <div class="flex flex-nowrap gap-static-sm items-center justify-start min-w-0" style="color: #fff">
       <nav aria-label="Main">
         <p-button-pure color="inherit" id="nav-button" class="p-static-xs -m-static-xs" style="color: #fff" type="button" icon="menu-lines" hide-label="{base: true, s: false}" aria="{'aria-haspopup': 'dialog'}">
           Menu
@@ -25,19 +25,9 @@
         <text x="280" y="140" text-anchor="middle">Ouranos</text>
       </svg>
     </a>
-    <div class="flex flex-wrap gap-static-md items-center justify-end" style="color: #fff">
-      <p-popover id="ouranos-language-popover" direction="bottom" compact="true">
-        <p-button-pure color="inherit" slot="button" id="ouranos-language-trigger" class="p-static-xs -m-static-xs" style="color: #fff" type="button" icon="globe" hide-label="true" title="Language: English" aria-label="Language: English">Language: English</p-button-pure>
-        <div class="ouranos-language-menu" role="group" aria-label="Select language">
-          <button class="ouranos-language-option" type="button" data-locale="en" aria-pressed="true">English</button>
-          <button class="ouranos-language-option" type="button" data-locale="zh-CN" aria-pressed="false">简体中文</button>
-          <button class="ouranos-language-option" type="button" data-locale="de" aria-pressed="false">Deutsch</button>
-          <button class="ouranos-language-option" type="button" data-locale="fr" aria-pressed="false">Français</button>
-          <button class="ouranos-language-option" type="button" data-locale="ja" aria-pressed="false">日本語</button>
-        </div>
-      </p-popover>
+    <div class="flex flex-nowrap gap-static-sm items-center justify-end min-w-0" style="color: #fff">
       <p-button-pure color="inherit" id="ouranos-ai-open" class="p-static-xs -m-static-xs" style="color: #fff" type="button" icon="ai-chat" hide-label="true" title="OURANOS AI Assistant" aria-label="OURANOS AI Assistant">AI Assistant</p-button-pure>
-      <p-button-pure color="inherit" id="ouranos-account" class="p-static-xs -m-static-xs" style="color: #fff" title="Account" type="button" icon="user" hide-label="true">Account</p-button-pure>
+      <p-button-pure color="inherit" id="ouranos-account" class="p-static-xs -m-static-xs" style="color: #fff" title="Account" type="button" icon="user" hide-label="true" aria-label="Account">Account</p-button-pure>
     </div>
   </div>
 </header>
