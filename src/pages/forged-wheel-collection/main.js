@@ -16,7 +16,7 @@ function renderCard(product, index) {
   const configureUrl = '/customize/?reference=' + encodeURIComponent('BBS ' + product.model) + '#enquiry';
   return `
     <article class="forged-product-card" data-product="${escapeHtml(product.id)}">
-      <a class="forged-product-card__visual" href="${escapeHtml(product.source)}" target="_blank" rel="noreferrer" aria-label="View BBS ${escapeHtml(product.model)} reference">
+      <a class="forged-product-card__visual" href="/wheel-product/?type=forged&id=${encodeURIComponent(product.id)}" aria-label="Discover OURANOS ${escapeHtml(product.model)} wheel details">
         <img src="${escapeHtml(product.image)}" alt="BBS ${escapeHtml(product.model)} forged wheel visual reference" loading="lazy" decoding="async">
         <span class="forged-product-card__index">${String(index + 1).padStart(2, '0')}</span>
       </a>
@@ -32,7 +32,7 @@ function renderCard(product, index) {
         </div>
         <p class="forged-product-card__description">${escapeHtml(product.description)}</p>
         <div class="forged-product-card__actions">
-          <p-button href="${escapeHtml(product.source)}" target="_blank" variant="primary">Discover</p-button>
+          <p-button href="/wheel-product/?type=forged&id=${encodeURIComponent(product.id)}" variant="primary">Discover</p-button>
           <p-button href="${escapeHtml(configureUrl)}" variant="secondary">Configure</p-button>
         </div>
       </div>
