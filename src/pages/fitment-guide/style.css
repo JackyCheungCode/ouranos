@@ -740,7 +740,6 @@
   }
 }
 
-
 /* Staggered fitment: real vehicle photography and restrained axle specification. */
 .fitment-staggered-photo {
   margin: 34px 0 0;
@@ -759,7 +758,7 @@
   color: #626262;
   background: #f1f1ef;
   font-size: 10px;
-  letter-spacing: .14em;
+  letter-spacing: 0.14em;
 }
 .fitment-axles {
   margin-top: 1px;
@@ -770,8 +769,15 @@
   padding: 22px 26px;
   background: #f1f1ef;
 }
-.fitment-axle-label { margin-bottom: 12px; }
-.fitment-axles h3 { font-size: 22px; letter-spacing: -.03em; }
+.fitment-axle-label {
+  margin-bottom: 12px;
+}
+.fitment-axles h3 {
+  font-size: 22px;
+  letter-spacing: -0.03em;
+}
 @media (max-width: 600px) {
-  .fitment-staggered-photo img { aspect-ratio: 4 / 3; }
+  .fitment-staggered-photo img {
+    aspect-ratio: 4 / 3;
+  }
 }
