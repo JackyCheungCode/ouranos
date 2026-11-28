@@ -99,7 +99,7 @@ form?.addEventListener('submit', async (event) => {
   const customerName = valueOf(name);
   const customerEmail = valueOf(email);
   const customerPhone = valueOf(whatsapp);
-  const contactValid = (customerEmail && validEmail(customerEmail)) || (!customerEmail && validPhone(customerPhone)) || (customerEmail && validEmail(customerEmail) && !customerPhone);
+  const contactValid = validEmail(customerEmail) || (!customerEmail && validPhone(customerPhone));
   if (!customerName || !contactValid) {
     contactError.hidden = false;
     if (!customerName) name.focus();
