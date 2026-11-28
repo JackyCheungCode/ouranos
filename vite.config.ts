@@ -134,6 +134,7 @@ function templatePartials() {
       const isDiscover = context.filename.includes('/discover/');
       const isWheels = context.filename.includes('/wheels/');
       const isForgedWheels = context.filename.includes('/forged-wheels/');
+      const isCastWheels = context.filename.includes('/cast-wheels/');
       const isContact = context.filename.includes('/contact/');
       const validChunks = new Set([
         'accordion',
@@ -217,13 +218,15 @@ function templatePartials() {
             ? 'Ouranos | Discover Wheels'
             : isForgedWheels
               ? 'OURANOS | Forged Wheels'
-              : isWheels
-                ? 'Ouranos | Wheels'
-                : isContact
-                  ? 'Ouranos | Contact Us'
-                  : isAdmin
-                    ? 'Ouranos Admin Panel'
-                    : 'Ouranos';
+              : isCastWheels
+                ? 'OURANOS | Cast Wheels'
+                : isWheels
+                  ? 'Ouranos | Wheels'
+                  : isContact
+                    ? 'Ouranos | Contact Us'
+                    : isAdmin
+                      ? 'Ouranos Admin Panel'
+                      : 'Ouranos';
       const partials = [
         getJsComponentChunkLinks({ components: components as never[] }),
         getJsFontLinks(),

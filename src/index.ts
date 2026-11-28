@@ -156,7 +156,8 @@ async function createWheelInquiry(request: Request, env: Env): Promise<Response>
     !productModel ||
     !['Forged', 'Cast', 'Flow Formed'].includes(construction) ||
     !customerName ||
-    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail) ||
+    (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail) &&
+      !/^\+?[0-9][0-9\s().-]{6,24}$/.test(customerPhone)) ||
     !Number.isInteger(quantity) ||
     quantity < 1 ||
     quantity > 10000 ||
@@ -165,7 +166,7 @@ async function createWheelInquiry(request: Request, env: Env): Promise<Response>
     return json(
       {
         error: 'INVALID_INQUIRY',
-        message: 'Check the selected wheel, contact details and quantity (minimum 1 set).',
+        message: 'Provide a valid work email or WhatsApp number, a contact name, a valid wheel selection and a quantity of at least one set.',
       },
       400,
     );

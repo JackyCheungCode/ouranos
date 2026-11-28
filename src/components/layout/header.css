@@ -51,6 +51,9 @@
   pointer-events: auto;
 }
 
+/* The shared overlay header is video-free by default; Forged Wheels opts in explicitly. */
+.ouranos-header__video { display: none; }
+
 /* Brand header: one Home-identical overlay pattern on every public page. */
 .ouranos-header {
   color: #fff;
