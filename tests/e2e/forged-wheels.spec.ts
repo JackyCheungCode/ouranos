@@ -40,13 +40,13 @@ test('forged wheels landing page follows the seven-section business brief', asyn
     .evaluateAll((images) => images.map((image) => getComputedStyle(image).filter));
   expect(logoFilters.every((filter) => filter !== 'grayscale(1)')).toBe(true);
   await expect(page.locator('.forged-certification-mark img')).toHaveCount(2);
-  const headerVideo = page.locator('.ouranos-header__video-embed');
+  const headerVideo = page.locator('.ouranos-header__video');
   await expect(headerVideo).toBeAttached();
-  await expect(headerVideo).toHaveAttribute('src', /youtube-nocookie\.com\/embed\/mGJGwe1cPo0/);
-  await expect(headerVideo).toHaveAttribute(
-    'title',
-    'FLEXIFORGED forged wheel CNC milling process',
-  );
+  await expect(headerVideo.locator('source')).toHaveAttribute('src', '/videos/mood-porsche-gts.mp4');
+  await expect(headerVideo).toHaveAttribute('autoplay', '');
+  await expect(headerVideo).toHaveAttribute('muted', '');
+  await expect(headerVideo).toHaveAttribute('loop', '');
+  await expect(headerVideo).toHaveAttribute('playsinline', '');
   await expect(page.locator('.forged-construction-panel')).toHaveCount(4);
   await expect(page.locator('p-carousel')).toBeVisible();
   await expect(page.locator('.forged-certifications__list')).toBeVisible();
