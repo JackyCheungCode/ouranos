@@ -267,28 +267,25 @@ async function decodeVin() {
       return;
     }
     $('#make').value = String(slug(make));
-    $('#make').dispatchEvent(new Event('change', { bubbles: true }));
-    await new Promise((resolve) => setTimeout(resolve, 700));
+    await loadModels();
     const model = match(state.models, modelName);
     if (!model) {
       $('#vin-status').textContent = 'VIN decoded: ' + [yearName, makeName, modelName, trimName].filter(Boolean).join(' ') + '. Confirm the matching model manually.';
       return;
     }
     $('#model').value = String(slug(model));
-    $('#model').dispatchEvent(new Event('change', { bubbles: true }));
-    await new Promise((resolve) => setTimeout(resolve, 700));
+    await loadYears();
     const year = match(state.years, yearName);
     if (!year) {
       $('#vin-status').textContent = 'VIN decoded: ' + [yearName, makeName, modelName, trimName].filter(Boolean).join(' ') + '. Confirm model year manually.';
       return;
     }
     $('#year').value = String(slug(year));
-    $('#year').dispatchEvent(new Event('change', { bubbles: true }));
-    await new Promise((resolve) => setTimeout(resolve, 700));
+    await loadModifications();
     const modification = trimName ? match(state.modifications, trimName) : null;
     if (modification) {
       $('#variant').value = String(slug(modification));
-      $('#variant').dispatchEvent(new Event('change', { bubbles: true }));
+      await loadSpecifications();
       $('#vin-status').textContent = 'VIN decoded. A matching modification was found; review the selected vehicle and factory data below.';
     } else {
       $('#vin-status').textContent = 'VIN decoded: ' + [yearName, makeName, modelName, trimName].filter(Boolean).join(' ') + '. Select the exact generation / modification manually to continue.';
