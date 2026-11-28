@@ -12,6 +12,8 @@ test('Cast Wheels capability page follows the five-module brief and shared navig
   await expect(page.locator('.ouranos-header__video')).toBeHidden();
   await expect(page.locator('html')).toHaveClass(/scheme-light/);
   await expect(page.locator('main.cast-page')).toBeVisible();
+  await expect(page.locator('body > footer')).toBeVisible();
+  await expect(page.locator('body > footer nav[aria-label="Footer"]')).toBeVisible();
   await expect(page.locator('main.cast-page > header, main.cast-page > footer')).toHaveCount(0);
   await expect(page.locator('.ouranos-header a[href="/cast-wheels/"]')).toHaveCount(1);
   await expect(page.locator('#nav-drilldown')).toContainText('Forged Wheels');
