@@ -115,7 +115,7 @@ test('Fitment Guide keeps the vehicle result unavailable when the upstream API f
     });
   });
   await page.goto('/fitment-guide/', { waitUntil: 'domcontentloaded' });
-  await expect(page.locator('#api-status')).toHaveText('VEHICLE MARKETS UNAVAILABLE');
+  await expect(page.locator('#api-status')).toHaveText('MANUFACTURER LOOKUP UNAVAILABLE');
   await expect(page.locator('#fitment-empty')).toContainText(
     'Vehicle lookup is temporarily unavailable',
   );
@@ -132,6 +132,8 @@ test('Fitment Guide decodes VIN and resolves the matching vehicle through the ca
     'src',
     'https://cdn.example.test/porsche.png',
   );
+  await page.locator('.fitment-vin summary').click();
+  await expect(page.locator('#vin')).toBeVisible();
   await page.locator('#vin').fill('WP0AB2A99SS123456');
   await page.locator('#vin-decode').click();
   await expect(page.locator('#vehicle-title')).toContainText('2025 Porsche 911 Carrera GTS');
