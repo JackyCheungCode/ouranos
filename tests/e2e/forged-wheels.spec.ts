@@ -115,7 +115,7 @@ test('forged wheels landing page follows the seven-section business brief', asyn
   await expect(page.locator('#warranty-modal')).toHaveJSProperty('open', false);
 });
 
-test('forged wheels enquiry supports a one-set private owner enquiry and responsive layout', async ({
+test('forged wheels enquiry enforces the four-wheel MOQ and responsive layout', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
@@ -132,6 +132,9 @@ test('forged wheels enquiry supports a one-set private owner enquiry and respons
   }));
   expect(dimensions.body).toBeLessThanOrEqual(dimensions.viewport);
   await expect(page.locator('#forged-submit')).toBeVisible();
+  await expect(page.locator('[name="quantity"]')).toHaveAttribute('min', '4');
+  await expect(page.locator('[name="quantity"]')).toHaveValue('4');
+  await expect(page.getByText('MOQ: 4 wheels')).toBeVisible();
   await expect(page.locator('.forged-swatch .swatch').first()).toHaveCSS('border-radius', '50%');
   await expect(page.locator('.forged-form-grid label:has(> p-input-text) > span')).toHaveCount(0);
 });
