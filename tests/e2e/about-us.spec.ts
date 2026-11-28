@@ -9,7 +9,7 @@ test('About Us presents OURANOS engineering story with the shared PDS layout', a
   await expect(page).toHaveTitle('OURANOS | About Us — Beyond the Wheel');
   await expect(page.locator('main.about-shell')).toHaveCount(1);
   await expect(page.locator('main.about-shell > section')).toHaveCount(10);
-  await expect(page.locator('p-heading#about-title')).toContainText(/ABOUT\\s*OURANOS\\./);
+  await expect(page.locator('p-heading#about-title')).toContainText(/ABOUT\s*OURANOS\./);
   await expect(page.locator('p-heading#manufacturing-title')).toContainText(
     'TWO MANUFACTURING ROUTES',
   );
