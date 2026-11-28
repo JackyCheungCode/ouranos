@@ -7,6 +7,7 @@ test('Cast Wheels capability page follows the five-module brief and shared navig
   await expect(page.locator('.ouranos-header')).toHaveAttribute('data-header-variant', 'overlay');
   await expect(page.locator('#ouranos-ai-open')).toBeVisible();
   await expect(page.locator('#ouranos-language-trigger')).toBeVisible();
+  await expect(page.locator('.ouranos-header__video')).toBeHidden();
   await expect(page.locator('html')).toHaveClass(/scheme-light/);
   await expect(page.locator('main.cast-page')).toBeVisible();
   await expect(page.locator('main.cast-page > header, main.cast-page > footer')).toHaveCount(0);
