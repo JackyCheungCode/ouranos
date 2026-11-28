@@ -14,7 +14,19 @@ html:has(body.cast-wheels-page) {
   overflow: clip;
 }
 
-.cast-page :is(p-heading, p-text, p-tag, p-button, p-link-pure, p-inline-notification, p-fieldset, p-segmented-control, p-accordion, p-table) {
+.cast-page
+  :is(
+    p-heading,
+    p-text,
+    p-tag,
+    p-button,
+    p-link-pure,
+    p-inline-notification,
+    p-fieldset,
+    p-segmented-control,
+    p-accordion,
+    p-table
+  ) {
   display: block;
 }
 
@@ -415,7 +427,17 @@ html:has(body.cast-wheels-page) {
   border-top: 1px solid var(--p-color-contrast-lower);
 }
 
-.cast-page :is(a, button, p-button, p-link-pure, p-input-text, p-input-email, p-textarea, p-segmented-control):focus-visible {
+.cast-page
+  :is(
+    a,
+    button,
+    p-button,
+    p-link-pure,
+    p-input-text,
+    p-input-email,
+    p-textarea,
+    p-segmented-control
+  ):focus-visible {
   outline: 2px solid var(--p-color-focus);
   outline-offset: 3px;
 }
