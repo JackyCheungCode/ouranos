@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en" class="scheme-light bg-canvas">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore the OURANOS forged wheel collection and discover a range of forged design references.">
+    <meta name="theme-color" content="#ffffff">
+    <title>OURANOS | Forged Wheel Collection</title>
+  </head>
+  <body class="scheme-light forged-collection-page">
+    <!-- OURANOS:HEADER -->
+
+    <main class="forged-collection-main">
+      <section class="forged-collection-hero" aria-labelledby="collection-hero-title">
+        <div class="forged-collection-hero__inner">
+          <p-text size="xs" color="inherit">OURANOS / FORGED WHEELS / COLLECTION</p-text>
+          <p-display id="collection-hero-title" tag="h1" size="large">Forged for your vision.</p-display>
+          <p-text class="forged-collection-hero__lead" size="md" color="inherit">Explore distinctive forged wheel architectures, from focused performance forms to timeless multi-piece designs.</p-text>
+          <p-button href="#collection" variant="primary" icon="arrow-down">Explore the collection</p-button>
+        </div>
+        <div class="forged-collection-hero__foot">
+          <span>FORGED WHEEL DESIGN REFERENCES</span>
+          <span>20 MODELS · ONE CUSTOMISATION PROGRAMME</span>
+        </div>
+      </section>
+
+      <section class="forged-customisation-section" aria-labelledby="customisation-title">
+        <div class="forged-collection-section-heading">
+          <p-text size="xs" color="contrast-medium">01 / ONE CUSTOMISATION PROGRAMME</p-text>
+          <div>
+            <p-heading id="customisation-title" tag="h2" size="xl">One programme.<br>Individual specifications.</p-heading>
+            <p-text color="contrast-medium">The customisation scope is shared across the forged collection. Select a design first; define its vehicle-specific dimensions and personal details during configuration.</p-text>
+          </div>
+        </div>
+        <div class="forged-customisation-grid">
+          <article class="forged-customisation-item">
+            <p-icon name="adjust" size="large" aria-hidden="true"></p-icon>
+            <div><h3>Wheel dimensions</h3><p>Diameter · Width</p></div>
+          </article>
+          <article class="forged-customisation-item">
+            <p-icon name="car" size="large" aria-hidden="true"></p-icon>
+            <div><h3>Vehicle fitment</h3><p>ET · PCD · CB</p></div>
+          </article>
+          <article class="forged-customisation-item">
+            <p-icon name="color-picker" size="large" aria-hidden="true"></p-icon>
+            <div><h3>Appearance</h3><p>Finish · Color</p></div>
+          </article>
+          <article class="forged-customisation-item">
+            <p-icon name="edit" size="large" aria-hidden="true"></p-icon>
+            <div><h3>Personalization</h3><p>Center Cap · Engraving</p></div>
+          </article>
+        </div>
+        <p-text class="forged-customisation-note" size="xs" color="contrast-medium">Final dimensions, finish compatibility and available details are confirmed against the selected design and vehicle.</p-text>
+      </section>
+
+      <section id="collection" class="forged-collection-catalogue" aria-labelledby="collection-title">
+        <div class="forged-collection-section-heading forged-collection-section-heading--catalogue">
+          <p-text size="xs" color="contrast-medium">02 / THE COLLECTION</p-text>
+          <div>
+            <p-heading id="collection-title" tag="h2" size="xl">Explore the forged collection.</p-heading>
+            <p-text color="contrast-medium">Compare spoke language, construction and proportion. Choose a design direction to begin your specification.</p-text>
+          </div>
+        </div>
+
+        <div class="forged-collection-toolbar" aria-label="Filter forged wheel references">
+          <div class="forged-collection-filters">
+            <p-select id="filter-construction" label="Construction" value="">
+              <p-select-option value="">All constructions</p-select-option>
+              <p-select-option value="One-Piece">One-Piece</p-select-option>
+              <p-select-option value="Two-Piece">Two-Piece</p-select-option>
+            </p-select>
+            <p-select id="filter-design" label="Design" value="">
+              <p-select-option value="">All designs</p-select-option>
+              <p-select-option value="Cross-Spoke">Cross-Spoke</p-select-option>
+              <p-select-option value="Mesh">Mesh</p-select-option>
+              <p-select-option value="Multi-Spoke">Multi-Spoke</p-select-option>
+              <p-select-option value="Split-Spoke">Split-Spoke</p-select-option>
+              <p-select-option value="Five-Spoke">Five-Spoke</p-select-option>
+              <p-select-option value="Seven-Spoke">Seven-Spoke</p-select-option>
+            </p-select>
+          </div>
+          <div class="forged-collection-toolbar__meta">
+            <span id="product-count" aria-live="polite">20 models</span>
+            <p-button id="clear-filters" variant="secondary" size="small">Clear filters</p-button>
+            <p-select id="sort-products" label="Sort by" value="featured">
+              <p-select-option value="featured">Featured</p-select-option>
+              <p-select-option value="az">Model A–Z</p-select-option>
+              <p-select-option value="za">Model Z–A</p-select-option>
+            </p-select>
+          </div>
+        </div>
+
+        <div id="forged-products-grid" class="forged-products-grid" aria-live="polite"></div>
+        <div id="forged-products-empty" class="forged-products-empty" hidden>
+          <p-heading tag="h3" size="md">No matching designs</p-heading>
+          <p-text color="contrast-medium">Adjust the filters to explore the full collection.</p-text>
+        </div>
+        <p-text class="forged-reference-note" size="xs" color="contrast-medium">Development visual references sourced from BBS Japan official product pages. BBS model names and imagery are shown for layout evaluation only; they are not OURANOS products, offers, fitment approvals or availability statements.</p-text>
+      </section>
+
+      <section class="forged-collection-process" aria-labelledby="process-title">
+        <div class="forged-collection-section-heading">
+          <p-text size="xs" color="contrast-medium">03 / YOUR SPECIFICATION</p-text>
+          <div>
+            <p-heading id="process-title" tag="h2" size="xl">From selected design<br>to a considered specification.</p-heading>
+            <p-text color="contrast-medium">A clear sequence keeps design selection, vehicle data and personal details together before production planning begins.</p-text>
+          </div>
+        </div>
+        <ol class="forged-process-steps">
+          <li><span>01</span><div><h3>Select a design</h3><p>Choose the spoke language and construction direction.</p></div></li>
+          <li><span>02</span><div><h3>Verify vehicle fitment</h3><p>Review diameter, width, ET, PCD, centre bore and brake clearance.</p></div></li>
+          <li><span>03</span><div><h3>Define the details</h3><p>Specify finish, colour, engraving and centre-cap requirements.</p></div></li>
+          <li><span>04</span><div><h3>Submit your enquiry</h3><p>Share the brief for a vehicle-specific review and quotation.</p></div></li>
+        </ol>
+        <div class="forged-collection-cta">
+          <div><p-text size="xs" color="contrast-medium">READY TO DEFINE YOUR SETUP?</p-text><p-heading tag="h2" size="lg">Create your own specification.</p-heading></div>
+          <p-button href="/forged-wheels/#enquiry" variant="primary" icon="arrow-right">Start an enquiry</p-button>
+        </div>
+      </section>
+    </main>
+
+    <!-- OURANOS:FOOTER -->
+    <script type="module" src="/src/pages/forged-wheel-collection/main.js"></script>
+  </body>
+</html>
