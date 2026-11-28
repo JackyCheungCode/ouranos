@@ -270,3 +270,33 @@ if (referenceModel) {
 }
 
 document.documentElement.dataset.forgedWheelsPage = 'ready';
+
+
+// Chapter wayfinding and restrained reveal motion.
+const chapterLinks = Array.from(document.querySelectorAll('.forged-chapter-nav a'));
+const chapterSections = chapterLinks.map((link) => document.getElementById(link.dataset.chapter)).filter(Boolean);
+if ('IntersectionObserver' in window && chapterSections.length) {
+  const chapterObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      chapterLinks.forEach((link) => {
+        if (link.dataset.chapter === entry.target.id) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      });
+    });
+  }, { rootMargin: '-28% 0px -58% 0px', threshold: 0 });
+  chapterSections.forEach((section) => chapterObserver.observe(section));
+}
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (!reduceMotion && 'IntersectionObserver' in window) {
+  const revealTargets = document.querySelectorAll('.forged-section__heading, .forged-solution-card, .forged-process-panel, .forged-construction-panel, .forged-customisation, .forged-fitment-card, .forged-aftercare__grid article, .forged-enquiry__form-wrap');
+  revealTargets.forEach((element) => element.classList.add('forged-reveal'));
+  const revealObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-visible');
+      observer.unobserve(entry.target);
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -36px 0px' });
+  revealTargets.forEach((element) => revealObserver.observe(element));
+}
