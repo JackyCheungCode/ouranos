@@ -166,7 +166,8 @@ async function createWheelInquiry(request: Request, env: Env): Promise<Response>
     return json(
       {
         error: 'INVALID_INQUIRY',
-        message: 'Provide a valid work email or WhatsApp number, a contact name, a valid wheel selection and a quantity of at least one set.',
+        message:
+          'Provide a valid work email or WhatsApp number, a contact name, a valid wheel selection and a quantity of at least one set.',
       },
       400,
     );
