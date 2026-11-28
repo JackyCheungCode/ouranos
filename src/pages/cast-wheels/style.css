@@ -1,4 +1,5 @@
 @import '@porsche-design-system/components-js';
+@import 'tailwindcss';
 @import '../../components/layout/header.css';
 
 .cast-page {
