@@ -70,6 +70,16 @@
             <p-heading id="brakes-title" tag="h2" size="xl">Clearance is a three-dimensional question.</p-heading>
             <p-text color="contrast-medium">A diameter and offset comparison alone cannot confirm brake clearance. The complete wheel profile and brake package must be considered.</p-text>
           </div>
+          <div class="fitment-reference-images" aria-label="Real wheel and brake clearance reference photography">
+            <figure>
+              <img src="https://hips.hearstapps.com/mtg-prod/uploads/sites/25/2015/07/Wheel-Fitment-Offset-Sizing-Brake-Caliper-Clearance.jpg?format=webp&q=80&w=1200" alt="Alloy wheel mounted over a brake rotor and caliper, showing spoke and caliper clearance" loading="lazy">
+              <figcaption>WHEEL / BRAKE CLEARANCE</figcaption>
+            </figure>
+            <figure>
+              <img src="https://www.vibemotorsports.com/cdn/shop/files/bmw-m3-f80-hre-ff21-liquid-metal-wheels-5_745611ed-6545-48ff-8a37-4fac1ee11009.jpg?v=1775838940&width=1200" alt="Close-up of a performance alloy wheel with visible brake rotor behind the spokes" loading="lazy">
+              <figcaption>WHEEL / SPOKE PROFILE</figcaption>
+            </figure>
+          </div>
           <div class="fitment-brake-grid">
             <article><span>01</span><h3>Caliper envelope</h3><p>Radial and axial space around the brake caliper, including the installed brake package.</p></article>
             <article><span>02</span><h3>Spoke profile</h3><p>Spoke curvature and rear-face geometry determine clearance to the caliper at critical points.</p></article>
@@ -121,8 +131,9 @@
               <summary>Identify by VIN (optional)</summary>
               <p-text size="sm" color="contrast-medium">VIN can help identify a vehicle. It does not establish wheel compatibility and may require confirmation against the selected market and modification.</p-text>
               <label for="vin">17-character Vehicle Identification Number</label>
-              <input id="vin" name="vin" type="text" minlength="17" maxlength="17" autocomplete="off" placeholder="Enter VIN for identification">
-              <p-text size="xs" color="contrast-medium">VIN decoding is not enabled in this page release. Use manual vehicle selection for now.</p-text>
+              <input id="vin" name="vin" type="text" minlength="17" maxlength="17" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Enter 17-character VIN">
+              <p-button id="vin-decode" type="button" variant="secondary">Decode VIN</p-button>
+              <p-text id="vin-status" size="xs" color="contrast-medium" role="status" aria-live="polite">VIN decoding uses the NHTSA vPIC service for supported US-market vehicles. Confirm the exact modification before reviewing wheel specifications.</p-text>
             </details>
             <div id="fitment-empty" class="fitment-empty" role="status" aria-live="polite">Select a market, manufacturer, model and year to retrieve available factory wheel specifications.</div>
             <div id="fitment-table-wrap" class="fitment-table-wrap" hidden>

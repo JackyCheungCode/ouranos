@@ -23,7 +23,11 @@ async function api(path, params = {}) {
   const query = new URLSearchParams({ region: state.market, ...params });
   const response = await fetch('/api/wheel-size/' + path + '?' + query.toString(), { headers: { accept: 'application/json' } });
   const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data?.details?.detail || data?.details?.message || data?.message || data?.error || 'Vehicle data request failed (' + response.status + ').');
+  if (!response.ok) {
+    const detail = data?.details?.detail || data?.details?.message || data?.message || data?.error;
+    const readable = typeof detail === 'string' ? detail : detail ? JSON.stringify(detail) : '';
+    throw new Error((readable || 'Vehicle data request failed') + ' (HTTP ' + response.status + ').');
+  }
   return data;
 }
 async function setOptions(element, items, placeholder) {
@@ -36,7 +40,19 @@ async function setOptions(element, items, placeholder) {
   items.forEach((item) => {
     const option = document.createElement('p-select-option');
     option.value = String(slug(item));
-    option.textContent = label(item);
+    const logo = typeof item === 'object' ? first(item.logo, item.logo_url, item.image, item.image_url, item.icon) : '';
+    if (logo && /^https:\/\//i.test(String(logo))) {
+      const image = document.createElement('img');
+      image.src = String(logo);
+      image.alt = '';
+      image.loading = 'lazy';
+      image.className = 'fitment-make-logo';
+      image.referrerPolicy = 'no-referrer';
+      option.append(image);
+    }
+    const name = document.createElement('span');
+    name.textContent = label(item);
+    option.append(name);
     fragment.append(option);
   });
   element.replaceChildren(fragment);
@@ -144,7 +160,7 @@ async function loadMakes() {
   } catch (error) {
     setStatus('MANUFACTURER LOOKUP UNAVAILABLE', 'error');
     $('#fitment-empty').hidden = false;
-    $('#fitment-empty').textContent = error.message;
+    $('#fitment-empty').textContent = 'The vehicle catalogue could not return manufacturers. ' + error.message + ' Check the Worker upstream response and API subscription status.';
   }
 }
 async function loadModels() {
@@ -221,4 +237,69 @@ $('#make').addEventListener('change', loadModels);
 $('#model').addEventListener('change', loadYears);
 $('#year').addEventListener('change', loadModifications);
 $('#variant').addEventListener('change', loadSpecifications);
+async function decodeVin() {
+  const input = $('#vin');
+  const vin = input.value.trim().toUpperCase();
+  if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
+    $('#vin-status').textContent = 'Enter a valid 17-character VIN. Letters I, O and Q are not used.';
+    return;
+  }
+  const button = $('#vin-decode');
+  button.disabled = true;
+  $('#vin-status').textContent = 'DECODING VIN…';
+  try {
+    const response = await fetch('https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValuesExtended/' + encodeURIComponent(vin) + '?format=json', {
+      headers: { accept: 'application/json' }
+    });
+    if (!response.ok) throw new Error('VIN service returned HTTP ' + response.status + '.');
+    const payload = await response.json();
+    const decoded = payload?.Results?.[0] || {};
+    const makeName = String(decoded.Make || '').trim();
+    const modelName = String(decoded.Model || '').trim();
+    const yearName = String(decoded.ModelYear || '').trim();
+    const trimName = String(decoded.Trim || decoded.Series || '').trim();
+    if (!makeName || !modelName || !yearName) throw new Error('The VIN service could not identify a complete make, model and model year.');
+    const match = (items, name) => {
+      const normalized = String(name).trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
+      const matches = items.filter((item) =>
+        label(item).trim().toLowerCase().replace(/[^a-z0-9]+/g, '') === normalized
+      );
+      return matches.length === 1 ? matches[0] : null;
+    };
+    let make = match(state.makes, makeName);
+    if (!make) {
+      $('#vin-status').textContent = 'VIN decoded: ' + [yearName, makeName, modelName, trimName].filter(Boolean).join(' ') + '. This make is not listed in the selected Wheel-Size market. Change market or select manually.';
+      return;
+    }
+    $('#make').value = String(slug(make));
+    await loadModels();
+    const model = match(state.models, modelName);
+    if (!model) {
+      $('#vin-status').textContent = 'VIN decoded: ' + [yearName, makeName, modelName, trimName].filter(Boolean).join(' ') + '. Confirm the matching model manually.';
+      return;
+    }
+    $('#model').value = String(slug(model));
+    await loadYears();
+    const year = match(state.years, yearName);
+    if (!year) {
+      $('#vin-status').textContent = 'VIN decoded: ' + [yearName, makeName, modelName, trimName].filter(Boolean).join(' ') + '. Confirm model year manually.';
+      return;
+    }
+    $('#year').value = String(slug(year));
+    await loadModifications();
+    const modification = trimName ? match(state.modifications, trimName) : null;
+    if (modification) {
+      $('#variant').value = String(slug(modification));
+      await loadSpecifications();
+      $('#vin-status').textContent = 'VIN decoded. A matching modification was found; review the selected vehicle and factory data below.';
+    } else {
+      $('#vin-status').textContent = 'VIN decoded: ' + [yearName, makeName, modelName, trimName].filter(Boolean).join(' ') + '. Select the exact generation / modification manually to continue.';
+    }
+  } catch (error) {
+    $('#vin-status').textContent = error instanceof Error ? error.message : 'VIN decoding is temporarily unavailable.';
+  } finally {
+    button.disabled = false;
+  }
+}
+$('#vin-decode').addEventListener('click', decodeVin);
 loadMarkets();
