@@ -2,6 +2,8 @@
 @import 'tailwindcss';
 @import '../../components/layout/header.css';
 
+html:has(body.cast-wheels-page) { scroll-behavior: smooth; }
+
 .cast-page {
   --cast-gutter: max(var(--p-spacing-static-md), calc((100vw - 1440px) / 2));
   color: var(--color-contrast-high);
