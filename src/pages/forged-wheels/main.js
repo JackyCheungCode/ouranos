@@ -262,4 +262,12 @@ form?.addEventListener('submit', async (event) => {
   }
 });
 
+const referenceModel = new URLSearchParams(location.search).get('reference');
+if (referenceModel) {
+  const notesField = document.querySelector('#notes');
+  if (notesField) {
+    notesField.value = 'BBS visual reference: ' + referenceModel + '. Please discuss an OURANOS forged wheel with a similar design direction and confirm vehicle-specific dimensions.';
+  }
+}
+
 document.documentElement.dataset.forgedWheelsPage = 'ready';
