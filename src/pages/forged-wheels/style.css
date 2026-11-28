@@ -4,13 +4,13 @@
 @import '../../components/layout/header.css';
 
 /* The home hero film is scoped to the forged-wheels landing page only. */
-/* Keep the shared overlay header above the Forged Wheels hero stacking context. */
+/*
+ * Keep the video in the page background stacking layer so it cannot cover
+ * the Forged Wheels hero. Header controls remain above both layers.
+ */
 body.forged-wheels-page .ouranos-header {
-  z-index: 3;
-}
-
-.ouranos-header {
-  isolation: isolate;
+  z-index: auto;
+  isolation: auto;
 }
 .ouranos-header__video {
   display: none;
@@ -40,7 +40,7 @@ body.forged-wheels-page .ouranos-header__video {
 }
 .ouranos-header > div {
   position: relative;
-  z-index: 2;
+  z-index: 4;
 }
 
 .forged-page {
