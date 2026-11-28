@@ -16,6 +16,28 @@ test('forged wheels landing page follows the seven-section business brief', asyn
   expect(headerGeometry.top).toBe(0);
   expect(headerGeometry.position).toBe('absolute');
 
+  const stackingLayers = await page.locator('.ouranos-header').evaluate((header) => ({
+    headerZIndex: getComputedStyle(header).zIndex,
+    headerIsolation: getComputedStyle(header).isolation,
+    videoZIndex: getComputedStyle(header.querySelector('.ouranos-header__video')!).zIndex,
+    headerContentZIndex: getComputedStyle(header.querySelector(':scope > div')!).zIndex,
+    heroZIndex: getComputedStyle(document.querySelector('.forged-hero')!).zIndex,
+  }));
+  expect(stackingLayers).toEqual({
+    headerZIndex: 'auto',
+    headerIsolation: 'auto',
+    videoZIndex: '0',
+    headerContentZIndex: '4',
+    heroZIndex: '2',
+  });
+
+  const heroCta = page.locator('#hero-enquiry');
+  const ctaHitTarget = await heroCta.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    return document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2)?.tagName;
+  });
+  expect(ctaHitTarget).toBe('P-LINK');
+
   const sectionIds = await page
     .locator('main.forged-page > section')
     .evaluateAll((items) => items.map((item) => item.id));
