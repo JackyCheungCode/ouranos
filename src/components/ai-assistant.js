@@ -12,6 +12,8 @@ if (openButton && closeButton && panel && form && input && messagesElement) {
   const setOpen = (open, { restoreFocus = true } = {}) => {
     panel.classList.toggle('is-open', open);
     panel.setAttribute('aria-hidden', String(!open));
+    panel.inert = !open;
+    openButton.setAttribute('aria-expanded', String(open));
     document.body.classList.toggle('ouranos-ai-is-open', open);
     if (open) input.focus();
     else if (restoreFocus) openButton.focus();
