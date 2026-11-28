@@ -8,7 +8,7 @@ test('forged wheel collection renders 20 BBS visual references with one shared c
   await expect(page).toHaveTitle('OURANOS | Forged Wheel Collection');
   await expect(page.locator('.ouranos-header')).toHaveAttribute('data-header-variant', 'overlay');
   await expect(page.locator('#ouranos-ai-open')).toBeVisible();
-  await expect(page.locator('#ouranos-language-trigger')).toBeVisible();
+  await expect(page.locator('#ouranos-language-trigger')).toHaveCount(0);
   await expect(page.locator('.ouranos-header__video')).toBeVisible();
   await expect(page.locator('.ouranos-header__video source')).toHaveAttribute(
     'src',
@@ -75,7 +75,7 @@ test('forged collection remains responsive without horizontal overflow', async (
     const layout = await page.evaluate(() => ({
       columns: getComputedStyle(document.querySelector('#forged-products-grid')!)
         .gridTemplateColumns.trim()
-        .split(/\s+/).length,
+        .split(/\\s+/).length,
       overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
     }));
     const expectedColumns = width > 1100 ? 4 : width > 760 ? 3 : width > 420 ? 2 : 1;
