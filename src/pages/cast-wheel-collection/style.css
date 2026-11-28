@@ -1,0 +1,435 @@
+@import '@porsche-design-system/components-js';
+@import 'tailwindcss';
+@import '@porsche-design-system/components-js/tailwindcss';
+@import '../../components/layout/header.css';
+
+:root {
+  color-scheme: light;
+}
+body.wheels-page {
+  color-scheme: light;
+  background: var(--pds-theme-light-background-base, #fff);
+  color: #171717;
+}
+.wheels-shell {
+  display: grid;
+  gap: clamp(64px, 8vw, 116px);
+  padding-bottom: clamp(56px, 8vw, 112px);
+}
+.wheels-hero {
+  position: relative;
+  display: grid;
+  align-items: end;
+  min-height: clamp(560px, 78vh, 860px);
+  overflow: hidden;
+  background: #e8e8e5;
+}
+.wheels-hero__image {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 255, 255, 0.68) 40%,
+      rgba(255, 255, 255, 0.02) 100%
+    ),
+    url('https://cdn.bbs.com/38/assets/images/products/XR/wheelGallery/BBS-XR-Platinumsilber-Frontal-Effekt-mitAFS.jpg')
+      center 52% / cover no-repeat;
+}
+.wheels-hero__content {
+  position: relative;
+  z-index: 1;
+  width: min(100% - 48px, 1320px);
+  margin: 0 auto;
+  padding: 110px 0 clamp(52px, 8vw, 104px);
+  display: grid;
+  justify-items: start;
+  gap: 18px;
+}
+.wheels-hero__content p-heading {
+  max-width: 760px;
+  letter-spacing: -0.04em;
+}
+.wheels-hero__content p-text {
+  max-width: 540px;
+}
+.wheels-catalogue {
+  box-sizing: border-box;
+  width: 100%;
+  padding: clamp(40px, 5vw, 72px) max(20px, calc((100% - 1440px) / 2));
+  background: #f0f0f2;
+  scroll-margin-top: 32px;
+}
+.wheels-catalogue__intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 24px;
+  margin-bottom: 30px;
+}
+.wheels-catalogue__intro > div {
+  display: grid;
+  gap: 10px;
+}
+.wheels-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 24px;
+  padding: 20px 0;
+  border-top: 1px solid #d8d8d6;
+  border-bottom: 1px solid #d8d8d6;
+}
+.wheels-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+.wheels-filters label,
+.wheels-sort {
+  display: grid;
+  gap: 7px;
+  min-width: 170px;
+}
+.wheels-filters label > span,
+.wheels-sort > span {
+  font-size: 11px;
+  color: #666;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.wheels-filters p-select,
+.wheels-sort p-select {
+  width: 100%;
+}
+.wheels-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 24px 18px;
+  padding-top: 26px;
+}
+.wheels-product-card {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  background: #fff;
+}
+.wheel-card__image {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1/1;
+  overflow: hidden;
+  background: #fff;
+}
+.wheel-card__image img {
+  width: 84%;
+  height: 84%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  transition: transform 0.35s ease;
+}
+.wheels-product-card:hover .wheel-card__image img {
+  transform: scale(1.035);
+}
+.wheel-card__body {
+  display: grid;
+  align-content: start;
+  gap: 15px;
+  padding: 20px;
+}
+.wheel-card__eyebrow {
+  margin: 0;
+  color: #777;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.wheel-card__title {
+  margin: 4px 0 0;
+  font-size: clamp(19px, 1.7vw, 24px);
+  line-height: 1.2;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+.wheel-card__design {
+  margin: 5px 0 0;
+  color: #666;
+  font-size: 12px;
+}
+.wheel-card__specs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid #e4e4e2;
+}
+.wheel-card__spec {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.wheel-card__spec span {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: #777;
+  text-transform: uppercase;
+}
+.wheel-card__spec strong {
+  font-size: 12px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.wheel-card__stock {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e4e4e2;
+}
+.wheel-card__stock span {
+  font-size: 11px;
+  color: #666;
+}
+.wheel-card__stock strong {
+  font-size: 13px;
+  font-weight: 600;
+}
+.wheel-card__link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid #e4e4e2;
+  color: #171717;
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+.wheel-card__link:hover {
+  text-decoration: underline;
+}
+.wheels-empty {
+  padding: 72px 24px;
+  text-align: center;
+}
+.wheels-empty[hidden] {
+  display: none;
+}
+.wheels-engineering {
+  width: min(100% - 48px, 1440px);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  align-items: center;
+  gap: clamp(32px, 7vw, 100px);
+}
+.wheels-engineering__image {
+  min-height: 440px;
+  background: #eee
+    url('https://cdn.bbs.com/44/assets/images/products/TL/colorsGallery/2048px/TLA0101_SatinBlackFront_001.jpg')
+    center/contain no-repeat;
+}
+.wheels-engineering__copy {
+  display: grid;
+  justify-items: start;
+  gap: 16px;
+  max-width: 480px;
+}
+.wheels-stock {
+  width: min(100% - 48px, 1440px);
+  margin: 0 auto;
+  display: grid;
+  gap: 32px;
+}
+.wheels-stock__intro {
+  display: grid;
+  gap: 12px;
+  max-width: 650px;
+}
+.wheels-stock__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid #d8d8d6;
+  border-bottom: 1px solid #d8d8d6;
+}
+.wheels-stock__grid article {
+  padding: 28px 26px 32px 0;
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+.wheels-stock__grid article + article {
+  padding-left: 26px;
+  border-left: 1px solid #d8d8d6;
+}
+.wheels-stock__index,
+.wheels-oem__content article > span {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: #777;
+}
+.wheels-stock__grid h3,
+.wheels-oem__content h3 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 500;
+}
+.wheels-stock__grid p,
+.wheels-oem__content p {
+  margin: 0;
+  color: #666;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.wheels-oem {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: #171717;
+  color: #fff;
+}
+.wheels-oem__visual {
+  min-height: 520px;
+  padding: clamp(36px, 6vw, 88px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.58)),
+    url('https://cdn.bbs.com/38/assets/images/products/XR/wheelGallery/BBS-XR-Platinumsilber-Frontal-Effekt-mitAFS.jpg')
+      center/cover no-repeat;
+}
+.wheels-oem__visual p-heading {
+  max-width: 520px;
+  color: #fff;
+}
+.wheels-oem__visual p-text {
+  color: #fff;
+}
+.wheels-oem__content {
+  padding: clamp(36px, 6vw, 88px);
+  display: grid;
+  align-content: center;
+  gap: 34px;
+}
+.wheels-oem__content article {
+  display: grid;
+  gap: 10px;
+}
+.wheels-oem__content article > span {
+  color: #aaa;
+}
+.wheels-oem__content h3 {
+  color: #fff;
+}
+.wheels-oem__content p {
+  color: #c6c6c6;
+}
+.wheels-oem__content p-button {
+  margin-top: 8px;
+  justify-self: start;
+}
+@media (max-width: 1200px) {
+  .wheels-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 760px) {
+  .wheels-hero {
+    min-height: 620px;
+  }
+  .wheels-hero__image {
+    background-image:
+      linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.97),
+        rgba(255, 255, 255, 0.45) 65%,
+        rgba(255, 255, 255, 0.04)
+      ),
+      url('https://cdn.bbs.com/38/assets/images/products/XR/wheelGallery/BBS-XR-Platinumsilber-Frontal-Effekt-mitAFS.jpg');
+    background-position: center;
+  }
+  .wheels-hero__content {
+    width: calc(100% - 40px);
+    padding-bottom: 44px;
+  }
+  .wheels-catalogue__intro {
+    align-items: start;
+  }
+  .wheels-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .wheels-filters {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .wheels-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px 12px;
+  }
+  .wheel-card__body {
+    padding: 14px;
+    gap: 12px;
+  }
+  .wheel-card__title {
+    font-size: 18px;
+  }
+  .wheels-engineering {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    width: calc(100% - 40px);
+  }
+  .wheels-engineering__image {
+    min-height: 300px;
+  }
+  .wheels-stock {
+    width: calc(100% - 40px);
+  }
+  .wheels-stock__grid {
+    grid-template-columns: 1fr;
+  }
+  .wheels-stock__grid article,
+  .wheels-stock__grid article + article {
+    padding: 22px 0;
+    border-left: 0;
+  }
+  .wheels-stock__grid article + article {
+    border-top: 1px solid #d8d8d6;
+  }
+  .wheels-oem {
+    grid-template-columns: 1fr;
+  }
+  .wheels-oem__visual {
+    min-height: 380px;
+  }
+  .wheels-oem__content {
+    padding: 36px 24px;
+  }
+}
+@media (max-width: 420px) {
+  .wheels-grid {
+    grid-template-columns: 1fr;
+  }
+  .wheel-card__image {
+    aspect-ratio: 1.12;
+  }
+  .wheels-filters {
+    grid-template-columns: 1fr;
+  }
+  .wheels-catalogue__intro {
+    flex-direction: column;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
