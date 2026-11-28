@@ -4,24 +4,38 @@ async function mockVehicleCatalogue(page: Page) {
   await page.route('**/api/wheel-size/**', async (route) => {
     const path = new URL(route.request().url()).pathname;
     const responses: Record<string, unknown> = {
-      '/api/wheel-size/regions': { data: [{ name: 'USA+', slug: 'usdm' }, { name: 'Europe', slug: 'eudm' }, { name: 'Japan', slug: 'jdm' }] },
+      '/api/wheel-size/regions': {
+        data: [
+          { name: 'USA+', slug: 'usdm' },
+          { name: 'Europe', slug: 'eudm' },
+          { name: 'Japan', slug: 'jdm' },
+        ],
+      },
       '/api/wheel-size/makes': { data: [{ name: 'Porsche', slug: 'porsche' }] },
       '/api/wheel-size/models': { data: [{ name: '911', slug: '911' }] },
       '/api/wheel-size/years': { data: [{ name: '2025', slug: '2025' }] },
       '/api/wheel-size/modifications': { data: [{ name: 'Carrera GTS', slug: 'carrera-gts' }] },
       '/api/wheel-size/search/by_model': {
-        data: [{
-          type: 'oe',
-          technical: { bolt_pattern: '5x130', centre_bore: 71.6 },
-          wheels: [{
-            front: { rim: { diameter: 20, width: 8.5, offset: 50 } },
-            rear: { rim: { diameter: 21, width: 11.5, offset: 45 } },
-          }],
-        }],
+        data: [
+          {
+            type: 'oe',
+            technical: { bolt_pattern: '5x130', centre_bore: 71.6 },
+            wheels: [
+              {
+                front: { rim: { diameter: 20, width: 8.5, offset: 50 } },
+                rear: { rim: { diameter: 21, width: 11.5, offset: 45 } },
+              },
+            ],
+          },
+        ],
       },
     };
     const data = responses[path] || { data: [] };
-    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(data) });
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(data),
+    });
   });
 }
 
@@ -61,20 +75,29 @@ test('Fitment Guide retrieves factory wheel data from the vehicle catalogue', as
   await expect(page.locator('#fitment-rows')).toContainText('5x130');
   await expect(page.locator('#fitment-rows')).toContainText('71.6');
   await expect(page.locator('#api-status')).toHaveText('FACTORY DATA RETRIEVED');
-  await expect(page.locator('.fitment-verification-note')).toContainText('not an OURANOS fitment approval');
+  await expect(page.locator('.fitment-verification-note')).toContainText(
+    'not an OURANOS fitment approval',
+  );
   expect(errors).toEqual([]);
 });
 
-test('Fitment Guide keeps the vehicle result unavailable when the upstream API fails', async ({ page }) => {
+test('Fitment Guide keeps the vehicle result unavailable when the upstream API fails', async ({
+  page,
+}) => {
   await page.route('**/api/wheel-size/**', async (route) => {
     await route.fulfill({
       status: 503,
       contentType: 'application/json',
-      body: JSON.stringify({ error: 'WHEEL_SIZE_NOT_CONFIGURED', message: 'Vehicle lookup is temporarily unavailable.' }),
+      body: JSON.stringify({
+        error: 'WHEEL_SIZE_NOT_CONFIGURED',
+        message: 'Vehicle lookup is temporarily unavailable.',
+      }),
     });
   });
   await page.goto('/fitment-guide/', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#api-status')).toHaveText('VEHICLE MARKETS UNAVAILABLE');
-  await expect(page.locator('#fitment-empty')).toContainText('Vehicle lookup is temporarily unavailable');
+  await expect(page.locator('#fitment-empty')).toContainText(
+    'Vehicle lookup is temporarily unavailable',
+  );
   await expect(page.locator('#fitment-table-wrap')).toBeHidden();
 });
