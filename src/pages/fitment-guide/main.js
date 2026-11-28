@@ -259,8 +259,13 @@ async function decodeVin() {
     const yearName = String(decoded.ModelYear || '').trim();
     const trimName = String(decoded.Trim || decoded.Series || '').trim();
     if (!makeName || !modelName || !yearName) throw new Error('The VIN service could not identify a complete make, model and model year.');
-    const match = (items, name) => items.find((item) => label(item).toLowerCase() === name.toLowerCase()) ||
-      items.find((item) => label(item).toLowerCase().includes(name.toLowerCase()) || name.toLowerCase().includes(label(item).toLowerCase()));
+    const match = (items, name) => {
+      const normalized = String(name).trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
+      const matches = items.filter((item) =>
+        label(item).trim().toLowerCase().replace(/[^a-z0-9]+/g, '') === normalized
+      );
+      return matches.length === 1 ? matches[0] : null;
+    };
     let make = match(state.makes, makeName);
     if (!make) {
       $('#vin-status').textContent = 'VIN decoded: ' + [yearName, makeName, modelName, trimName].filter(Boolean).join(' ') + '. This make is not listed in the selected Wheel-Size market. Change market or select manually.';
