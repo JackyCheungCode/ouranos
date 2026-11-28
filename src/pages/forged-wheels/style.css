@@ -4,6 +4,11 @@
 @import '../../components/layout/header.css';
 
 /* The home hero film is scoped to the forged-wheels landing page only. */
+/* Keep the shared overlay header above the Forged Wheels hero stacking context. */
+body.forged-wheels-page .ouranos-header {
+  z-index: 3;
+}
+
 .ouranos-header {
   isolation: isolate;
 }
