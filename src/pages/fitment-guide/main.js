@@ -24,9 +24,10 @@ async function api(path, params = {}) {
   const response = await fetch('/api/wheel-size/' + path + '?' + query.toString(), { headers: { accept: 'application/json' } });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
-    const detail = data?.details?.detail || data?.details?.message || data?.message || data?.error;
-    const readable = typeof detail === 'string' ? detail : detail ? JSON.stringify(detail) : '';
-    throw new Error((readable || 'Vehicle data request failed') + ' (HTTP ' + response.status + ').');
+    const detail = data?.details ?? data?.message ?? data?.error ?? data;
+    const readable = typeof detail === 'string' ? detail : JSON.stringify(detail);
+    const upstreamStatus = data?.status ? ' Upstream status: ' + data.status + '.' : '';
+    throw new Error((readable || 'Vehicle data request failed') + upstreamStatus + ' (HTTP ' + response.status + ').');
   }
   return data;
 }
@@ -128,43 +129,30 @@ function render(records) {
 }
 async function loadMarkets() {
   const market = $('#market');
-  const fallbackMarkets = [
+  // Use canonical Wheel-Size v2 region codes. Do not infer codes from display names or numeric IDs.
+  const markets = [
     { name: 'USA+ (USDM)', slug: 'usdm' },
+    { name: 'Canada (CDM)', slug: 'cdm' },
+    { name: 'Mexico (MXNDM)', slug: 'mxndm' },
+    { name: 'Central & South America (LADM)', slug: 'ladm' },
     { name: 'Europe (EUDM)', slug: 'eudm' },
+    { name: 'Russia+ (RUS)', slug: 'rus' },
     { name: 'Japan (JDM)', slug: 'jdm' },
+    { name: 'China (CHDM)', slug: 'chdm' },
+    { name: 'South Korea (SKDM)', slug: 'skdm' },
+    { name: 'Southeast Asia (SAM)', slug: 'sam' },
+    { name: 'Middle East (MEDM)', slug: 'medm' },
+    { name: 'North Africa (NADM)', slug: 'nadm' },
+    { name: 'South Africa (SADM)', slug: 'sadm' },
+    { name: 'Oceania (AUDM)', slug: 'audm' },
   ];
-  // Keep the market control usable even if the catalogue endpoint is temporarily unavailable.
-  await setOptions(market, fallbackMarkets, 'Select vehicle market');
+  await setOptions(market, markets, 'Select vehicle market');
   state.market = 'usdm';
   market.value = state.market;
   market.setAttribute('value', state.market);
   enable(market, true);
   setStatus('SELECT VEHICLE MARKET', 'success');
-
-  try {
-    const markets = list(await api('regions', {}));
-    if (markets.length) {
-      const options = markets.map((item) => ({
-        ...item,
-        name: label(item) + ' (' + String(slug(item)).toUpperCase() + ')',
-      }));
-      await setOptions(market, options, 'Select vehicle market');
-      const known = new Set(options.map((item) => String(slug(item)).toLowerCase()));
-      state.market = known.has('usdm') ? 'usdm' : String(slug(options[0]));
-      market.value = state.market;
-      market.setAttribute('value', state.market);
-    }
-    enable(market, true);
-    setStatus('SELECT VEHICLE MARKET', 'success');
-    await loadMakes();
-  } catch (error) {
-    // Market selection is independent of catalogue availability.
-    enable(market, true);
-    setStatus('MARKET AVAILABLE · CATALOGUE CONNECTION LIMITED', 'error');
-    $('#fitment-empty').hidden = false;
-    $('#fitment-empty').textContent = 'Choose a vehicle market. ' + error.message + ' Manufacturer data may be temporarily unavailable.';
-    await loadMakes().catch(() => undefined);
-  }
+  await loadMakes();
 }
 async function loadMakes() {
   setStatus('LOADING MANUFACTURERS');
@@ -244,8 +232,15 @@ async function loadSpecifications() {
   }
 }
 $('#market').addEventListener('change', async (event) => {
-  state.market = String(event.detail?.value ?? event.target.value ?? '');
+  const selectedMarket = String(event.detail?.value ?? event.target.value ?? '').trim().toLowerCase();
+  const validMarkets = new Set(['usdm', 'cdm', 'mxndm', 'ladm', 'eudm', 'rus', 'jdm', 'chdm', 'skdm', 'sam', 'medm', 'nadm', 'sadm', 'audm']);
+  if (!validMarkets.has(selectedMarket)) {
+    setStatus('INVALID VEHICLE MARKET', 'error');
+    return;
+  }
+  state.market = selectedMarket;
   $('#market').value = state.market;
+  $('#market').setAttribute('value', state.market);
   await resetSelect('make', 'Select manufacturer');
   await Promise.all([resetSelect('model', 'Select model'), resetSelect('year', 'Select model year'), resetSelect('variant', 'Select modification')]);
   $('#fitment-table-wrap').hidden = true;
