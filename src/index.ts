@@ -156,8 +156,8 @@ async function createWheelInquiry(request: Request, env: Env): Promise<Response>
     !productModel ||
     !['Forged', 'Cast', 'Flow Formed'].includes(construction) ||
     !customerName ||
-    (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(customerEmail) &&
-      !/^\\+?[0-9][0-9\\s().-]{6,24}$/.test(customerPhone)) ||
+    (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail) &&
+      !/^\+?[0-9][0-9\s().-]{6,24}$/.test(customerPhone)) ||
     !Number.isInteger(quantity) ||
     quantity < 1 ||
     quantity > 10000 ||
