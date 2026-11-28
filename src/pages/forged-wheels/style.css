@@ -1213,7 +1213,7 @@ body.forged-wheels-page .ouranos-header > div { position: relative; z-index: 4; 
   text-transform: uppercase;
 }
 .forged-actions { display: flex; flex-wrap: wrap; gap: 12px; }
-.forged-hero .forged-actions p-button { display: inline-flex; }
+.forged-hero .forged-actions p-link { display: inline-flex; }
 .forged-trustbar {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1415,7 +1415,7 @@ body.forged-wheels-page .ouranos-header > div { position: relative; z-index: 4; 
   .forged-hero__copy { gap: 18px; padding-bottom: 48px; }
   .forged-hero__copy p-display { font-size: clamp(3.2rem, 12vw, 5.5rem); }
   .forged-actions { align-items: stretch; flex-direction: column; width: min(100%, 340px); }
-  .forged-actions p-button { width: 100%; }
+  .forged-actions p-link { width: 100%; }
   .forged-trustbar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .forged-trustbar > div { padding: 16px 12px; border-bottom: 1px solid rgb(255 255 255 / 25%); }
   .forged-trustbar > div:first-child { padding-left: 0; }
