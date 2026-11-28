@@ -10,16 +10,13 @@ const sortSelect=document.querySelector('#sort-products');
 
 function escapeHtml(value){return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));}
 function card(product){
-  const enquirySubject = encodeURIComponent('Cast wheel enquiry — ' + product.model + ' ' + product.part);
-  const enquiryBody = encodeURIComponent('Hello OURANOS team,\n\nI would like to enquire about the following cast wheel reference:\n' + product.model + ' ' + product.part + '\n\nPlease share availability, specifications and supply details.\n\nThank you.');
-  const enquiryUrl = 'mailto:xg.y@outlook.com?subject=' + enquirySubject + '&body=' + enquiryBody;
   const specs=product.preview.map(([label,value])=>'<div class="wheel-card__spec"><span>'+escapeHtml(label)+'</span><strong>'+escapeHtml(value)+'</strong></div>').join('');
   return '<article class="wheels-product-card" data-product="'+escapeHtml(product.id)+'">'
     +'<div class="wheel-card__image"><img src="'+escapeHtml(product.image)+'" alt="BBS '+escapeHtml(product.model)+' cast wheel" width="900" height="900" loading="lazy" decoding="async"></div>'
     +'<div class="wheel-card__body"><div><p class="wheel-card__eyebrow">'+escapeHtml(product.family)+'</p><h3 class="wheel-card__title">'+escapeHtml(product.model)+' <span>'+escapeHtml(product.part)+'</span></h3><p class="wheel-card__design">'+escapeHtml(product.finish)+'</p></div>'
     +'<div class="wheel-card__specs">'+specs+'</div>'
     +'<div class="wheel-card__stock"><span>Available stock</span><strong>'+escapeHtml(product.stock)+' pcs</strong></div>'
-    +'<div class="wheel-card__actions"><p-button href="/wheel-product/?type=cast&id='+encodeURIComponent(product.id)+'" variant="primary">DISCOVER</p-button><p-button href="/wheel-enquiry/?type=cast&id='+encodeURIComponent(product.id)+'&model='+encodeURIComponent(product.part)+'&stock='+encodeURIComponent(product.stock)+'" variant="secondary">ENQUIRE</p-button></div></div></article>';
+    +'<div class="wheel-card__actions"><p-button href="'+escapeHtml(product.source)+'" target="_blank" variant="primary">EXPLORE MODEL ↗</p-button><p-button href="'+escapeHtml(enquiryUrl)+'" variant="secondary">ENQUIRE</p-button></div></div></article>';
 }
 function render(){
   const model=modelFilter.value || 'all';
