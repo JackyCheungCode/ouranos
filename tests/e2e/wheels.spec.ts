@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 
-test('Cast wheel catalogue presents 20 single-piece BBS cast references without a configure or purchase flow', async ({ page }) => {
+test('Cast wheel catalogue presents 20 single-piece BBS cast references without a configure or purchase flow', async ({
+  page,
+}) => {
   await page.goto('/wheels/', { waitUntil: 'domcontentloaded' });
   await expect(page).toHaveTitle('OURANOS | Cast Wheel Collection');
   await expect(page.locator('.ouranos-header')).toHaveAttribute('data-header-variant', 'overlay');
@@ -18,16 +20,29 @@ test('Cast wheel catalogue presents 20 single-piece BBS cast references without 
   await expect(page.locator('body')).not.toContainText('TEMPORARY');
 });
 
-test('Cast wheel catalogue filters by model and diameter and remains responsive', async ({ page }) => {
+test('Cast wheel catalogue filters by model and diameter and remains responsive', async ({
+  page,
+}) => {
   await page.goto('/wheels/', { waitUntil: 'domcontentloaded' });
-  await page.locator('#filter-model').evaluate(el => { el.value='SX'; el.dispatchEvent(new Event('change',{bubbles:true})); });
+  await page.locator('#filter-model').evaluate((el) => {
+    el.value = 'SX';
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+  });
   await expect(page.locator('#wheels-grid [data-product]')).toHaveCount(5);
-  await page.locator('#filter-diameter').evaluate(el => { el.value='18'; el.dispatchEvent(new Event('change',{bubbles:true})); });
+  await page.locator('#filter-diameter').evaluate((el) => {
+    el.value = '18';
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+  });
   await expect(page.locator('#wheels-grid [data-product]')).toHaveCount(0);
-  await page.locator('#filter-diameter').evaluate(el => { el.value='17'; el.dispatchEvent(new Event('change',{bubbles:true})); });
+  await page.locator('#filter-diameter').evaluate((el) => {
+    el.value = '17';
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+  });
   await expect(page.locator('#wheels-grid [data-product]')).toHaveCount(5);
-  await page.setViewportSize({width:390,height:844});
+  await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.locator('#wheels-grid [data-product]')).toHaveCount(5);
-  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>document.documentElement.clientWidth);
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
+  );
   expect(overflow).toBe(false);
 });
