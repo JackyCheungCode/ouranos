@@ -365,10 +365,26 @@ async function wheelSizeRequest(request: Request, env: Env): Promise<Response> {
 
 function safeError(body: string) {
   try {
-    const parsed = JSON.parse(body);
-    return { code: parsed.code, detail: parsed.detail, message: parsed.message };
+    const parsed = JSON.parse(body) as Record<string, unknown>;
+    // Preserve provider validation details for diagnosis, while never returning request URLs or credentials.
+    const keys = [
+      'code',
+      'detail',
+      'message',
+      'error',
+      'errors',
+      'type',
+      'fields',
+      'validation_errors',
+      'non_field_errors',
+    ];
+    const details: Record<string, unknown> = {};
+    for (const key of keys) {
+      if (parsed[key] !== undefined) details[key] = parsed[key];
+    }
+    return Object.keys(details).length ? details : parsed;
   } catch {
-    return body.slice(0, 500);
+    return body.slice(0, 1000);
   }
 }
 
