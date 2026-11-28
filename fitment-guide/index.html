@@ -44,16 +44,10 @@
           <p-heading id="specs-title" tag="h2" size="xl">Read the complete wheel specification.</p-heading>
         </div>
         <div class="fitment-specs-layout">
-          <div class="fitment-specs-visual" aria-label="Wheel specification diagram">
-            <div class="fitment-wheel-diagram">
-              <div class="fitment-wheel-diagram__rim"><div class="fitment-wheel-diagram__hub"></div></div>
-              <span class="fitment-callout fitment-callout--pcd">PCD</span>
-              <span class="fitment-callout fitment-callout--cb">CB</span>
-              <span class="fitment-callout fitment-callout--et">ET / OFFSET</span>
-              <span class="fitment-callout fitment-callout--width">WIDTH</span>
-            </div>
-            <p-text size="xs" color="contrast-medium">SCHEMATIC / NOT TO SCALE</p-text>
-          </div>
+          <figure class="fitment-specs-visual">
+            <img src="https://media.whichcar.com.au/uploads/2025/02/b525ac11-2017-Porsche-718-Cayman-S-wheel.jpg" alt="Photograph of a Porsche alloy wheel, tyre and brake assembly" loading="lazy" decoding="async">
+            <figcaption>WHEEL ASSEMBLY / REAL VEHICLE DETAIL</figcaption>
+          </figure>
           <div class="fitment-specs-list">
             <article><h3>PCD · Pitch Circle Diameter</h3><p>The number of mounting holes and the diameter of the circle passing through their centres. Both must match the vehicle hub.</p></article>
             <article><h3>ET · Offset</h3><p>Determines the mounting face position relative to the wheel centreline. Changes affect inner clearance and outer position.</p></article>
@@ -117,15 +111,17 @@
             </div>
             <div class="fitment-market-row">
               <label for="market">Vehicle market</label>
-              <p-select id="market" name="market" value="usdm" aria-label="Vehicle market" disabled>
-                <p-select-option value="">Loading markets…</p-select-option>
+              <p-select id="market" name="market" label="Vehicle market" value="usdm" aria-label="Vehicle market" required>
+                <p-select-option value="usdm">USA+ (USDM)</p-select-option>
+                <p-select-option value="eudm">Europe (EUDM)</p-select-option>
+                <p-select-option value="jdm">Japan (JDM)</p-select-option>
               </p-select>
             </div>
             <div class="fitment-vehicle-fields">
-              <label>Manufacturer<p-select id="make" name="make" aria-label="Manufacturer" disabled><p-select-option value="">Select manufacturer</p-select-option></p-select></label>
-              <label>Model<p-select id="model" name="model" aria-label="Model" disabled><p-select-option value="">Select model</p-select-option></p-select></label>
-              <label>Model year<p-select id="year" name="year" aria-label="Model year" disabled><p-select-option value="">Select year</p-select-option></p-select></label>
-              <label>Generation / modification<p-select id="variant" name="variant" aria-label="Generation or modification" disabled><p-select-option value="">Select modification</p-select-option></p-select></label>
+              <p-select id="make" name="make" label="Manufacturer" aria-label="Manufacturer" disabled><p-select-option value="">Select manufacturer</p-select-option></p-select>
+              <p-select id="model" name="model" label="Model" aria-label="Model" disabled><p-select-option value="">Select model</p-select-option></p-select>
+              <p-select id="year" name="year" label="Model year" aria-label="Model year" disabled><p-select-option value="">Select year</p-select-option></p-select>
+              <p-select id="variant" name="variant" label="Generation / modification" aria-label="Generation or modification" disabled><p-select-option value="">Select modification</p-select-option></p-select>
             </div>
             <details class="fitment-vin">
               <summary>Identify by VIN (optional)</summary>
