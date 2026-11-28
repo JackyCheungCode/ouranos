@@ -133,7 +133,8 @@ test('forged wheels enquiry enforces the four-wheel MOQ and responsive layout', 
   expect(dimensions.body).toBeLessThanOrEqual(dimensions.viewport);
   await expect(page.locator('#forged-submit')).toBeVisible();
   await expect(page.locator('p-input-number[name="quantity"]')).toHaveAttribute('min', '4');
-  await expect(page.getByText('MOQ: 4 wheels')).toBeVisible();
+  await expect(page.locator('.forged-quantity-note')).toHaveText('Minimum order: 4 wheels');
+  await expect(page.locator('.forged-quantity-note')).toBeVisible();
   await expect(page.locator('.forged-swatch .swatch').first()).toHaveCSS('border-radius', '50%');
   await expect(page.locator('.forged-form-grid label:has(> p-input-text) > span')).toHaveCount(0);
 });
