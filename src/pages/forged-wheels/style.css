@@ -12,19 +12,23 @@ body.forged-wheels-page .ouranos-header {
 .ouranos-header {
   isolation: isolate;
 }
-.ouranos-header__video {
+.ouranos-header__video-embed {
   display: none;
   position: absolute;
   z-index: 0;
   inset: 0 0 auto;
   width: 100%;
   height: min(720px, 100svh);
-  object-fit: cover;
-  object-position: center 46%;
+  border: 0;
   pointer-events: none;
 }
-body.forged-wheels-page .ouranos-header__video {
+body.forged-wheels-page .ouranos-header__video-embed {
   display: block;
+  width: max(100%, 128vh);
+  height: min(720px, 100svh);
+  left: 50%;
+  transform: translateX(-50%);
+  aspect-ratio: 16 / 9;
 }
 .ouranos-header.ouranos-header::before {
   z-index: 1;
