@@ -228,7 +228,7 @@ html:has(body.cast-wheels-page) { scroll-behavior: smooth; }
 .cast-contact-error { color: #ffb4a9 !important; }
 #cast-submit { width: fit-content; }
 #cast-form-feedback { display: block; }
-#cast-form-feedback[hidden] { display: none; }
+#cast-form-feedback[hidden], .cast-contact-error[hidden] { display: none; }
 .cast-page__disclaimer { padding: 1.2rem var(--cast-gutter) 2rem; background: #171b1e; color: #9da7ab; }
 .cast-page :is(a, button, p-button, p-link-pure, p-input-text, p-input-email, p-textarea):focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
 .cast-page :is(#engineering-risks, #process-positioning, #supply-assurance, #consultation) { scroll-margin-top: 2rem; }
