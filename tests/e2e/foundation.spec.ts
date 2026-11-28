@@ -24,7 +24,7 @@ test('Home page is served at the root with shared Ouranos layout', async ({ page
   const stylesheetUrls: string[] = [];
   for (let index = 0; index < stylesheetCount; index += 1) {
     const href = await stylesheets.nth(index).getAttribute('href');
-    if (href && /\\.css(?:\\?|$)/.test(href)) stylesheetUrls.push(href);
+    if (href && /\.css(?:\?|$)/.test(href)) stylesheetUrls.push(href);
   }
   expect(stylesheetUrls.length).toBeGreaterThan(0);
 
