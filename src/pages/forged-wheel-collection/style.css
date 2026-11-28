@@ -30,7 +30,13 @@ body.forged-collection-page .ouranos-header.ouranos-header::before {
   z-index: 1;
   inset: 0 0 auto;
   height: min(720px, 100svh);
-  background: linear-gradient(180deg, rgb(0 0 0 / 62%) 0%, rgb(0 0 0 / 46%) 52%, rgb(0 0 0 / 18%) 82%, transparent 100%);
+  background: linear-gradient(
+    180deg,
+    rgb(0 0 0 / 62%) 0%,
+    rgb(0 0 0 / 46%) 52%,
+    rgb(0 0 0 / 18%) 82%,
+    transparent 100%
+  );
 }
 body.forged-collection-page .ouranos-header > div {
   position: relative;
@@ -87,8 +93,8 @@ body.forged-collection-page .ouranos-header > div {
   max-width: 900px;
   color: #fff;
   font-size: clamp(3.5rem, 8vw, 7.8rem);
-  line-height: .94;
-  letter-spacing: -.065em;
+  line-height: 0.94;
+  letter-spacing: -0.065em;
 }
 .forged-collection-hero__inner p-text {
   max-width: 560px;
@@ -102,7 +108,7 @@ body.forged-collection-page .ouranos-header > div {
   border-top: 1px solid rgb(255 255 255 / 45%);
   color: rgb(255 255 255 / 86%);
   font-size: 10px;
-  letter-spacing: .14em;
+  letter-spacing: 0.14em;
 }
 
 .forged-customisation-section,
@@ -114,7 +120,7 @@ body.forged-collection-page .ouranos-header > div {
 }
 .forged-collection-section-heading {
   display: grid;
-  grid-template-columns: minmax(180px, .7fr) minmax(0, 1.3fr);
+  grid-template-columns: minmax(180px, 0.7fr) minmax(0, 1.3fr);
   gap: 24px 6vw;
   align-items: start;
   width: min(100%, 1440px);
@@ -129,7 +135,7 @@ body.forged-collection-page .ouranos-header > div {
   color: var(--color-contrast-high, #111);
   font-size: clamp(2.3rem, 4.8vw, 4.7rem);
   line-height: 1.02;
-  letter-spacing: -.05em;
+  letter-spacing: -0.05em;
 }
 .forged-collection-section-heading > div > p-text {
   max-width: 60ch;
@@ -268,7 +274,7 @@ body.forged-collection-page .ouranos-header > div {
   color: #222;
   background: rgb(255 255 255 / 92%);
   font-size: 10px;
-  letter-spacing: .1em;
+  letter-spacing: 0.1em;
 }
 .forged-product-card__body {
   display: grid;
@@ -280,7 +286,7 @@ body.forged-collection-page .ouranos-header > div {
   margin: 0;
   color: #777;
   font-size: 9px;
-  letter-spacing: .14em;
+  letter-spacing: 0.14em;
 }
 .forged-product-card__identity h3 {
   margin: 0;
@@ -288,7 +294,7 @@ body.forged-collection-page .ouranos-header > div {
   font-size: clamp(23px, 2vw, 30px);
   line-height: 1.05;
   font-weight: 500;
-  letter-spacing: -.035em;
+  letter-spacing: -0.035em;
 }
 .forged-product-card__identity p {
   margin: 7px 0 0;
@@ -306,7 +312,7 @@ body.forged-collection-page .ouranos-header > div {
 .forged-product-card__construction span {
   color: #777;
   font-size: 9px;
-  letter-spacing: .12em;
+  letter-spacing: 0.12em;
 }
 .forged-product-card__construction strong {
   color: #222;
@@ -388,7 +394,7 @@ body.forged-collection-page .ouranos-header > div {
 .forged-process-steps li > span {
   color: var(--color-contrast-medium, #626262);
   font-size: 12px;
-  letter-spacing: .12em;
+  letter-spacing: 0.12em;
 }
 .forged-process-steps h3 {
   margin: 0 0 8px;

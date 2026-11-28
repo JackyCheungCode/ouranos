@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 
-test('forged wheel collection renders 20 BBS visual references with one shared customisation programme', async ({ page }) => {
+test('forged wheel collection renders 20 BBS visual references with one shared customisation programme', async ({
+  page,
+}) => {
   await page.goto('/forged-wheels/collection/', { waitUntil: 'domcontentloaded' });
 
   await expect(page).toHaveTitle('OURANOS | Forged Wheel Collection');
@@ -8,7 +10,10 @@ test('forged wheel collection renders 20 BBS visual references with one shared c
   await expect(page.locator('#ouranos-ai-open')).toBeVisible();
   await expect(page.locator('#ouranos-language-trigger')).toBeVisible();
   await expect(page.locator('.ouranos-header__video')).toBeVisible();
-  await expect(page.locator('.ouranos-header__video source')).toHaveAttribute('src', '/videos/mood-porsche-gts.mp4');
+  await expect(page.locator('.ouranos-header__video source')).toHaveAttribute(
+    'src',
+    '/videos/mood-porsche-gts.mp4',
+  );
   await expect(page.locator('body > footer')).toBeVisible();
   await expect(page.locator('body > footer nav[aria-label="Footer"]')).toBeVisible();
 
@@ -17,7 +22,9 @@ test('forged wheel collection renders 20 BBS visual references with one shared c
   await expect(page.locator('.forged-customisation-item').nth(0)).toContainText('Diameter · Width');
   await expect(page.locator('.forged-customisation-item').nth(1)).toContainText('ET · PCD · CB');
   await expect(page.locator('.forged-customisation-item').nth(2)).toContainText('Finish · Color');
-  await expect(page.locator('.forged-customisation-item').nth(3)).toContainText('Center Cap · Engraving');
+  await expect(page.locator('.forged-customisation-item').nth(3)).toContainText(
+    'Center Cap · Engraving',
+  );
 
   await expect(page.locator('.forged-product-card')).toHaveCount(20);
   await expect(page.locator('#product-count')).toHaveText('20 models');
@@ -26,8 +33,12 @@ test('forged wheel collection renders 20 BBS visual references with one shared c
   await expect(page.locator('.forged-product-card').first()).not.toContainText('Center Cap');
   await expect(page.locator('.forged-reference-note')).toContainText('not OURANOS products');
 
-  await expect(page.locator('.forged-product-card').first().locator('p-button').first()).toHaveAttribute('href', /^https:\/\/bbs-japan\.co\.jp\/en\/products\//);
-  await expect(page.locator('.forged-product-card').first().locator('p-button').nth(1)).toHaveAttribute('href', /reference=BBS%20FL/);
+  await expect(
+    page.locator('.forged-product-card').first().locator('p-button').first(),
+  ).toHaveAttribute('href', /^https:\/\/bbs-japan\.co\.jp\/en\/products\//);
+  await expect(
+    page.locator('.forged-product-card').first().locator('p-button').nth(1),
+  ).toHaveAttribute('href', /reference=BBS%20FL/);
 });
 
 test('forged collection filters and sorts the reference models', async ({ page }) => {
@@ -62,7 +73,9 @@ test('forged collection remains responsive without horizontal overflow', async (
     await page.goto('/forged-wheels/collection/', { waitUntil: 'domcontentloaded' });
 
     const layout = await page.evaluate(() => ({
-      columns: getComputedStyle(document.querySelector('#forged-products-grid')!).gridTemplateColumns.trim().split(/\s+/).length,
+      columns: getComputedStyle(document.querySelector('#forged-products-grid')!)
+        .gridTemplateColumns.trim()
+        .split(/\s+/).length,
       overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
     }));
     const expectedColumns = width > 1100 ? 4 : width > 760 ? 3 : width > 420 ? 2 : 1;
