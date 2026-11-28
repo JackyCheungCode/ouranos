@@ -1,37 +1,26 @@
 #ouranos-ai-panel {
   position: fixed;
-  z-index: 50;
+  z-index: 1100;
   inset: 0 0 0 auto;
   display: flex;
   flex-direction: column;
   width: min(480px, 100vw);
   height: 100dvh;
-  padding: 28px;
+  padding: max(28px, env(safe-area-inset-top)) 28px max(28px, env(safe-area-inset-bottom));
   color: #171717;
   background: #fff;
   border-left: 1px solid #e5e5e5;
-  box-shadow: -16px 0 48px rgb(0 0 0 / 10%);
+  box-shadow: -16px 0 48px rgb(0 0 0 / 18%);
   transform: translateX(105%);
   visibility: hidden;
   transition:
     transform 240ms ease,
     visibility 240ms;
   color-scheme: light;
+  overscroll-behavior: contain;
 }
-/* Keep the official Header Pattern interactive while the AI drawer is open. */
-#ouranos-ai-panel {
-  inset-block-start: 80px;
-  height: calc(100dvh - 80px);
-}
-body:has(.ouranos-header[data-header-variant='stacked']) #ouranos-ai-panel {
-  inset-block-start: 176px;
-  height: calc(100dvh - 176px);
-}
-@media (max-width: 680px) {
-  body:has(.ouranos-header[data-header-variant='stacked']) #ouranos-ai-panel {
-    inset-block-start: 144px;
-    height: calc(100dvh - 144px);
-  }
+body.ouranos-ai-is-open {
+  overflow: hidden;
 }
 #ouranos-ai-panel.is-open {
   transform: translateX(0);
@@ -269,7 +258,9 @@ body:has(.ouranos-header[data-header-variant='stacked']) #ouranos-ai-panel {
 }
 @media (max-width: 520px) {
   #ouranos-ai-panel {
-    padding: 20px;
+    width: 100vw;
+    padding: max(20px, env(safe-area-inset-top)) 20px max(20px, env(safe-area-inset-bottom));
+    border-left: 0;
   }
   .ouranos-ai-product-grid {
     grid-template-columns: 1fr;
