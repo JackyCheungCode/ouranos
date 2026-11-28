@@ -222,7 +222,9 @@ function templatePartials() {
                 ? 'OURANOS | Cast wheel Collection'
                 : isContact
                   ? 'Ouranos | Contact Us'
-                  : isAdmin
+                  : isAboutUs
+                    ? 'OURANOS | About Us — Beyond the Wheel'
+                    : isAdmin
                     ? 'Ouranos Admin Panel'
                     : 'Ouranos';
       const partials = [
