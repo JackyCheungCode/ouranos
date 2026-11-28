@@ -1,13 +1,14 @@
 import './ai-assistant.css';
 
-const openButton = document.getElementById('ouranos-ai-open');
-const closeButton = document.getElementById('ouranos-ai-close');
-const panel = document.getElementById('ouranos-ai-panel');
-const form = document.getElementById('ouranos-ai-form');
-const input = document.getElementById('ouranos-ai-input');
-const messagesElement = document.getElementById('ouranos-ai-messages');
+function initOuranosAI() {
+  const openButton = document.getElementById('ouranos-ai-open');
+  const closeButton = document.getElementById('ouranos-ai-close');
+  const panel = document.getElementById('ouranos-ai-panel');
+  const form = document.getElementById('ouranos-ai-form');
+  const input = document.getElementById('ouranos-ai-input');
+  const messagesElement = document.getElementById('ouranos-ai-messages');
 
-if (openButton && closeButton && panel && form && input && messagesElement) {
+  if (!openButton || !closeButton || !panel || !form || !input || !messagesElement) return false;
   const history = [];
   const setOpen = (open, { restoreFocus = true } = {}) => {
     panel.classList.toggle('is-open', open);
@@ -244,6 +245,7 @@ if (openButton && closeButton && panel && form && input && messagesElement) {
   }, true);
   const header = document.querySelector('.ouranos-header');
   if (header) header.dataset.aiControllerReady = 'true';
+  return true;
   window.addEventListener('ouranos:ai-close', () => setOpen(false, { restoreFocus: false }));
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && panel.classList.contains('is-open')) setOpen(false);
@@ -255,4 +257,16 @@ if (openButton && closeButton && panel && form && input && messagesElement) {
     input.value = '';
     sendMessage(content);
   });
+}
+
+if (!initOuranosAI()) {
+  // Shared layout fragments can be inserted after this module is evaluated.
+  // Observe until the Header and AI drawer are both present, then initialise once.
+  const observer = new MutationObserver(() => {
+    if (initOuranosAI()) observer.disconnect();
+  });
+  observer.observe(document.documentElement, { childList: true, subtree: true });
+  document.addEventListener('DOMContentLoaded', () => {
+    if (initOuranosAI()) observer.disconnect();
+  }, { once: true });
 }
