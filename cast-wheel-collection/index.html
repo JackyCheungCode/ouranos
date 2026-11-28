@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Explore the OURANOS cast wheel collection, stock availability and OEM / ODM programmes.">
-    <title>OURANOS | Cast Wheel Collection</title>
+    <title>OURANOS | Cast wheel Collection</title>
   </head>
   <body class="scheme-light wheels-page">
     <!-- OURANOS:HEADER -->
@@ -30,10 +30,10 @@
         </div>
         <div class="wheels-toolbar">
           <div class="wheels-filters">
-            <label><span>Model</span><p-select id="filter-model" compact="true" value="all"><p-select-option value="all">All models</p-select-option><p-select-option value="SR">SR</p-select-option><p-select-option value="SX">SX</p-select-option><p-select-option value="XR">XR</p-select-option><p-select-option value="TL-A">TL-A</p-select-option></p-select></label>
-            <label><span>Diameter</span><p-select id="filter-diameter" compact="true" value="all"><p-select-option value="all">All sizes</p-select-option><p-select-option value="16">16 inch</p-select-option><p-select-option value="17">17 inch</p-select-option><p-select-option value="18">18 inch</p-select-option><p-select-option value="19">19 inch</p-select-option><p-select-option value="20">20 inch</p-select-option></p-select></label>
+            <label><span>Model</span><p-select id="filter-model" compact="true" value="all" aria-label="Filter by model"><p-select-option value="all">All models</p-select-option><p-select-option value="SR">SR</p-select-option><p-select-option value="SX">SX</p-select-option><p-select-option value="XR">XR</p-select-option><p-select-option value="TL-A">TL-A</p-select-option></p-select></label>
+            <label><span>Diameter</span><p-select id="filter-diameter" compact="true" value="all" aria-label="Filter by diameter"><p-select-option value="all">All sizes</p-select-option><p-select-option value="16">16 inch</p-select-option><p-select-option value="17">17 inch</p-select-option><p-select-option value="18">18 inch</p-select-option><p-select-option value="19">19 inch</p-select-option><p-select-option value="20">20 inch</p-select-option></p-select></label>
           </div>
-          <label class="wheels-sort"><span>Sort by</span><p-select id="sort-products" compact="true" value="featured"><p-select-option value="featured">Featured</p-select-option><p-select-option value="az">Model A–Z</p-select-option><p-select-option value="stock">Stock quantity</p-select-option></p-select></label>
+          <label class="wheels-sort"><span>Sort by</span><p-select id="sort-products" compact="true" value="featured" aria-label="Sort products"><p-select-option value="featured">Featured</p-select-option><p-select-option value="az">Model A–Z</p-select-option><p-select-option value="stock">Stock quantity</p-select-option></p-select></label>
         </div>
         <div id="wheels-grid" class="wheels-grid" aria-live="polite"></div>
         <div id="wheels-empty" class="wheels-empty" hidden><p-heading tag="h3" size="lg">No wheels found.</p-heading><p-text color="contrast-medium">Choose another model or size.</p-text></div>
@@ -75,6 +75,6 @@
       </section>
     </main>
     <!-- OURANOS:FOOTER -->
-    <script type="module" src="/src/pages/wheels/main.js"></script>
+    <script type="module" src="/src/pages/cast-wheel-collection/main.js"></script>
   </body>
 </html>

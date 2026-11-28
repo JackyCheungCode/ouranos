@@ -1,7 +1,7 @@
-const imageSR='https://sidovski.com/hpeciai/862a066d52aacb59dc26e8d8ad58960b/pol_pl_Felga-aluminiowa-18-BBS-SR-18x8-ET42-5x108-Himalaya-Grey-Satin-294441_1.png';
-const imageSX='https://sidovski.com/hpeciai/ac3ab83265c5b0f88d20f808a1a8f2c7/pol_pl_Felga-aluminiowa-18-BBS-SX-18x8-ET35-5x112-Brilliant-Silver-305710_1.png';
-const imageXR='https://cdn.bbs.com/38/assets/images/products/XR/wheelGallery/BBS-XR-Platinumsilber-Frontal-Effekt-mitAFS.jpg';
-const imageTLA='https://cdn.bbs.com/121/assets/images/products-v2/wheels/TL-A-v2/Radgalerie/TLA0101_SatinPlatinumSilverFront_001.png';
+const imageSR='https://bbs-usa-appguide.com/wheel_images/wheelPic_8-21-2020_4506.png';
+const imageSX='https://bbs-usa-appguide.com/wheel_images/wheelPic_8-21-2020_4524.png';
+const imageXR='https://bbs-usa-appguide.com/wheel_images/wheelPic_8-21-2020_4467.png';
+const imageTLA='https://bbs-usa-appguide.com/wheel_images/wheelPic_1-4-2022_5337.png';
 
 export const castProducts=[
 {id:'sr-009',model:'SR',part:'SR 009',family:'Performance Design',diameter:'16',finish:'Satin Grey',image:imageSR,preview:[['Diameter','16″'],['Width','7J'],['Bolt pattern','5 × 120']],stock:18,source:'https://www.bbs-usa.com/road_wheels/wheel_details.cfm?wheel=89'},

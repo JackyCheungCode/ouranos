@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 const publicPages = [
   '/',
-  '/wheels/',
+  '/cast-wheel-collection/',
   '/forged-wheels/',
   '/customize/',
   '/discover/',

@@ -1162,7 +1162,7 @@ async function aiAssistantRequest(request: Request, env: Env): Promise<Response>
 OUTPUT CONTRACT: Return ONLY one valid JSON object, no markdown fences, with shape {"type":"assistant_message","content":[...]}.
 Allowed content blocks:
 - {"type":"text","value":"..."}
-- {"type":"product_card","product":{"id":"real published product id","title":"...","image":"...","url":"/wheels/...","series":"...","description":"...","specs":[{"label":"...","value":"..."}]}}
+- {"type":"product_card","product":{"id":"real published product id","title":"...","image":"...","url":"/cast-wheel-collection/...","series":"...","description":"...","specs":[{"label":"...","value":"..."}]}}
 - {"type":"product_grid","items":[product objects using the same fields]}
 - {"type":"specification_table"|"comparison_table","title":"...","columns":["..."],"rows":[["..."]]}
 - {"type":"selection","title":"...","description":"...","mode":"single"|"multiple","confirm_label":"Confirm selection","options":[{"label":"...","value":"...","description":"..."}]}
