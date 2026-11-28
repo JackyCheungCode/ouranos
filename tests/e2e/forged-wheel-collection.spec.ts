@@ -75,7 +75,7 @@ test('forged collection remains responsive without horizontal overflow', async (
     const layout = await page.evaluate(() => ({
       columns: getComputedStyle(document.querySelector('#forged-products-grid')!)
         .gridTemplateColumns.trim()
-        .split(/\\s+/).length,
+        .split(/\s+/).length,
       overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
     }));
     const expectedColumns = width > 1100 ? 4 : width > 760 ? 3 : width > 420 ? 2 : 1;
