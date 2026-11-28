@@ -8,6 +8,7 @@ test('Cast wheel collection presents 20 cast references with product and enquiry
   await expect(page.locator('.ouranos-header')).toHaveAttribute('data-header-variant', 'overlay');
   await expect(page.locator('#ouranos-ai-open')).toBeVisible();
   await expect(page.locator('body > footer nav[aria-label="Footer"]')).toBeVisible();
+  await expect(page.locator('html')).toHaveAttribute('data-cast-catalogue-ready', 'true');
   await expect(page.locator('#wheels-grid [data-product]')).toHaveCount(20);
   await expect(page.locator('#product-count')).toHaveText('20 products');
   await expect(page.locator('#wheels-grid p-button')).toHaveCount(40);
@@ -18,6 +19,7 @@ test('Cast wheel collection presents 20 cast references with product and enquiry
   ).toHaveAttribute('src', /^https:\/\//);
   await expect(page.locator('#filter-model')).toHaveJSProperty('tagName', 'P-SELECT');
   await expect(page.locator('#filter-diameter')).toHaveJSProperty('tagName', 'P-SELECT');
+  await expect(page.locator('#sort-products')).toHaveJSProperty('tagName', 'P-SELECT');
   await expect(
     page.locator('#wheels-grid .wheels-product-card').first(),
   ).toHaveCSS('background-color', 'rgb(255, 255, 255)');
