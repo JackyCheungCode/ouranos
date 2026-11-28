@@ -10,7 +10,9 @@ test('About Us presents OURANOS engineering story with the shared PDS layout', a
   await expect(page.locator('main.about-shell')).toHaveCount(1);
   await expect(page.locator('main.about-shell > section')).toHaveCount(10);
   await expect(page.locator('p-heading#about-title')).toContainText('BEYOND');
-  await expect(page.locator('p-heading#manufacturing-title')).toContainText('TWO MANUFACTURING ROUTES');
+  await expect(page.locator('p-heading#manufacturing-title')).toContainText(
+    'TWO MANUFACTURING ROUTES',
+  );
   await expect(page.locator('p-heading#quality-title')).toContainText('QUALITY MUST BE MEASURED');
   await expect(page.locator('p-heading#development-title')).toContainText('FROM CONCEPT');
   await expect(page.locator('p-button[href="/forged-wheels/collection/"]')).toHaveCount(2);

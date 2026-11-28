@@ -225,8 +225,8 @@ function templatePartials() {
                   : isAboutUs
                     ? 'OURANOS | About Us — Beyond the Wheel'
                     : isAdmin
-                    ? 'Ouranos Admin Panel'
-                    : 'Ouranos';
+                      ? 'Ouranos Admin Panel'
+                      : 'Ouranos';
       const partials = [
         getJsComponentChunkLinks({ components: components as never[] }),
         getJsFontLinks(),
