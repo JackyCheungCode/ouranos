@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+// End-to-end coverage for the new customer-facing wheel journeys.
+
 test('wheel product detail resolves a forged product and connects the enquiry flow', async ({ page }) => {
   await page.goto('/wheel-product/?type=forged&id=fl', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('.ouranos-header')).toBeVisible();
