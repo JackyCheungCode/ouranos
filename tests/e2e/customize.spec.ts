@@ -281,7 +281,7 @@ test('Configurator defaults to the first wheel model and supports Back and the p
   await expect(
     page.locator('#nav-drilldown p-drilldown-item[identifier="ouranos-wheels"]'),
   ).toHaveAttribute('label', 'Ouranos Wheels');
-  await expect(page.locator('#nav-drilldown')).toContainText('Wheels Catalogue');
+  await expect(page.locator('#nav-drilldown')).toContainText('Cast Wheels');
   await expect(page.locator('#nav-drilldown')).toContainText('Discover Wheels');
   await expect(page.locator('#nav-drilldown')).toContainText('Wheel Design Studio');
   await expect(page.locator('#nav-drilldown')).toContainText('BETA');
