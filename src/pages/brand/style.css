@@ -105,7 +105,6 @@ body.about-page { color-scheme: light; background: var(--pds-theme-light-backgro
   .about-hero { min-height: 680px; }
   .about-hero__visual { background-position: 58% center; }
   .about-hero__content { padding: 140px 0 88px; }
-  .about-hero__content p-heading { font-size: clamp(58px, 16vw, 88px); }
   .about-hero__index { right: 20px; }
   .about-intro { grid-template-columns: 1fr; gap: 20px; }
   .about-intro__copy, .about-intro__body { grid-column: 1; padding-top: 0; }
