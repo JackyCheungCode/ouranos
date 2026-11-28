@@ -18,7 +18,7 @@ test('Cast Wheels capability page follows the five-module brief and shared navig
   await expect(page.locator('#nav-drilldown')).toContainText('Cast Wheels');
 
   await expect(page.locator('#cast-hero-title')).toContainText(
-    'Cast wheels. Engineered with intent.',
+    'Cast wheels.Engineered with intent.',
   );
   await expect(page.locator('.cast-proof > div')).toHaveCount(3);
   await expect(page.locator('.cast-risk')).toHaveCount(3);
