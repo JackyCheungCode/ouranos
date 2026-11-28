@@ -26,7 +26,7 @@ test('wheel enquiry form submits through the existing inquiry endpoint contract'
 
 test('fitment engineering report and technical support pages render shared site layout', async ({ page }) => {
   await page.goto('/fitment-report/', { waitUntil: 'domcontentloaded' });
-  await expect(page.locator('h1')).toContainText('Fitment is a system');
+  await expect(page.locator('p-heading[tag="h1"]')).toContainText('Fitment is a system');
   await expect(page.locator('.report-access__levels article')).toHaveCount(2);
   await expect(page.locator('body > footer')).toBeVisible();
   await page.goto('/technical-support/', { waitUntil: 'domcontentloaded' });
