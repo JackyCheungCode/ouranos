@@ -104,9 +104,10 @@ function sharedLayoutPartials() {
           /^import ['"]\.\/header\.css['"];?\s*/m,
           '',
         );
+        const headerStyles = readPartial('header.css');
         transformed = transformed.replace(
           '</head>',
-          '<link rel="stylesheet" href="/src/components/layout/header.css">\n</head>',
+          `<style id="ouranos-header-styles">\n${headerStyles}\n</style>\n</head>`,
         );
         transformed = transformed.replace(
           '</body>',
@@ -122,9 +123,10 @@ function sharedLayoutPartials() {
       ).replace(/^import ['"]\.\/ai-assistant\.css['"];?\s*/m, '');
       transformed = transformed.replace(/<script[^>]+ai-assistant\.js[^>]*><\/script>/g, '');
       if (!transformed.includes('ouranos-ai-controller-inline')) {
+        const aiStyles = readFileSync(resolve(rootDir, 'src/components/ai-assistant.css'), 'utf8');
         transformed = transformed.replace(
           '</head>',
-          '<link rel="stylesheet" href="/src/components/ai-assistant.css">\n</head>',
+          `<style id="ouranos-ai-styles">\n${aiStyles}\n</style>\n</head>`,
         );
         transformed = transformed.replace(
           '</body>',
