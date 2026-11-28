@@ -127,24 +127,43 @@ function render(records) {
   });
 }
 async function loadMarkets() {
-  setStatus('LOADING VEHICLE MARKETS');
   const market = $('#market');
-  enable(market, false);
+  const fallbackMarkets = [
+    { name: 'USA+ (USDM)', slug: 'usdm' },
+    { name: 'Europe (EUDM)', slug: 'eudm' },
+    { name: 'Japan (JDM)', slug: 'jdm' },
+  ];
+  // Keep the market control usable even if the catalogue endpoint is temporarily unavailable.
+  await setOptions(market, fallbackMarkets, 'Select vehicle market');
+  state.market = 'usdm';
+  market.value = state.market;
+  market.setAttribute('value', state.market);
+  enable(market, true);
+  setStatus('SELECT VEHICLE MARKET', 'success');
+
   try {
     const markets = list(await api('regions', {}));
-    const known = new Set(markets.map((item) => String(slug(item)).toLowerCase()));
-    const preferred = ['usdm', 'eudm', 'jdm'];
-    const ordered = [...preferred.filter((key) => known.has(key)), ...markets.filter((item) => !preferred.includes(String(slug(item)).toLowerCase()))];
-    await setOptions(market, ordered.map((item) => ({ ...item, name: label(item) + ' (' + String(slug(item)).toUpperCase() + ')' })), 'Select vehicle market');
-    state.market = known.has('usdm') ? 'usdm' : String(slug(ordered[0] || ''));
-    market.value = state.market;
-    market.setAttribute('value', state.market);
+    if (markets.length) {
+      const options = markets.map((item) => ({
+        ...item,
+        name: label(item) + ' (' + String(slug(item)).toUpperCase() + ')',
+      }));
+      await setOptions(market, options, 'Select vehicle market');
+      const known = new Set(options.map((item) => String(slug(item)).toLowerCase()));
+      state.market = known.has('usdm') ? 'usdm' : String(slug(options[0]));
+      market.value = state.market;
+      market.setAttribute('value', state.market);
+    }
     enable(market, true);
-    setStatus('MARKET SELECTED · ' + state.market.toUpperCase(), 'success');
+    setStatus('SELECT VEHICLE MARKET', 'success');
     await loadMakes();
   } catch (error) {
-    setStatus('VEHICLE MARKETS UNAVAILABLE', 'error');
-    $('#fitment-empty').textContent = error.message + ' Please retry later.';
+    // Market selection is independent of catalogue availability.
+    enable(market, true);
+    setStatus('MARKET AVAILABLE · CATALOGUE CONNECTION LIMITED', 'error');
+    $('#fitment-empty').hidden = false;
+    $('#fitment-empty').textContent = 'Choose a vehicle market. ' + error.message + ' Manufacturer data may be temporarily unavailable.';
+    await loadMakes().catch(() => undefined);
   }
 }
 async function loadMakes() {
@@ -225,16 +244,29 @@ async function loadSpecifications() {
   }
 }
 $('#market').addEventListener('change', async (event) => {
-  state.market = event.target.value;
+  state.market = String(event.detail?.value ?? event.target.value ?? '');
+  $('#market').value = state.market;
   await resetSelect('make', 'Select manufacturer');
   await Promise.all([resetSelect('model', 'Select model'), resetSelect('year', 'Select model year'), resetSelect('variant', 'Select modification')]);
   $('#fitment-table-wrap').hidden = true;
   if (state.market) await loadMakes();
 });
-$('#make').addEventListener('change', loadModels);
-$('#model').addEventListener('change', loadYears);
-$('#year').addEventListener('change', loadModifications);
-$('#variant').addEventListener('change', loadSpecifications);
+$('#make').addEventListener('change', (event) => {
+  $('#make').value = String(event.detail?.value ?? event.target.value ?? '');
+  loadModels();
+});
+$('#model').addEventListener('change', (event) => {
+  $('#model').value = String(event.detail?.value ?? event.target.value ?? '');
+  loadYears();
+});
+$('#year').addEventListener('change', (event) => {
+  $('#year').value = String(event.detail?.value ?? event.target.value ?? '');
+  loadModifications();
+});
+$('#variant').addEventListener('change', (event) => {
+  $('#variant').value = String(event.detail?.value ?? event.target.value ?? '');
+  loadSpecifications();
+});
 async function decodeVin() {
   const input = $('#vin');
   const vin = input.value.trim().toUpperCase();
