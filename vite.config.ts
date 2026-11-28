@@ -135,6 +135,7 @@ function templatePartials() {
       const isCastWheelCollection = context.filename.includes('/cast-wheel-collection/');
       const isForgedWheels = context.filename.includes('/forged-wheels/');
       const isContact = context.filename.includes('/contact/');
+      const isAboutUs = context.filename.includes('/about-us/');
       const validChunks = new Set([
         'accordion',
         'ai-tag',
