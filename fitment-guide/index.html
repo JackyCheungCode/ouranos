@@ -121,8 +121,9 @@
               <summary>Identify by VIN (optional)</summary>
               <p-text size="sm" color="contrast-medium">VIN can help identify a vehicle. It does not establish wheel compatibility and may require confirmation against the selected market and modification.</p-text>
               <label for="vin">17-character Vehicle Identification Number</label>
-              <input id="vin" name="vin" type="text" minlength="17" maxlength="17" autocomplete="off" placeholder="Enter VIN for identification">
-              <p-text size="xs" color="contrast-medium">VIN decoding is not enabled in this page release. Use manual vehicle selection for now.</p-text>
+              <input id="vin" name="vin" type="text" minlength="17" maxlength="17" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Enter 17-character VIN">
+              <p-button id="vin-decode" type="button" variant="secondary">Decode VIN</p-button>
+              <p-text id="vin-status" size="xs" color="contrast-medium" role="status" aria-live="polite">VIN decoding uses the NHTSA vPIC service for supported US-market vehicles. Confirm the exact modification before reviewing wheel specifications.</p-text>
             </details>
             <div id="fitment-empty" class="fitment-empty" role="status" aria-live="polite">Select a market, manufacturer, model and year to retrieve available factory wheel specifications.</div>
             <div id="fitment-table-wrap" class="fitment-table-wrap" hidden>
