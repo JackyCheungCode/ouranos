@@ -24,7 +24,7 @@ body.forged-wheels-page .ouranos-header {
 }
 body.forged-wheels-page .ouranos-header__video-embed {
   display: block;
-  width: max(100%, 128vh);
+  width: max(100vw, calc(min(720px, 100svh) * 1.7778));
   height: min(720px, 100svh);
   left: 50%;
   transform: translateX(-50%);
